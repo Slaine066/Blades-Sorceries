@@ -1,0 +1,119 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "CharacterBase.h"
+#include "InputActionValue.h"
+#include "CharacterHero.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
+
+UCLASS()
+class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
+{
+	GENERATED_BODY()
+	
+public:
+	ACharacterHero();
+
+	/*
+	* Methods
+	*/
+	// AnimNotify
+	void OnUnsheath();
+	void OnSheath();
+	void OnNormalAttackCombo();
+	void OnSkillEnd();
+
+	/*
+	* Variables
+	*/
+
+protected:
+	/*
+	* Methods Inherited
+	*/
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/*
+	* Methods
+	*/
+	// Input Action Functions
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Unsheath(const FInputActionValue& Value);
+	void NormalAttack(const FInputActionValue& Value);
+	void Skill_1(const FInputActionValue& Value);
+	void Skill_2(const FInputActionValue& Value);
+	void Skill_3(const FInputActionValue& Value);
+	void Dash(const FInputActionValue& Value);
+
+	/*
+	* Variables
+	*/
+	// Input Actions
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* LookAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* UnsheathAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* NormalAttackAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Skill_1_Action;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Skill_2_Action;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Skill_3_Action;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* DashAction;
+
+private:
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+	// Spring Arm & Camera
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* SpringArmComponent;
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* CameraComponent;
+
+	// Input Mapping Context
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputMappingContext* InputMappingContext;
+
+	// Montages
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UAnimMontage* UnsheathMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UAnimMontage* SheathMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* UnsheathAttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TArray<UAnimMontage*> NormalAttackMontages;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* Skill_1_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* Skill_2_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* Skill_3_Montage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool IsComboActive;
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	int ComboCounter;
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool IsSkilling;
+};
