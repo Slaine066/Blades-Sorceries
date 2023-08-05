@@ -25,6 +25,10 @@ public:
 	/*
 	* Methods
 	*/
+	bool Get_IsAttacking() { return IsAttacking; }
+	bool Get_IsDead() { return IsDead; }
+	
+	virtual void Attack();
 
 	/*
 	* Variables
@@ -45,10 +49,16 @@ protected:
 	* Variables
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TSubclassOf<AWeaponBase> WeaponClass;
+	TSubclassOf<AWeaponBase> WeaponClassLeft;
 	UPROPERTY()
-	AWeaponBase* Weapon;
+	AWeaponBase* WeaponLeft;
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<AWeaponBase> WeaponClassRight;
+	UPROPERTY()
+	AWeaponBase* WeaponRight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	bool IsDead;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsAttacking;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")

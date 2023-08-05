@@ -2,7 +2,6 @@
 
 
 #include "CharacterBase.h"
-#include "WeaponBase.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase() 
@@ -16,13 +15,14 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Spawn Weapon at run-time.
-	Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass);
 }
 
 // Called every frame
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACharacterBase::Attack()
+{
 }

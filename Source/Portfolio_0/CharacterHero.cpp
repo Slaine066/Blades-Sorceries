@@ -51,16 +51,22 @@ void ACharacterHero::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
-	if (!WeaponSocket)
-		return;
-
-	// Retrieve WeaponSocket.
-	if (WeaponSocket)
+	if (WeaponClassLeft)
 	{
-		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(Weapon, GetMesh());
-		Weapon->SetOwner(this);
+		// Spawn Weapon at run-time.
+		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
+
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
+		if (!WeaponSocket)
+			return;
+
+		// Retrieve WeaponSocket.
+		if (WeaponSocket)
+		{
+			// Attach Weapon to WeaponSocket and set Owner.
+			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+			WeaponLeft->SetOwner(this);
+		}
 	}
 }
 
@@ -267,8 +273,8 @@ void ACharacterHero::OnUnsheath()
 	if (const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket"))
 	{
 		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(Weapon, GetMesh());
-		Weapon->SetOwner(this);
+		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+		WeaponLeft->SetOwner(this);
 	}
 }
 
@@ -278,8 +284,8 @@ void ACharacterHero::OnSheath()
 	if (const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath"))
 	{
 		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(Weapon, GetMesh());
-		Weapon->SetOwner(this);
+		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+		WeaponLeft->SetOwner(this);
 	}
 }
 

@@ -6,9 +6,8 @@
 #include "CharacterBase.h"
 #include "CharacterMob.generated.h"
 
-/**
- * 
- */
+class UBehaviorTree;
+
 UCLASS()
 class PORTFOLIO_0_API ACharacterMob : public ACharacterBase
 {
@@ -18,8 +17,18 @@ public:
 	ACharacterMob();
 
 	/*
+	* Methods Inherited
+	*/
+	virtual void Attack() override;
+
+	/*
 	* Methods
 	*/
+	// AnimNotify
+	void OnSpawn();
+
+	bool Get_IsSpawned() { return IsSpawned; }
+	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 
 	/*
 	* Variables
@@ -32,7 +41,31 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-private:
+	/*
+	* Methods
+	*/
 
-	
+	/*
+	* Variables
+	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	bool IsSpawned = false;
+
+private:
+	/*
+	* Methods
+	*/
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	/*
+	* Variables
+	*/
+	UPROPERTY(EditAnywhere, Category = "AI")
+	UBehaviorTree* BehaviorTree = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* SpawnMontage = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* NormalAttackMontage = nullptr;
 };

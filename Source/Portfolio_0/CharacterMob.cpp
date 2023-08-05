@@ -2,30 +2,41 @@
 
 
 #include "CharacterMob.h"
-#include "Engine/SkeletalMeshSocket.h"
-#include "WeaponBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACharacterMob::ACharacterMob()
 {
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
 void ACharacterMob::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket");
-	if (!WeaponSocket)
-		return;
+	// Bind OnMontageEnded Delegate
+	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &ACharacterMob::OnMontageEnded);
 
-	// Retrieve WeaponSocket.
-	if (WeaponSocket)
-	{
-		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(Weapon, GetMesh());
-		Weapon->SetOwner(this);
-	}
+	PlayAnimMontage(SpawnMontage);
 }
 
 void ACharacterMob::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+}
+
+void ACharacterMob::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking = false;
+}
+
+void ACharacterMob::Attack()
+{
+	IsAttacking = true;
+
+	PlayAnimMontage(NormalAttackMontage);
+}
+
+void ACharacterMob::OnSpawn()
+{
+	IsSpawned = true;
 }

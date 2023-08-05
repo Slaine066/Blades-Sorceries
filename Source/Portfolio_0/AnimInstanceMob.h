@@ -13,5 +13,45 @@ UCLASS()
 class PORTFOLIO_0_API UAnimInstanceMob : public UAnimInstanceCharacter
 {
 	GENERATED_BODY()
-	
+
+public:
+	UAnimInstanceMob();
+
+	/*
+	** Methods
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void Spawn();
+
+	/*
+	** Variables
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACharacterMob* Mob;
+
+protected:
+	/*
+	* Methods Inherited
+	*/
+	// Similar to BeginPlay, but for UAnimInstance
+	virtual void NativeInitializeAnimation() override;
+
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+
+private:
+	/*
+	* Methods
+	*/
+	void CheckMob();
+
+	/*
+	* Variables
+	*/
+
 };

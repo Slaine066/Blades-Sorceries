@@ -13,5 +13,40 @@ UCLASS()
 class PORTFOLIO_0_API AMobGoblin : public ACharacterMob
 {
 	GENERATED_BODY()
+
+public:
+	AMobGoblin();
+
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+
+protected:
+	/*
+	* Methods Inherited
+	*/
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+
+private:
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
 	
 };
