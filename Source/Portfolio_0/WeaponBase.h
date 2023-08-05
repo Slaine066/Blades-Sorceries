@@ -17,6 +17,7 @@ public:
 	/*
 	* Methods
 	*/
+	UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
 
 	/*
 	* Variables
@@ -36,11 +37,19 @@ protected:
 	/*
 	* Variables
 	*/
+	// Damage dealt by this Weapon every Hit
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	float Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TSubclassOf<UDamageType> DamageType;
 
 private:
 	/*
 	* Methods
 	*/
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	/*
 	* Variables

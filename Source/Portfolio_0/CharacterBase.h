@@ -25,8 +25,9 @@ public:
 	/*
 	* Methods
 	*/
-	bool Get_IsAttacking() { return IsAttacking; }
 	bool Get_IsDead() { return IsDead; }
+	bool Get_IsAttacking() { return IsAttacking; }
+	bool Get_CanDamage() { return CanDamage; }
 	
 	virtual void Attack();
 
@@ -40,11 +41,13 @@ protected:
 	*/
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
+	
 	/*
 	* Methods
 	*/
-
+	UFUNCTION()
+	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+	
 	/*
 	* Variables
 	*/
@@ -68,6 +71,10 @@ private:
 	/*
 	* Methods
 	*/
+	UFUNCTION()
+	void OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+	UFUNCTION()
+	void OnMontageNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 
 	/*
 	* Variables
