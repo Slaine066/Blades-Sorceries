@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "WeaponBase.h"
+#include "CharacterBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -20,9 +22,32 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Overlap Delegates
+	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapBegin);
 }
 
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AWeaponBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ACharacterBase* Character = Cast<ACharacterBase>(GetOwner());
+	ACharacterBase* OtherCharacter = Cast<ACharacterBase>(OtherActor);
+	
+	if (!Character || !OtherCharacter)
+		return;
+
+	// Damage to the Overlapped Character
+	if (Character->Get_CanDamage())
+	{
+			// TODO: Make Damage Blueprintable.
+
+			UGameplayStatics::ApplyDamage(OtherCharacter, 10.f, GetInstigatorController(), Character, DamageType);
+			/*UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());*/
+
+	}
 }

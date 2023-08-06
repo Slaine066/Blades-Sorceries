@@ -4,6 +4,7 @@
 #include "CharacterHero.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -51,9 +52,12 @@ void ACharacterHero::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 
+	// Setup Collision Profile
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Hero"));
+
+	// Spawn Weapon at run-time.
 	if (WeaponClassLeft)
 	{
-		// Spawn Weapon at run-time.
 		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
 
 		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
@@ -66,6 +70,9 @@ void ACharacterHero::BeginPlay()
 			// Attach Weapon to WeaponSocket and set Owner.
 			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
 			WeaponLeft->SetOwner(this);
+
+			// Setup Collision Profile
+			WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
 		}
 	}
 }
@@ -106,6 +113,14 @@ void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Dash
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACharacterHero::Dash);
 	}
+}
+
+void ACharacterHero::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+
+	// Logging
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hero Takes Damage."));
 }
 
 void ACharacterHero::Move(const FInputActionValue& Value)
