@@ -22,7 +22,7 @@ public:
 	void OnLanding();
 	void OnNormalAttackSpell();
 	void OnSpellEnd();
-
+	void OnAimEnd();
 
 	/* Variables */
 
@@ -35,6 +35,14 @@ protected:
 	/* Methods */
 	void Flying(const FInputActionValue& Value);
 	void NormalAttackSpell(const FInputActionValue& Value);
+
+	virtual void Move(const FInputActionValue& Value);
+	//RangeAttackSpell
+	virtual void Skill_1(const FInputActionValue& Value);
+	//PirecingAttackSpell
+	virtual void Skill_2(const FInputActionValue& Value);
+	//ChargeAttackSpell
+	virtual void Skill_3(const FInputActionValue& Value);
 
 	/* Variables */
 
@@ -57,6 +65,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
 		UAnimMontage* NormalAttackSpell_Fly_Montage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* RangeAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* RangeAttackSpell_Fly_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* PirecingAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* PirecingAttackSpell_Fly_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* ChargeAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* ChargeAttackSpell_Fly_Montage;
 
 	/* Variables */
 

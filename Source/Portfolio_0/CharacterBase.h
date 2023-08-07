@@ -13,6 +13,7 @@
  */
 
 class AWeaponBase;
+class AClothPartsBase;
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterBase : public ACharacter
@@ -59,6 +60,12 @@ protected:
 	TSubclassOf<AWeaponBase> WeaponClassRight;
 	UPROPERTY()
 	AWeaponBase* WeaponRight;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Cloth")
+	TSubclassOf<AClothPartsBase> ClothHairClass;
+	UPROPERTY()
+	AClothPartsBase* ClothHair;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsDead;
