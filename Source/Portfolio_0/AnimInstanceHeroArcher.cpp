@@ -2,6 +2,8 @@
 
 
 #include "AnimInstanceHeroArcher.h"
+#include "CharacterHeroArcher.h"
+
 
 UAnimInstanceHeroArcher::UAnimInstanceHeroArcher()
 {
@@ -10,6 +12,12 @@ UAnimInstanceHeroArcher::UAnimInstanceHeroArcher()
 }
 
 
+
+void UAnimInstanceHeroArcher::NormalAttackFunc()
+{
+	if (Archer)
+		Archer->OnNormalAttack();
+}
 
 void UAnimInstanceHeroArcher::NativeInitializeAnimation()
 {
@@ -20,9 +28,8 @@ void UAnimInstanceHeroArcher::NativeInitializeAnimation()
 
 void UAnimInstanceHeroArcher::CheckHeroArcher()
 {
-	if (Hero != nullptr)
+	if (Hero)
 	{
-		Archer = dynamic_cast<ACharacterHeroArcher*>(Hero);
+		Archer = Cast<ACharacterHeroArcher>(Hero);
 	}
-
 }

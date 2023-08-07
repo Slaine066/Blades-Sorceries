@@ -53,6 +53,7 @@ void AHeroMage::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		// NormalAttackSpell
 		EnhancedInputComponent->BindAction(NormalAttackSpellAction, ETriggerEvent::Triggered, this, &AHeroMage::NormalAttackSpell);
+		
 	}
 }
 

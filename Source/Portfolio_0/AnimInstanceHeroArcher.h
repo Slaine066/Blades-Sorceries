@@ -17,8 +17,11 @@ class PORTFOLIO_0_API UAnimInstanceHeroArcher : public UAnimInstanceHero
 public:
 	UAnimInstanceHeroArcher();
 	
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACharacterHeroArcher* Archer;
+
+	UFUNCTION(BlueprintCallable, Category = "NormalAttack")
+	void NormalAttackFunc();
 
 protected:
 	virtual void NativeInitializeAnimation() override;
@@ -26,6 +29,8 @@ protected:
 
 private:
 	void CheckHeroArcher();
+
+
 
 
 

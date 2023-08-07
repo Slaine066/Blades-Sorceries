@@ -55,26 +55,26 @@ void ACharacterHero::BeginPlay()
 	// Setup Collision Profile
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Hero"));
 
-	// Spawn Weapon at run-time.
-	if (WeaponClassLeft)
-	{
-		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
+	//// Spawn Weapon at run-time.
+	//if (WeaponClassLeft)
+	//{
+	//	WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
-		if (!WeaponSocket)
-			return;
+	//	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
+	//	if (!WeaponSocket)
+	//		return;
 
-		// Retrieve WeaponSocket.
-		if (WeaponSocket)
-		{
-			// Attach Weapon to WeaponSocket and set Owner.
-			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
-			WeaponLeft->SetOwner(this);
+	//	// Retrieve WeaponSocket.
+	//	if (WeaponSocket)
+	//	{
+	//		// Attach Weapon to WeaponSocket and set Owner.
+	//		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+	//		WeaponLeft->SetOwner(this);
 
-			// Setup Collision Profile
-			WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
-		}
-	}
+	//		// Setup Collision Profile
+	//		WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
+	//	}
+	//}
 }
 
 void ACharacterHero::Tick(float DeltaTime)
