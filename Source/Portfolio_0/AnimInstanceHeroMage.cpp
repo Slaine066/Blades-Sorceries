@@ -43,6 +43,14 @@ void UAnimInstanceHeroMage::SpellEnd()
 	}
 }
 
+void UAnimInstanceHeroMage::SpellEndAim()
+{
+	if (HeroMage)
+	{
+		HeroMage->OnAimEnd();
+	}
+}
+
 void UAnimInstanceHeroMage::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

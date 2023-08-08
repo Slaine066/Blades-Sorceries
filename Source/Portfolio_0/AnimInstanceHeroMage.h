@@ -27,6 +27,9 @@ public:
 		void NormalAttackSpell();
 	UFUNCTION(BlueprintCallable, Category = "Spell")
 		void SpellEnd();
+	UFUNCTION(BlueprintCallable, Category = "Spell")
+		void SpellEndAim();
+
 
 
 	/* Variables */

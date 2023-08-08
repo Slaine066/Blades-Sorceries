@@ -44,13 +44,13 @@ protected:
 	* Methods
 	*/
 	// Input Action Functions
-	void Move(const FInputActionValue& Value);
+	virtual void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Unsheath(const FInputActionValue& Value);
 	void NormalAttack(const FInputActionValue& Value);
-	void Skill_1(const FInputActionValue& Value);
-	void Skill_2(const FInputActionValue& Value);
-	void Skill_3(const FInputActionValue& Value);
+	virtual void Skill_1(const FInputActionValue& Value);
+	virtual void Skill_2(const FInputActionValue& Value);
+	virtual void Skill_3(const FInputActionValue& Value);
 	void Dash(const FInputActionValue& Value);
 
 	/*
@@ -76,6 +76,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* DashAction;
 
+	UPROPERTY(VisibleAnywhere)
+		class UCameraComponent* CameraComponent;
+
 private:
 	/*
 	* Methods
@@ -87,8 +90,6 @@ private:
 	// Spring Arm & Camera
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComponent;
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* CameraComponent;
 
 	// Input Mapping Context
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
