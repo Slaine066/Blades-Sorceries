@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
+#include "ProjectileBase.h"
 #include "HeroMage.generated.h"
 
 /**
@@ -25,6 +26,9 @@ public:
 	void OnAimEnd();
 
 	/* Variables */
+	// Magic muzzle offset from the camera location
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+		FVector SpellMuzzleOffset;
 
 protected:
 	/* Methods Inherited */
@@ -35,6 +39,9 @@ protected:
 	/* Methods */
 	void Flying(const FInputActionValue& Value);
 	void NormalAttackSpell(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void NormalAttackFire();
 
 	virtual void Move(const FInputActionValue& Value);
 	//RangeAttackSpell
@@ -51,6 +58,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 		UInputAction* NormalAttackSpellAction;
 
+	//projectile class to spawn
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+		TSubclassOf<class AProjectileBase> ProjectileClass;
 
 private:
 	/* Methods */

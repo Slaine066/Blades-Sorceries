@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
+
 
 
 UCLASS()
@@ -18,9 +20,32 @@ public:
 	AProjectileBase();
 
 	/* Methods */
-	UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
+	UStaticMeshComponent* GetMeshComponent() const { return ProjectileMeshComponent; }
+
+	// Function that initializes the projectile's velocity in the shoot direction.
+	void FireInDirection(const FVector& ShootDirection);
+
+	// Function that is called when the projectile hits something
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 	/* Variables */
+	// Sphere collision component.
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+	USphereComponent* CollisionComponent;
+
+	// Projectile movement component
+	UPROPERTY(VisibleAnywhere, Category = "ProjectileMovement")
+	UProjectileMovementComponent* ProjectileMovementComponent;
+
+	// Projectile Mesh
+	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
+	class UStaticMeshComponent* ProjectileMeshComponent;
+
+	// Projectile Material
+	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
+		UMaterialInstanceDynamic* ProjectileMaterialInstance;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,17 +55,13 @@ protected:
 	/* Methods */
 
 	/* Variables */
-	// Sphere collision component.
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-	USphereComponent* CollisionComponent;
+
 
 private:
 
 	/* Methods */
 
 	/* Variables */
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* MeshComponent;
 
 
 };

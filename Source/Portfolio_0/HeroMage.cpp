@@ -29,8 +29,7 @@ void AHeroMage::OnNormalAttackSpell()
 	//Add Need Attack Code
 	IsSpellState = true;
 
-	
-
+	NormalAttackFire();
 }
 
 void AHeroMage::OnSpellEnd()
@@ -159,6 +158,46 @@ void AHeroMage::NormalAttackSpell(const FInputActionValue& Value)
 		IsSpellState = true;
 
 		bUseControllerRotationYaw = true;
+	}
+}
+
+void AHeroMage::NormalAttackFire()
+{
+	if (ProjectileClass)
+	{
+		// Get Mage Transform
+		FVector MageLocation = GetActorLocation();
+		FRotator MageRotation = GetActorRotation();
+
+		// Get the camera Transform
+		// How to Get Camera Transform
+		//FVector CameraLocation;
+		//FRotator CameraRotation;
+		//GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+		// Set MagicMuzzle Offset from camera space to world space
+		FVector MuzzleLocation = MageLocation + FTransform(MageRotation).TransformVector(SpellMuzzleOffset);
+
+		//Skew the aim to be slightly upwards
+		FRotator MuzzleRotation = MageRotation;
+
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			// Spawn the projectile at the muzzle
+			AProjectileBase* Projectile = World->SpawnActor<AProjectileBase>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+
+			if (Projectile)
+			{
+				// Set the projectiles's initial trajectory.
+				FVector LaunchDirection = MuzzleRotation.Vector();
+				Projectile->FireInDirection(LaunchDirection);
+			}
+		}
 	}
 }
 
