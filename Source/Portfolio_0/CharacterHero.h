@@ -19,6 +19,11 @@ public:
 	ACharacterHero();
 
 	/*
+	* Methods Inherited
+	*/
+	virtual void Die() override;
+
+	/*
 	* Methods
 	*/
 	// AnimNotify
