@@ -18,6 +18,7 @@ public:
 	ACharacterHeroArcher();
 
 	void OnNormalAttack();
+	FVector GetMousePos() const { return m_vMousePosition; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,6 +29,8 @@ protected:
 private:
 	void SetWeapon();
 	void NormalAttackFunc(const FInputActionValue& Value);
+	void UpdateMousePos();
+	void ArrowFire(); // NormalAttack
 
 
 private:
@@ -40,5 +43,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "NormalAttack")
 	bool bIsAttack;
 
+	FVector m_vMousePosition;
 	
 };
