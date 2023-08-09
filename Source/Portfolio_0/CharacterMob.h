@@ -45,6 +45,8 @@ protected:
 	/*
 	* Methods
 	*/
+	UFUNCTION()
+		void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/*
 	* Variables
@@ -56,8 +58,6 @@ private:
 	/*
 	* Methods
 	*/
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/*
 	* Variables

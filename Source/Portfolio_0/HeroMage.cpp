@@ -10,7 +10,7 @@
 #include "Camera/CameraComponent.h"
 
 AHeroMage::AHeroMage()
-	:IsFlyingState(false), IsSpellState(false)
+	:IsFlyingState(false), IsSpellState(false), IsNonHitState(false)
 {
 }
 
@@ -41,6 +41,11 @@ void AHeroMage::OnSpellEnd()
 void AHeroMage::OnAimEnd()
 {
 	bUseControllerRotationYaw = false;
+}
+
+void AHeroMage::OnHitable()
+{
+	IsNonHitState = false;
 }
 
 void AHeroMage::BeginPlay()
@@ -106,6 +111,36 @@ void AHeroMage::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		// NormalAttackSpell
 		EnhancedInputComponent->BindAction(NormalAttackSpellAction, ETriggerEvent::Triggered, this, &AHeroMage::NormalAttackSpell);
+	}
+}
+
+void AHeroMage::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+	{
+		return;
+	}
+
+	if (!IsNonHitState)
+	{
+		// Calculate Damage Hit This Area
+
+		if (AnimInstanceHeroMage->IsFlying)
+		{
+			PlayAnimMontage(HitMotion_Fly_Montage);
+		}
+		else
+		{
+			PlayAnimMontage(HitMotion_Montage);
+		}
+
+		IsNonHitState = true;
+
+		// Logging
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Mage Hit"));
 	}
 }
 
