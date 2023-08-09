@@ -27,7 +27,7 @@ private:
 	* Methods
 	*/
 	UFUNCTION()
-	virtual void OnPossess(APawn* MobPawn) override; 
+	virtual void OnPossess(APawn* MobPawn) override;
 
 	/*
 	* Variables

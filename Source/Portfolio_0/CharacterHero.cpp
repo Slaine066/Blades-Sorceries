@@ -120,13 +120,23 @@ void ACharacterHero::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
 
 	// Logging
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hero Takes Damage."));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hero Takes Damage: %f."), Damage));
+}
+
+void ACharacterHero::Die()
+{
+	Super::Die();
+
+	// Disable Inputs
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+		DisableInput(PlayerController);
 }
 
 void ACharacterHero::Move(const FInputActionValue& Value)
 {
 	// Can't move while using Skills.
-	if (IsSkilling)
+	if (IsSkilling || IsHit)
 		return;
 
 	// Input is a Vector2D
@@ -166,7 +176,7 @@ void ACharacterHero::Look(const FInputActionValue& Value)
 void ACharacterHero::Unsheath(const FInputActionValue& Value)
 {
 	// Can't Unsheath/Sheath while using Normal Attacks or Skills.
-	if (IsAttacking || IsSkilling)
+	if (IsAttacking || IsSkilling || IsHit)
 		return;
 
 	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
@@ -182,7 +192,7 @@ void ACharacterHero::Unsheath(const FInputActionValue& Value)
 void ACharacterHero::NormalAttack(const FInputActionValue& Value)
 {
 	// Can't use Normal Attacks while Skilling.
-	if (IsSkilling)
+	if (IsSkilling || IsHit)
 		return;
 
 	// If already Attacking, toggle Combo variable.
@@ -212,7 +222,7 @@ void ACharacterHero::NormalAttack(const FInputActionValue& Value)
 void ACharacterHero::Skill_1(const FInputActionValue& Value)
 {
 	// Can't use Skills when Skilling.
-	if (IsSkilling)
+	if (IsSkilling || IsHit)
 		return;
 
 	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
@@ -235,7 +245,7 @@ void ACharacterHero::Skill_1(const FInputActionValue& Value)
 void ACharacterHero::Skill_2(const FInputActionValue& Value)
 {
 	// Can't use Skills when Skilling.
-	if (IsSkilling)
+	if (IsSkilling || IsHit)
 		return;
 
 	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
@@ -258,7 +268,7 @@ void ACharacterHero::Skill_2(const FInputActionValue& Value)
 void ACharacterHero::Skill_3(const FInputActionValue& Value)
 {
 	// Can't use Skills when Skilling.
-	if (IsSkilling)
+	if (IsSkilling || IsHit)
 		return;
 
 	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());

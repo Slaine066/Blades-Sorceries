@@ -27,7 +27,6 @@ EBTNodeResult::Type UAttackBTTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	}
 
 	ACharacterMob* Mob = Cast<ACharacterMob>(OwnerComp.GetAIOwner()->GetPawn());
-
 	if (Mob)
 		Mob->Attack();
 
@@ -40,6 +39,9 @@ void UAttackBTTask::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemor
 
 	ACharacterMob* Mob = Cast<ACharacterMob>(OwnerComp.GetAIOwner()->GetPawn());
 	
-	if (Mob && !Mob->Get_IsAttacking())
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	if (Mob)
+	{
+		if (!Mob->Get_IsAttacking())
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
 }

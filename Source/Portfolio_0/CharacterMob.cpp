@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "WeaponBase.h"
+#include "MobAIController.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ACharacterMob::ACharacterMob()
 {
@@ -61,9 +64,6 @@ void ACharacterMob::BeginPlay()
 		}
 	}
 
-	// Bind OnMontageEnded Delegate
-	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &ACharacterMob::OnMontageEnded);
-
 	PlayAnimMontage(SpawnMontage);
 }
 
@@ -77,12 +77,24 @@ void ACharacterMob::OnDamageTaken(AActor* DamagedActor, float Damage, const UDam
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
 
 	// Logging
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Mob Takes Damage."));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Takes Damage: %f."), Damage));
 }
 
 void ACharacterMob::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsAttacking = false;
+	Super::OnMontageEnded(Montage, bInterrupted);
+
+	if (Montage->GetName() == NormalAttackMontage->GetName())
+	{
+		IsAttacking = false;
+	}
+	else if (Montage->GetName() == HitMontage->GetName())
+	{
+		AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+		if (MobAIController)
+			MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", false);
+	}
+	
 }
 
 void ACharacterMob::Attack()
@@ -90,6 +102,26 @@ void ACharacterMob::Attack()
 	IsAttacking = true;
 
 	PlayAnimMontage(NormalAttackMontage);
+}
+
+void ACharacterMob::Hit()
+{
+	Super::Hit();
+
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+
+	if (MobAIController)
+		MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", true);
+}
+
+void ACharacterMob::Die()
+{
+	Super::Die();
+
+	// UnPossess
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+	if (MobAIController)
+		MobAIController->UnPossess();
 }
 
 void ACharacterMob::OnSpawn()
