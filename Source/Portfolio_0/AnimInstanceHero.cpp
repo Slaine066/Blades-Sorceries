@@ -20,6 +20,8 @@ void UAnimInstanceHero::CheckHero()
 {
 	if (Character)
 		Hero = Cast<ACharacterHero>(Character);
+
+	
 }
 
 void UAnimInstanceHero::Unsheath()

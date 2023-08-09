@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
+#include "ProjectileBase.h"
 #include "HeroMage.generated.h"
 
 /**
@@ -22,9 +23,12 @@ public:
 	void OnLanding();
 	void OnNormalAttackSpell();
 	void OnSpellEnd();
-
+	void OnAimEnd();
 
 	/* Variables */
+	// Magic muzzle offset from the camera location
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+		FVector SpellMuzzleOffset;
 
 protected:
 	/* Methods Inherited */
@@ -36,6 +40,17 @@ protected:
 	void Flying(const FInputActionValue& Value);
 	void NormalAttackSpell(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void NormalAttackFire();
+
+	virtual void Move(const FInputActionValue& Value);
+	//RangeAttackSpell
+	virtual void Skill_1(const FInputActionValue& Value);
+	//PirecingAttackSpell
+	virtual void Skill_2(const FInputActionValue& Value);
+	//ChargeAttackSpell
+	virtual void Skill_3(const FInputActionValue& Value);
+
 	/* Variables */
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -43,6 +58,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 		UInputAction* NormalAttackSpellAction;
 
+	//projectile class to spawn
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+		TSubclassOf<class AProjectileBase> ProjectileClass;
 
 private:
 	/* Methods */
@@ -57,6 +75,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
 		UAnimMontage* NormalAttackSpell_Fly_Montage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* RangeAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* RangeAttackSpell_Fly_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* PirecingAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* PirecingAttackSpell_Fly_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* ChargeAttackSpell_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Spell")
+		UAnimMontage* ChargeAttackSpell_Fly_Montage;
 
 	/* Variables */
 

@@ -13,6 +13,7 @@
  */
 
 class AWeaponBase;
+class AClothPartsBase;
 
 USTRUCT(BlueprintType)
 struct FAttributes
@@ -83,6 +84,12 @@ protected:
 	TSubclassOf<AWeaponBase> WeaponClassRight;
 	UPROPERTY()
 	AWeaponBase* WeaponRight;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Cloth")
+	TSubclassOf<AClothPartsBase> ClothHairClass;
+	UPROPERTY()
+	AClothPartsBase* ClothHair;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsDead;
