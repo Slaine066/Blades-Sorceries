@@ -41,6 +41,8 @@ ACharacterHero::ACharacterHero()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
+
+	
 }
 
 void ACharacterHero::BeginPlay()
@@ -131,6 +133,11 @@ void ACharacterHero::Die()
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
 		DisableInput(PlayerController);
+}
+
+void ACharacterHero::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	Super::OnMontageEnded(Montage, bInterrupted);
 }
 
 void ACharacterHero::Move(const FInputActionValue& Value)

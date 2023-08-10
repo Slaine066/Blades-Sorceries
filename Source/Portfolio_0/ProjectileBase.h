@@ -8,8 +8,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
 
-
-
 UCLASS()
 class PORTFOLIO_0_API AProjectileBase : public AActor
 {

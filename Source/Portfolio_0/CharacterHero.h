@@ -48,6 +48,8 @@ protected:
 	/*
 	* Methods
 	*/
+	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 	// Input Action Functions
 	virtual void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);

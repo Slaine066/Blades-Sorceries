@@ -145,6 +145,22 @@ void AHeroMage::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageT
 	}
 }
 
+void AHeroMage::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+	{
+		return;
+	}
+
+	if (Montage->GetName() == HitMontage_Fly->GetName() ||
+		Montage->GetName() == HitMontage->GetName())
+	{
+		IsHit = false;
+		IsAttacking = false;
+	}
+}
+
 void AHeroMage::Flying(const FInputActionValue& Value)
 {
 	if (IsSpellState)

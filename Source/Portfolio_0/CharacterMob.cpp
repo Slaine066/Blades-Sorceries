@@ -94,7 +94,6 @@ void ACharacterMob::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		if (MobAIController)
 			MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", false);
 	}
-	
 }
 
 void ACharacterMob::Attack()

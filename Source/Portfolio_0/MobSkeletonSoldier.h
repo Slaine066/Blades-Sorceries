@@ -18,7 +18,6 @@ public:
 	AMobSkeletonSoldier();
 
 	/* Methods */
-	virtual void Attack() override;
 
 	/* Variables */
 
