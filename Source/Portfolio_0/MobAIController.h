@@ -22,18 +22,15 @@ public:
 protected:
 	virtual void Tick(float TimeDelta) override;
 
-private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UFUNCTION()
 	virtual void OnPossess(APawn* MobPawn) override;
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(VisibleAnywhere, Category = "AI")
-	UBehaviorTreeComponent* BehaviorTreeComponent;
+		UBehaviorTreeComponent* BehaviorTreeComponent;
 	UPROPERTY(VisibleAnywhere, Category = "AI")
-	UBlackboardComponent* BlackboardComponent;
+		UBlackboardComponent* BlackboardComponent;
+
+private:
 };

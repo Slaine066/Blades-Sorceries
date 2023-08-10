@@ -27,7 +27,7 @@ void ACharacterMob::BeginPlay()
 	{
 		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_R_Socket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_L_Socket");
 		if (!WeaponSocket)
 			return;
 
@@ -48,7 +48,7 @@ void ACharacterMob::BeginPlay()
 	{
 		WeaponRight = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassRight);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_L_Socket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_R_Socket");
 		if (!WeaponSocket)
 			return;
 
