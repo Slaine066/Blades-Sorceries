@@ -48,8 +48,6 @@ protected:
 	/*
 	* Methods
 	*/
-	UFUNCTION()
-		void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/*
 	* Variables
