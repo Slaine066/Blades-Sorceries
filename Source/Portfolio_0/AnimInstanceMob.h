@@ -21,7 +21,7 @@ public:
 	** Methods
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Spawn();
+	virtual void Spawn();
 
 	/*
 	** Variables

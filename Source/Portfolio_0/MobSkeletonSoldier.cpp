@@ -7,6 +7,11 @@ AMobSkeletonSoldier::AMobSkeletonSoldier()
 {
 }
 
+void AMobSkeletonSoldier::Attack()
+{
+	Super::Attack();
+}
+
 void AMobSkeletonSoldier::BeginPlay()
 {
 	Super::BeginPlay();

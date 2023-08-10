@@ -46,6 +46,7 @@ void AHeroMage::OnAimEnd()
 void AHeroMage::OnHitable()
 {
 	IsNonHitState = false;
+	IsSpellState = false;
 }
 
 void AHeroMage::BeginPlay()
