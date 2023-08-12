@@ -99,7 +99,7 @@ void AGameModeCustom::Spawn(FGameTimer GameTimer)
 		FRotator SpawnRotation = DirectionToPlayer.Rotation();
 
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		AMobGoblin* Mob = GetWorld()->SpawnActor<AMobGoblin>(SpawnableMobs[MobType], SpawnLocation, SpawnRotation, SpawnParams);
 	
