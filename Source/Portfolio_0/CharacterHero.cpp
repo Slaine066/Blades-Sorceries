@@ -32,9 +32,14 @@ ACharacterHero::ACharacterHero()
 	// Enable the Pawn to control Camera rotation.
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComponent->SetupAttachment(GetRootComponent());
-	SpringArmComponent->TargetArmLength = 500.f;
-	SpringArmComponent->TargetOffset = FVector(0.f, 0.f, 100.f);
-	SpringArmComponent->bUsePawnControlRotation = true;
+	SpringArmComponent->TargetArmLength = 1000.f;
+	SpringArmComponent->TargetOffset = FVector(0.f, 0.f, 200.f);
+	SpringArmComponent->bUsePawnControlRotation = true;	
+
+	SpringArmComponent->bEnableCameraLag = true;
+	SpringArmComponent->CameraLagMaxDistance = 100000.f;
+	SpringArmComponent->CameraLagSpeed = 5.f;
+	SpringArmComponent->bDoCollisionTest = false;
 
 	// CameraComponent
 	// Attach the "CameraComponent" to the "SprintArmComponent".
@@ -42,7 +47,15 @@ ACharacterHero::ACharacterHero()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
 
+	FTransform AddCamOffset;	
+	AddCamOffset.SetLocation(FVector(200.f, 0.f, 600.f));
+	AddCamOffset.SetRotation(FRotator(-45.f, 0.f, 0.f).Quaternion());	
+
+	CameraComponent->AddAdditiveOffset(AddCamOffset, 10.f);
 	
+
+	//Camera Setup to Player Location
+
 }
 
 void ACharacterHero::BeginPlay()
@@ -99,7 +112,7 @@ void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterHero::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterHero::Look);
+		//EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterHero::Look);
 
 		// Unsheath
 		EnhancedInputComponent->BindAction(UnsheathAction, ETriggerEvent::Triggered, this, &ACharacterHero::Unsheath);
