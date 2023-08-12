@@ -66,8 +66,8 @@ protected:
 	// Input Actions
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* MoveAction;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* LookAction;
+	//UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	//UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
