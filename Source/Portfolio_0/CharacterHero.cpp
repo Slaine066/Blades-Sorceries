@@ -127,6 +127,9 @@ void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Dash
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACharacterHero::Dash);
+
+		// Pause
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &ACharacterHero::PauseGame);
 	}
 }
 
@@ -310,6 +313,18 @@ void ACharacterHero::Skill_3(const FInputActionValue& Value)
 
 void ACharacterHero::Dash(const FInputActionValue& Value)
 {
+}
+
+void ACharacterHero::PauseGame(const FInputActionValue& Value)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		if (PlayerController->IsPaused())
+			PlayerController->SetPause(false);
+		else
+			PlayerController->SetPause(true);
+	}
 }
 
 void ACharacterHero::OnUnsheath()

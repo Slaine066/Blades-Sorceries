@@ -59,6 +59,7 @@ protected:
 	virtual void Skill_2(const FInputActionValue& Value);
 	virtual void Skill_3(const FInputActionValue& Value);
 	void Dash(const FInputActionValue& Value);
+	void PauseGame(const FInputActionValue& Value);
 
 	/*
 	* Variables
@@ -82,9 +83,11 @@ protected:
 	UInputAction* Skill_3_Action;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* DashAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* PauseAction;
 
 	UPROPERTY(VisibleAnywhere)
-		class UCameraComponent* CameraComponent;
+	class UCameraComponent* CameraComponent;
 
 private:
 	/*
