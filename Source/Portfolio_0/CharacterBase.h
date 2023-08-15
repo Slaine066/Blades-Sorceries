@@ -22,12 +22,37 @@ struct FAttributes
 
 	FAttributes() {}
 
+	// Level & Experience
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Level;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ExperienceMax;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Experience;
+
+	// Health
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int HealthMax;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HealthRegen;
+
+	// Damage & Armor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Armor;
+
+	// Utility
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MovementSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PickupRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CooldownReduction;
 };
 
 UCLASS()

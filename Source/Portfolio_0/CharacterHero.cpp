@@ -327,6 +327,37 @@ void ACharacterHero::PauseGame(const FInputActionValue& Value)
 	}
 }
 
+void ACharacterHero::GainExperience(int Amount)
+{
+	Attributes.Experience += Amount;
+
+	if (Attributes.Experience >= Attributes.ExperienceMax)
+		LevelUp();
+}
+
+void ACharacterHero::IncreaseHealth(int Amount)
+{
+	Attributes.Health += Amount;
+
+	if (Attributes.Health >= Attributes.HealthMax)
+		Attributes.Health = Attributes.HealthMax;
+}
+
+void ACharacterHero::LevelUp()
+{
+	Attributes.Level += 1;
+	Attributes.Experience = 0;
+	Attributes.ExperienceMax *= 1.25f;
+
+	ChooseItem();
+}
+
+void ACharacterHero::ChooseItem()
+{
+	/* Pause Game & Choose Item */
+	// TODO
+}
+
 void ACharacterHero::OnUnsheath()
 {
 	// Retrieve WeaponSocket.
@@ -383,4 +414,26 @@ void ACharacterHero::OnNormalAttackCombo()
 void ACharacterHero::OnSkillEnd()
 {
 	IsSkilling = false;
+}
+
+void ACharacterHero::OnPickup(EPickupableType Type)
+{
+	switch (Type)
+	{
+	case EPickupableType::EXPERIENCE_SMALL:
+		GainExperience(10);
+		break;
+	case EPickupableType::EXPERIENCE_MEDIUM:
+		GainExperience(50);
+		break;
+	case EPickupableType::EXPERIENCE_BIG:
+		GainExperience(250);
+		break;
+	case EPickupableType::POTION:
+		IncreaseHealth(10);
+		break;
+	case EPickupableType::CHEST:
+		ChooseItem();
+		break;
+	}
 }
