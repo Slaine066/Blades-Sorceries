@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
-#include "ProjectileBase.h"
 #include "HeroMage.generated.h"
 
 /**
@@ -64,6 +63,8 @@ protected:
 	//projectile class to spawn
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectileBase> ProjectileClass;
+
+
 
 private:
 	/* Methods */

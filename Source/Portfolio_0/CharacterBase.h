@@ -51,9 +51,23 @@ public:
 	virtual void Hit();
 	virtual void Die();
 
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	virtual void FloatingDamageFont(float Damage);
+
 	/*
 	* Variables
 	*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
+	FLinearColor HitDamageColorRGBA{1.f, 1.f, 1.f, 1.f};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
+	FVector LocationOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
+	int FontSize = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
+	int OutlineSize = 0;
+	
+
 
 protected:
 	/*
@@ -61,7 +75,7 @@ protected:
 	*/
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	
+
 	/*
 	* Methods
 	*/
@@ -89,6 +103,8 @@ protected:
 	TSubclassOf<AClothPartsBase> ClothHairClass;
 	UPROPERTY()
 	AClothPartsBase* ClothHair;
+
+
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
