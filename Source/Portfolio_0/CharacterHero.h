@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
 #include "InputActionValue.h"
+#include "Pickupable.h"
 #include "CharacterHero.generated.h"
 
 class UInputMappingContext;
@@ -31,6 +32,7 @@ public:
 	void OnSheath();
 	void OnNormalAttackCombo();
 	void OnSkillEnd();
+	void OnPickup(EPickupableType Type);
 
 	/*
 	* Variables
@@ -91,6 +93,10 @@ private:
 	/*
 	* Methods
 	*/
+	void GainExperience(int Amount);
+	void IncreaseHealth(int Amount);
+	void LevelUp();
+	void ChooseItem();
 
 	/*
 	* Variables
@@ -126,4 +132,7 @@ private:
 	int ComboCounter;
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool IsSkilling;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	TArray<class AItemBase*> Items;
 };
