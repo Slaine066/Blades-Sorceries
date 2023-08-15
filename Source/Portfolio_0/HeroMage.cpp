@@ -7,6 +7,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "WeaponBase.h"
 #include "ClothPartsBase.h"
+#include "ProjectileBase.h"
 #include "Camera/CameraComponent.h"
 
 AHeroMage::AHeroMage()
@@ -220,12 +221,6 @@ void AHeroMage::NormalAttackFire()
 		// Get Mage Transform
 		FVector MageLocation = GetActorLocation();
 		FRotator MageRotation = GetActorRotation();
-
-		// Get the camera Transform
-		// How to Get Camera Transform
-		//FVector CameraLocation;
-		//FRotator CameraRotation;
-		//GetActorEyesViewPoint(CameraLocation, CameraRotation);
 
 		// Set MagicMuzzle Offset from camera space to world space
 		FVector MuzzleLocation = MageLocation + FTransform(MageRotation).TransformVector(SpellMuzzleOffset);

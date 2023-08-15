@@ -32,6 +32,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+
 void ACharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage->GetName() == HitMontage->GetName())
@@ -52,6 +53,8 @@ void ACharacterBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 		/*const FString DamageString = FString::SanitizeFloat(Damage, 0);
 		FText DamageText = FText::FromString(DamageString);
 		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());*/
+
+		// Call DamageFont
 
 		// Check if Character is Dead
 		if (Attributes.Health == 0)
@@ -89,4 +92,9 @@ void ACharacterBase::Die()
 
 	// Play Death Montage
 	PlayAnimMontage(DeathMontage);
+}
+
+void ACharacterBase::FloatingDamageFont(float Damage)
+{
+
 }
