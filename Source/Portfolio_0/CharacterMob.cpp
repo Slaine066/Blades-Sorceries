@@ -9,6 +9,7 @@
 #include "MobAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameStateCustom.h"
 
 ACharacterMob::ACharacterMob()
 {
@@ -121,6 +122,14 @@ void ACharacterMob::Die()
 	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
 	if (MobAIController)
 		MobAIController->UnPossess();
+
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	if (!GameMode)
+		return;
+
+	AGameStateCustom* GameStateCustom = GameMode->GetGameState<AGameStateCustom>();
+	if (GameStateCustom)
+		GameStateCustom->DecreaseMobCount();
 }
 
 void ACharacterMob::OnSpawn()

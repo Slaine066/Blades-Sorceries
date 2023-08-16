@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
 #include "InputActionValue.h"
+#include "Pickupable.h"
 #include "CharacterHero.generated.h"
 
 class UInputMappingContext;
@@ -31,6 +32,7 @@ public:
 	void OnSheath();
 	void OnNormalAttackCombo();
 	void OnSkillEnd();
+	void OnPickup(EPickupableType Type);
 
 	/*
 	* Variables
@@ -59,7 +61,7 @@ protected:
 	virtual void Skill_2(const FInputActionValue& Value);
 	virtual void Skill_3(const FInputActionValue& Value);
 	void Dash(const FInputActionValue& Value);
-	void PauseGame(const FInputActionValue& Value);
+	void Pause(const FInputActionValue& Value);
 
 	/*
 	* Variables
@@ -86,6 +88,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* PauseAction;
 
+	/* Testing Inputs */ 
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* LevelUpAction;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Choice1Action;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Choice2Action;
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputAction* Choice3Action;
+
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
@@ -93,6 +105,14 @@ private:
 	/*
 	* Methods
 	*/
+	void GainExperience(int Amount);
+	void IncreaseHealth(int Amount);
+	void LevelUp();
+	void GenerateChoices();
+	void CheckChoices();
+	void Choice1();
+	void Choice2();
+	void Choice3();
 
 	/*
 	* Variables
@@ -128,4 +148,11 @@ private:
 	int ComboCounter;
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool IsSkilling;
+
+	UPROPERTY(EditAnywhere, Category = "Item")
+	class UDataTable* ItemsDataTable = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	TArray<class AItemBase*> Items;
+
+	TArray<struct FItemData> Choices;
 };

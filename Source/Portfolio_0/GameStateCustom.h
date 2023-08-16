@@ -36,6 +36,7 @@ public:
 	FGameTimer Get_GameTimer() { return GameTimer; }
 	int Get_MobCount() { return MobCount; }
 	void IncreaseMobCount() { MobCount += 1; }
+	void DecreaseMobCount() { MobCount -= 1; }
 
 	/*
 	* Variables

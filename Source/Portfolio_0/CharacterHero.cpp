@@ -12,6 +12,8 @@
 #include <EnhancedInputComponent.h>
 #include "AnimInstanceHero.h"
 #include "WeaponBase.h"
+#include "Engine/DataTable.h"
+#include "ItemBase.h"
 
 ACharacterHero::ACharacterHero() 
 	: IsComboActive(false), ComboCounter(0)
@@ -129,7 +131,16 @@ void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACharacterHero::Dash);
 
 		// Pause
-		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &ACharacterHero::PauseGame);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &ACharacterHero::Pause);
+
+		// Level Up (Testing)
+		EnhancedInputComponent->BindAction(LevelUpAction, ETriggerEvent::Triggered, this, &ACharacterHero::LevelUp);
+		// Choice 1 (Testing)
+		EnhancedInputComponent->BindAction(Choice1Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice1);
+		// Choice 2 (Testing)
+		EnhancedInputComponent->BindAction(Choice2Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice2);
+		// Choice 3 (Testing)
+		EnhancedInputComponent->BindAction(Choice3Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice3);
 	}
 }
 
@@ -315,7 +326,7 @@ void ACharacterHero::Dash(const FInputActionValue& Value)
 {
 }
 
-void ACharacterHero::PauseGame(const FInputActionValue& Value)
+void ACharacterHero::Pause(const FInputActionValue& Value)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
@@ -324,6 +335,194 @@ void ACharacterHero::PauseGame(const FInputActionValue& Value)
 			PlayerController->SetPause(false);
 		else
 			PlayerController->SetPause(true);
+	}
+}
+
+void ACharacterHero::GainExperience(int Amount)
+{
+	Attributes.Experience += Amount;
+
+	if (Attributes.Experience >= Attributes.ExperienceMax)
+		LevelUp();
+}
+
+void ACharacterHero::IncreaseHealth(int Amount)
+{
+	Attributes.Health += Amount;
+
+	if (Attributes.Health >= Attributes.HealthMax)
+		Attributes.Health = Attributes.HealthMax;
+}
+
+void ACharacterHero::LevelUp()
+{
+	Attributes.Level += 1;
+	Attributes.Experience = 0;
+	Attributes.ExperienceMax *= 1.25f;
+
+	GenerateChoices();
+}
+
+void ACharacterHero::GenerateChoices()
+{
+	/* Pause Game */
+	/*APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+		PlayerController->SetPause(true);*/
+
+		/* Get Choosable Items */
+	TArray<FItemData*> AllItems;
+	ItemsDataTable->GetAllRows("", AllItems);
+
+	TArray<FItemData> ChoosableItems; // If have "Attack Speed Boost (Common), the ChoosableItem will be "Attack Boost (Uncommon).
+
+	if (Items.IsEmpty())
+	{
+		/* Filter Choosable Items (EItemGrade::COMMON Items). */
+		for (FItemData* Row : AllItems)
+		{
+			if (Row->Grade == EItemGrade::COMMON)
+				ChoosableItems.Add(*Row);
+		}
+	}
+	else
+	{
+		for (FItemData* Row : AllItems)
+		{
+			auto Predicate = [&](AItemBase* ItemPtr) { 
+				return ItemPtr && ItemPtr->Get_ItemData().Item == Row->Item; 
+			};
+
+			AItemBase** Item = Items.FindByPredicate(Predicate);
+			if (Item)
+			{
+				/* Check Grade */
+				EItemGrade CurrentGrade = (*Item)->Get_ItemData().Grade;
+				if (CurrentGrade == EItemGrade::LEGENDARY)
+					continue;
+
+				if (Row->Grade == (EItemGrade)((int)CurrentGrade + 1))
+					ChoosableItems.Add(*Row);
+			}
+			else
+			{
+				if (Row->Grade == EItemGrade::COMMON)
+					ChoosableItems.Add(*Row);
+			}
+		}
+	}
+
+	/* Shuffle ChoosableItems */
+	ChoosableItems.Sort([](const FItemData& A, const FItemData& B) {
+		return FMath::RandBool(); // Sort with random order, effectively shuffling the array
+		});
+
+	/* Keep first 3 Elements. */
+	Choices.Empty();
+	Choices.Add(ChoosableItems[0]);
+	Choices.Add(ChoosableItems[1]);
+	Choices.Add(ChoosableItems[2]);
+
+	// Debug Log ChoosableItems
+	GEngine->AddOnScreenDebugMessage(10, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()));
+	GEngine->AddOnScreenDebugMessage(11, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()));
+	GEngine->AddOnScreenDebugMessage(12, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()));
+}
+
+/*
+* Should be able to have not more than:
+* - 6 EItemType::ATTRIBUTE_BOOST Items;
+* - 6 EItemType::ABILITY Items.
+*/
+void ACharacterHero::CheckChoices()
+{
+	// TODO
+}
+
+void ACharacterHero::Choice1()
+{
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[0]);
+	
+	/* Empty Choices Array. */
+	Choices.Empty();
+	
+	auto Predicate = [&](AItemBase* ItemPtr) {
+		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
+	};
+
+	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
+	if (CurrentItem)
+	{
+		/* Replace Item */
+		int Index = Items.IndexOfByPredicate(Predicate);
+
+		if (Items.IsValidIndex(Index))
+			Items[Index] = Item;
+	}
+	else
+	{
+		/* Add Item to Items Array. */
+		Items.Add(Item);
+	}
+}
+
+void ACharacterHero::Choice2()
+{
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[1]);
+
+	/* Empty Choices Array. */
+	Choices.Empty();
+
+	auto Predicate = [&](AItemBase* ItemPtr) {
+		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
+	};
+
+	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
+	if (CurrentItem)
+	{
+		/* Replace Item */
+		int Index = Items.IndexOfByPredicate(Predicate);
+
+		if (Items.IsValidIndex(Index))
+			Items[Index] = Item;
+	}
+	else
+	{
+		/* Add Item to Items Array. */
+		Items.Add(Item);
+	}
+}
+
+void ACharacterHero::Choice3()
+{
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[2]);
+
+	/* Empty Choices Array. */
+	Choices.Empty();
+
+	auto Predicate = [&](AItemBase* ItemPtr) {
+		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
+	};
+
+	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
+	if (CurrentItem)
+	{
+		/* Replace Item */
+		int Index = Items.IndexOfByPredicate(Predicate);
+
+		if (Items.IsValidIndex(Index))
+			Items[Index] = Item;
+	}
+	else
+	{
+		/* Add Item to Items Array. */
+		Items.Add(Item);
 	}
 }
 
@@ -383,4 +582,26 @@ void ACharacterHero::OnNormalAttackCombo()
 void ACharacterHero::OnSkillEnd()
 {
 	IsSkilling = false;
+}
+
+void ACharacterHero::OnPickup(EPickupableType Type)
+{
+	switch (Type)
+	{
+	case EPickupableType::EXPERIENCE_SMALL:
+		GainExperience(10);
+		break;
+	case EPickupableType::EXPERIENCE_MEDIUM:
+		GainExperience(50);
+		break;
+	case EPickupableType::EXPERIENCE_BIG:
+		GainExperience(250);
+		break;
+	case EPickupableType::POTION:
+		IncreaseHealth(10);
+		break;
+	case EPickupableType::CHEST:
+		GenerateChoices();
+		break;
+	}
 }
