@@ -5,7 +5,6 @@
 
 AItemBase::AItemBase()
 {
-
 }
 
 void AItemBase::BeginPlay()

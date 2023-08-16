@@ -21,7 +21,9 @@ enum class EItem : uint8
 	COOLDOWN_REDUCTION, 
 
 	/* Abilities */
-	
+
+	/* Last Element */
+	LAST
 };
 
 UENUM()
@@ -77,6 +79,8 @@ public:
 	/*
 	* Methods
 	*/
+	FItemData Get_ItemData() { return ItemData; }
+	void Set_ItemData(FItemData& _ItemData) { ItemData = _ItemData; }
 
 	/*
 	* Variables
