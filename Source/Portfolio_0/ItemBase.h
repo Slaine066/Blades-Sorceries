@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "ItemBase.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItem : uint8
 { 
 	/* Attributes Boost */
@@ -26,14 +26,14 @@ enum class EItem : uint8
 	LAST
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	ATTRIBUTE_BOOST,
 	ABILITY
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItemGrade : uint8
 {
 	COMMON,
