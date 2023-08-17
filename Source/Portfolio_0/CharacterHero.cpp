@@ -14,6 +14,7 @@
 #include "WeaponBase.h"
 #include "Engine/DataTable.h"
 #include "ItemBase.h"
+#include "Utility.h"
 
 ACharacterHero::ACharacterHero() 
 	: IsComboActive(false), ComboCounter(0)
@@ -97,6 +98,8 @@ void ACharacterHero::BeginPlay()
 void ACharacterHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Log();
 }
 
 void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -422,11 +425,6 @@ void ACharacterHero::GenerateChoices()
 	Choices.Add(ChoosableItems[0]);
 	Choices.Add(ChoosableItems[1]);
 	Choices.Add(ChoosableItems[2]);
-
-	// Debug Log ChoosableItems
-	GEngine->AddOnScreenDebugMessage(10, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()));
-	GEngine->AddOnScreenDebugMessage(11, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()));
-	GEngine->AddOnScreenDebugMessage(12, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()));
 }
 
 /*
@@ -448,24 +446,7 @@ void ACharacterHero::Choice1()
 	/* Empty Choices Array. */
 	Choices.Empty();
 	
-	auto Predicate = [&](AItemBase* ItemPtr) {
-		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
-	};
-
-	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
-	if (CurrentItem)
-	{
-		/* Replace Item */
-		int Index = Items.IndexOfByPredicate(Predicate);
-
-		if (Items.IsValidIndex(Index))
-			Items[Index] = Item;
-	}
-	else
-	{
-		/* Add Item to Items Array. */
-		Items.Add(Item);
-	}
+	AddItem(Item);
 }
 
 void ACharacterHero::Choice2()
@@ -477,24 +458,7 @@ void ACharacterHero::Choice2()
 	/* Empty Choices Array. */
 	Choices.Empty();
 
-	auto Predicate = [&](AItemBase* ItemPtr) {
-		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
-	};
-
-	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
-	if (CurrentItem)
-	{
-		/* Replace Item */
-		int Index = Items.IndexOfByPredicate(Predicate);
-
-		if (Items.IsValidIndex(Index))
-			Items[Index] = Item;
-	}
-	else
-	{
-		/* Add Item to Items Array. */
-		Items.Add(Item);
-	}
+	AddItem(Item);
 }
 
 void ACharacterHero::Choice3()
@@ -506,6 +470,11 @@ void ACharacterHero::Choice3()
 	/* Empty Choices Array. */
 	Choices.Empty();
 
+	AddItem(Item);
+}
+
+void ACharacterHero::AddItem(AItemBase* Item)
+{
 	auto Predicate = [&](AItemBase* ItemPtr) {
 		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
 	};
@@ -517,12 +486,78 @@ void ACharacterHero::Choice3()
 		int Index = Items.IndexOfByPredicate(Predicate);
 
 		if (Items.IsValidIndex(Index))
+		{
 			Items[Index] = Item;
+			Item->Initialize(this);
+		}
 	}
 	else
 	{
 		/* Add Item to Items Array. */
 		Items.Add(Item);
+		Item->Initialize(this);
+	}
+}
+
+void ACharacterHero::Log()
+{
+	/*
+	* Log Attributes
+	*/
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ATTRIBUTES, 999.f, FColor::Green, TEXT("Attributes"), false);
+	// Log Level
+	GEngine->AddOnScreenDebugMessage((int)ELOG::LEVEL, 999.f, FColor::Emerald, FString::Printf(TEXT("Level: %d"), Attributes.Level), false);
+	// Log ExperienceMax
+	GEngine->AddOnScreenDebugMessage((int)ELOG::EXPERIENCE_MAX, 999.f, FColor::Emerald, FString::Printf(TEXT("Experience Max: %d"), Attributes.ExperienceMax), false);
+	// Log Experience
+	GEngine->AddOnScreenDebugMessage((int)ELOG::EXPERIENCE, 999.f, FColor::Emerald, FString::Printf(TEXT("Experience: %d"), Attributes.Experience), false);
+	// Log HealthMax
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH_MAX, 999.f, FColor::Emerald, FString::Printf(TEXT("Health Max: %d"), Attributes.HealthMax), false);
+	// Log Health
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH, 999.f, FColor::Emerald, FString::Printf(TEXT("Health: %d"), Attributes.Health), false);
+	// Log HealthRegen
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH_REGEN, 999.f, FColor::Emerald, FString::Printf(TEXT("Health Regen: %f"), Attributes.HealthRegen), false);
+	// Log Damage
+	GEngine->AddOnScreenDebugMessage((int)ELOG::DAMAGE, 999.f, FColor::Emerald, FString::Printf(TEXT("Damage: %d"), Attributes.Damage), false);
+	// Log AttackSpeed
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ATTACK_SPEED, 999.f, FColor::Emerald, FString::Printf(TEXT("Attack Speed: %f"), Attributes.AttackSpeed), false);
+	// Log Armor
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ARMOR, 999.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Attributes.Armor), false);
+	// Log MovementSpeed
+	GEngine->AddOnScreenDebugMessage((int)ELOG::MOVEMENT_SPEED, 999.f, FColor::Emerald, FString::Printf(TEXT("Movement Speed: %f"), Attributes.MovementSpeed), false);
+	// Log PickupRange
+	GEngine->AddOnScreenDebugMessage((int)ELOG::PICKUP_RANGE, 999.f, FColor::Emerald, FString::Printf(TEXT("Pickup Range: %f"), Attributes.PickupRange), false);
+	// Log CooldownReduction
+	GEngine->AddOnScreenDebugMessage((int)ELOG::COOLDOWN_REDUCTION, 999.f, FColor::Emerald, FString::Printf(TEXT("Cooldown Reduction: %f"), Attributes.CooldownReduction), false);
+
+	/*
+	* Log Items
+	*/
+	if (!Items.IsEmpty())
+	{
+		FString ItemsString;
+		for (int i = 0; i < Items.Num(); i++)
+		{
+			FString Index = FString::Printf(TEXT("%i. "), i + 1);
+			ItemsString.Append(Index);
+			ItemsString.Append(*Items[i]->Get_ItemData().Name.ToString());
+			ItemsString.Append(" ");
+		}
+
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEMS, 999.f, FColor::Magenta, ItemsString, false);
+	}
+
+	/*
+	* Log Item Choices
+	*/
+	if (!Choices.IsEmpty())
+	{
+		// Log Choice 1
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1, 1.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()), false);
+		// Log Choice 2
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 1.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
+		// Log Choice 3
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 1.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
 	}
 }
 

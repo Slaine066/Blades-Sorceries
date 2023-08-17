@@ -71,6 +71,14 @@ public:
 	bool Get_IsHit() { return IsHit; }
 	bool Get_IsAttacking() { return IsAttacking; }
 	bool Get_CanDamage() { return CanDamage; }
+	void Set_HealthMax(int HealthMax) { Attributes.HealthMax = HealthMax; }
+	void Set_HealthRegen(float HealthRegen) { Attributes.HealthRegen = HealthRegen; }
+	void Set_Damage(int Damage) { Attributes.Damage = Damage; }
+	void Set_AttackSpeed(float AttackSpeed) { Attributes.AttackSpeed = AttackSpeed; }
+	void Set_Armor(float Armor) { Attributes.Armor = Armor; }
+	void Set_MovementSpeed(float MovementSpeed) { Attributes.MovementSpeed = MovementSpeed; }
+	void Set_PickupRange(float PickupRange) { Attributes.PickupRange = PickupRange; }
+	void Set_CooldownReduction(float CooldownReduction) { Attributes.CooldownReduction = CooldownReduction; }
 	
 	virtual void Attack();
 	virtual void Hit();

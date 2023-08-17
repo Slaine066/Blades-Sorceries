@@ -22,6 +22,7 @@ enum class EItem : uint8
 
 	/* Abilities */
 
+
 	/* Last Element */
 	LAST
 };
@@ -81,6 +82,8 @@ public:
 	*/
 	FItemData Get_ItemData() { return ItemData; }
 	void Set_ItemData(FItemData& _ItemData) { ItemData = _ItemData; }
+
+	void Initialize(class ACharacterHero* Hero);
 
 	/*
 	* Variables
