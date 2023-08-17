@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "ArrowProjectile.generated.h"
+
 
 UCLASS()
 class PORTFOLIO_0_API AArrowProjectile : public AActor
@@ -22,5 +25,25 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+public:
+	void FireArrowDirection(const FVector& vDirection);
+
+
+public:
+	// Sphere Collision Com
+	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
+	USphereComponent* CollisionComponent;
+
+	// Projectile Movement Com
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	UProjectileMovementComponent* ProjectileMovementComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class UStaticMeshComponent* ProjectileMeshComponent;
+
+	// Projectile Material
+	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
+	UMaterialInstanceDynamic* ProjectileMaterialInstance;
 
 };

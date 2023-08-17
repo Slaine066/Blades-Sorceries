@@ -8,7 +8,10 @@
 #include "AnimInstanceHeroArcher.h"
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "Kismet/GameplayStatics.h"
+
+
+
+
 ACharacterHeroArcher::ACharacterHeroArcher()
 	: bIsAttack(false)
 {
@@ -127,6 +130,7 @@ void ACharacterHeroArcher::ArrowFire()
 		if (PlayerController->DeprojectScreenPositionToWorld(MousePosition.X, MousePosition.Y, WorldLocation, WorldDirection))
 		{
 			FVector Direction = CurrentPosition - WorldLocation;
+			FVector RealDir = Direction;
 			Direction.Z = 0.0f; // Z 방향 회전은 제한합니다.
 
 			//// 보간된 방향 벡터를 얻습니다.
@@ -139,12 +143,108 @@ void ACharacterHeroArcher::ArrowFire()
 			FQuat RotationDelta = FQuat::FindBetweenVectors(GetActorForwardVector(), Direction);
 			AddActorLocalRotation(RotationDelta);
 
+			UE_LOG(LogTemp, Log, TEXT("Rotate"));
+			UE_LOG(LogTemp, Log, TEXT("Rotate"));
+			UE_LOG(LogTemp, Log, TEXT("Rotate"));
 
+			Fire(RealDir);
+
+			//HandlePicking();
 		}
 
 		// Add yaw and pitch input to Controller
 		//AddControllerYawInput();
 		
+	}
+}
+
+void ACharacterHeroArcher::Fire(FVector vDirection)
+{
+	if (ProjectileClass)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Fire"));
+		UE_LOG(LogTemp, Log, TEXT("Fire"));
+		UE_LOG(LogTemp, Log, TEXT("Fire"));
+
+
+		FVector ArcherLocation = GetActorLocation();
+		FRotator ArcherRotation = GetActorRotation();
+
+		// Set MagicMuzzle Offset from camera space to world space
+		FVector MuzzleLocation = ArcherLocation + FTransform(ArcherRotation).TransformVector(MuzzleOffset);
+
+		//Skew the aim to be slightly upwards
+		FRotator MuzzleRotation = ArcherRotation;
+
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			// Spawn the projectile at the muzzle
+			AArrowProjectile* Projectile = World->SpawnActor<AArrowProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+
+			//if (Projectile)
+			//{
+			//	FVector CurrentPos = GetActorLocation();
+			//	FVector PickPos = vDirection;
+
+			//	FVector Dir = PickPos - CurrentPos;
+
+			//	
+			//	Projectile->FireArrowDirection(Dir);
+			//}
+
+			if (Projectile)
+			{
+				// Set the projectiles's initial trajectory.
+				FVector LaunchDirection = MuzzleRotation.Vector();
+
+				
+
+				Projectile->FireArrowDirection(LaunchDirection);
+			}
+		}
+	}
+	else
+		UE_LOG(LogTemp, Log, TEXT("Fuck"));
+
+
+
+}
+
+void ACharacterHeroArcher::HandlePicking()
+{
+	UE_LOG(LogTemp, Log, TEXT("HandlePicking"));
+
+	FVector StartLocation;
+	FRotator CamLot;
+	FVector EndLocation;
+
+	FHitResult HitResult;
+
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		
+		PlayerController->GetPlayerViewPoint(StartLocation, CamLot);
+
+		EndLocation = StartLocation + GetControlRotation().Vector() * 100.f;
+
+		FCollisionQueryParams CollisionParams;
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+
+		if (bHit)
+		{
+			AActor* HitActor = HitResult.GetActor();
+			if(HitActor)
+			{
+				Fire(HitActor->GetActorLocation());
+			}
+		}
 	}
 }
 

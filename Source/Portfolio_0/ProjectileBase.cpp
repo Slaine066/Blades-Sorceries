@@ -50,7 +50,7 @@ AProjectileBase::AProjectileBase()
 		{
 			ProjectileMeshComponent->SetStaticMesh(Mesh.Object);
 		}
-
+		
 		static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("'/Game/Portfolio_0/Characters/Hero/Mage/Projectile/SphereMaterial.SphereMaterial'"));
 		if (Material.Succeeded())
 		{
@@ -62,9 +62,6 @@ AProjectileBase::AProjectileBase()
 
 		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponHero"));
 	}
-
-	// Projectile Life Time Set
-	InitialLifeSpan = 3.f;
 }
 
 void AProjectileBase::FireInDirection(const FVector& ShootDirection)

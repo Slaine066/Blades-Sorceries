@@ -19,6 +19,8 @@ public:
 	ACrosshair();
 
 
+	FVector2D GetCrosshairPos() const { return m_vCrosshairPos; }
+
 
 public:
 	// HUD에 대한 드로우콜
@@ -31,6 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* CrosshairTexture;
 
-
+private:
+	FVector2D m_vCrosshairPos;
 	
 };

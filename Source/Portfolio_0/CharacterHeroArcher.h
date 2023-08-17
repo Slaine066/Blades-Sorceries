@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
+#include "ArrowProjectile.h"
 #include "CharacterHeroArcher.generated.h"
 
 /**
@@ -20,18 +21,28 @@ public:
 	void OnNormalAttack();
 	FVector GetMousePos() const { return m_vMousePosition; }
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GamePlay)
+	FVector MuzzleOffset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	TSubclassOf<class AArrowProjectile> ProjectileClass;
+
+
+
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 
 private:
 	void SetWeapon();
 	void NormalAttackFunc(const FInputActionValue& Value);
 	void UpdateMousePos();
 	void ArrowFire(); // NormalAttack
-
+	void Fire(FVector vDirection);
+	void HandlePicking();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -44,5 +55,7 @@ private:
 	bool bIsAttack;
 
 	FVector m_vMousePosition;
-	
+
+
+
 };
