@@ -27,12 +27,14 @@ public:
 	/*
 	* Methods
 	*/
+
+	void OnPickup(EPickupableType Type);
+
 	// AnimNotify
 	void OnUnsheath();
 	void OnSheath();
 	void OnNormalAttackCombo();
 	void OnSkillEnd();
-	void OnPickup(EPickupableType Type);
 
 	/*
 	* Variables
@@ -113,6 +115,9 @@ private:
 	void Choice1();
 	void Choice2();
 	void Choice3();
+	void AddItem(class AItemBase* Item);
+
+	void Log();
 
 	/*
 	* Variables

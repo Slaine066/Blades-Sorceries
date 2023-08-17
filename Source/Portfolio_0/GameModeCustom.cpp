@@ -5,6 +5,7 @@
 #include "CharacterMob.h"
 #include "Kismet/GameplayStatics.h"
 #include "MobGoblin.h"
+#include "Utility.h"
 
 void AGameModeCustom::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -73,6 +74,9 @@ void AGameModeCustom::CheckGameTimer()
 		BossSpawnType = EBossType::DEMON;
 		break;
 	}
+
+	// Log MobCountLimit
+	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT_LIMIT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Count Limit: %d"), MobCountLimit), false);
 
 	Spawn(GameTimer);
 }

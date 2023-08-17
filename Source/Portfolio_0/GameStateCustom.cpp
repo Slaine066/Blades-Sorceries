@@ -2,6 +2,7 @@
 
 
 #include "GameStateCustom.h"
+#include "Utility.h"
 
 void AGameStateCustom::DefaultTimer()
 {
@@ -10,9 +11,9 @@ void AGameStateCustom::DefaultTimer()
 	GameTimer.Minutes = ElapsedTime / 60;
 	GameTimer.Seconds = ElapsedTime % 60;
 
-	// Debug Log Timer
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, FString::Printf(TEXT("Minutes: %d, Seconds: %d"), GameTimer.Minutes, GameTimer.Seconds));
-	// Debug Log Mob Count
-	GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Spawned: %d"), MobCount));
+	// Log GameTimer
+	GEngine->AddOnScreenDebugMessage((int)ELOG::TIMER, 999.f, FColor::Red, FString::Printf(TEXT("Minutes: %d, Seconds: %d"), GameTimer.Minutes, GameTimer.Seconds), false);
 
+	// Log MobCount
+	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Spawned: %d"), MobCount), false);
 }
