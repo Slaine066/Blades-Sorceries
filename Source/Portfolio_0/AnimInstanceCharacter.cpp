@@ -4,6 +4,7 @@
 #include "AnimInstanceCharacter.h"
 #include "CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 UAnimInstanceCharacter::UAnimInstanceCharacter()
 {
@@ -40,5 +41,19 @@ void UAnimInstanceCharacter::UpdateAnimation()
 			IsRunning = true;
 		else
 			IsRunning = false;
+	}
+}
+
+void UAnimInstanceCharacter::Die()
+{
+	CheckCharacter();
+
+	if (Character)
+	{
+		Character->GetMesh()->bPauseAnims = true;
+		Character->GetMesh()->bNoSkeletonUpdate = true;
+
+		// Remove Collisions
+		Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
 	}
 }

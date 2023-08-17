@@ -6,6 +6,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "WeaponBase.h"
+#include "MobAIController.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "GameStateCustom.h"
 
 ACharacterMob::ACharacterMob()
 {
@@ -24,7 +28,7 @@ void ACharacterMob::BeginPlay()
 	{
 		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_R_Socket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_L_Socket");
 		if (!WeaponSocket)
 			return;
 
@@ -45,7 +49,7 @@ void ACharacterMob::BeginPlay()
 	{
 		WeaponRight = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassRight);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_L_Socket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("Hand_R_Socket");
 		if (!WeaponSocket)
 			return;
 
@@ -61,9 +65,6 @@ void ACharacterMob::BeginPlay()
 		}
 	}
 
-	// Bind OnMontageEnded Delegate
-	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &ACharacterMob::OnMontageEnded);
-
 	PlayAnimMontage(SpawnMontage);
 }
 
@@ -77,12 +78,23 @@ void ACharacterMob::OnDamageTaken(AActor* DamagedActor, float Damage, const UDam
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
 
 	// Logging
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Mob Takes Damage."));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Takes Damage: %f."), Damage));
 }
 
 void ACharacterMob::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	IsAttacking = false;
+	Super::OnMontageEnded(Montage, bInterrupted);
+
+	if (Montage->GetName() == NormalAttackMontage->GetName())
+	{
+		IsAttacking = false;
+	}
+	else if (Montage->GetName() == HitMontage->GetName())
+	{
+		AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+		if (MobAIController)
+			MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", false);
+	}
 }
 
 void ACharacterMob::Attack()
@@ -90,6 +102,34 @@ void ACharacterMob::Attack()
 	IsAttacking = true;
 
 	PlayAnimMontage(NormalAttackMontage);
+}
+
+void ACharacterMob::Hit()
+{
+	Super::Hit();
+
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+
+	if (MobAIController)
+		MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", true);
+}
+
+void ACharacterMob::Die()
+{
+	Super::Die();
+
+	// UnPossess
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+	if (MobAIController)
+		MobAIController->UnPossess();
+
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	if (!GameMode)
+		return;
+
+	AGameStateCustom* GameStateCustom = GameMode->GetGameState<AGameStateCustom>();
+	if (GameStateCustom)
+		GameStateCustom->DecreaseMobCount();
 }
 
 void ACharacterMob::OnSpawn()

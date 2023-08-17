@@ -57,7 +57,7 @@ AProjectileBase::AProjectileBase()
 			ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
 		}
 		ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
-		ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09f, 0.09f, 0.09f));
+		ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09, 0.09f, 0.09f));
 		ProjectileMeshComponent->SetupAttachment(RootComponent);
 
 		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponHero"));

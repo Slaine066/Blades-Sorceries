@@ -29,6 +29,8 @@ public:
 		void SpellEnd();
 	UFUNCTION(BlueprintCallable, Category = "Spell")
 		void SpellEndAim();
+	UFUNCTION(BlueprintCallable, Category = "Hit")
+		void HitEnd();
 
 
 

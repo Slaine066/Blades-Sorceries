@@ -7,10 +7,11 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "WeaponBase.h"
 #include "ClothPartsBase.h"
+#include "ProjectileBase.h"
 #include "Camera/CameraComponent.h"
 
 AHeroMage::AHeroMage()
-	:IsFlyingState(false), IsSpellState(false)
+	:IsFlyingState(false), IsSpellState(false), IsNonHitState(false)
 {
 }
 
@@ -41,6 +42,12 @@ void AHeroMage::OnSpellEnd()
 void AHeroMage::OnAimEnd()
 {
 	bUseControllerRotationYaw = false;
+}
+
+void AHeroMage::OnHitable()
+{
+	IsNonHitState = false;
+	IsSpellState = false;
 }
 
 void AHeroMage::BeginPlay()
@@ -110,6 +117,52 @@ void AHeroMage::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
+void AHeroMage::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+	{
+		return;
+	}
+
+	if (!IsNonHitState)
+	{
+		// Calculate Damage Hit This Area
+
+		if (AnimInstanceHeroMage->IsFlying)
+		{
+			PlayAnimMontage(HitMotion_Fly_Montage);
+		}
+		else
+		{
+			PlayAnimMontage(HitMotion_Montage);
+		}
+
+		IsNonHitState = true;
+
+		// Logging
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Mage Hit"));
+	}
+}
+
+void AHeroMage::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+	{
+		return;
+	}
+
+	if (Montage->GetName() == HitMontage_Fly->GetName() ||
+		Montage->GetName() == HitMontage->GetName())
+	{
+		IsHit = false;
+		IsAttacking = false;
+	}
+}
+
 void AHeroMage::Flying(const FInputActionValue& Value)
 {
 	if (IsSpellState)
@@ -169,12 +222,6 @@ void AHeroMage::NormalAttackFire()
 		// Get Mage Transform
 		FVector MageLocation = GetActorLocation();
 		FRotator MageRotation = GetActorRotation();
-
-		// Get the camera Transform
-		// How to Get Camera Transform
-		//FVector CameraLocation;
-		//FRotator CameraRotation;
-		//GetActorEyesViewPoint(CameraLocation, CameraRotation);
 
 		// Set MagicMuzzle Offset from camera space to world space
 		FVector MuzzleLocation = MageLocation + FTransform(MageRotation).TransformVector(SpellMuzzleOffset);

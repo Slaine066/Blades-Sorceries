@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void UpdateAnimation();
 
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	virtual void Die();
+
 	/*
 	** Variables
 	*/

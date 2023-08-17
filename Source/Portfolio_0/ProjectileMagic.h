@@ -18,6 +18,7 @@ public:
 	AProjectileMagic();
 
 	/* Methods */
+	virtual void Tick(float DeltaTime) override;
 
 	/* Variables */
 
@@ -27,7 +28,6 @@ protected:
 	* Methods Inherited
 	*/
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 
 	/* Methods */
 

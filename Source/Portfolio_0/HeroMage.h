@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
-#include "ProjectileBase.h"
 #include "HeroMage.generated.h"
 
 /**
@@ -24,6 +23,7 @@ public:
 	void OnNormalAttackSpell();
 	void OnSpellEnd();
 	void OnAimEnd();
+	void OnHitable();
 
 	/* Variables */
 	// Magic muzzle offset from the camera location
@@ -35,6 +35,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/* Methods */
 	void Flying(const FInputActionValue& Value);
@@ -60,7 +62,9 @@ protected:
 
 	//projectile class to spawn
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-		TSubclassOf<class AProjectileBase> ProjectileClass;
+	TSubclassOf<class AProjectileBase> ProjectileClass;
+
+
 
 private:
 	/* Methods */
@@ -88,11 +92,23 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
 		UAnimMontage* ChargeAttackSpell_Fly_Montage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+		UAnimMontage* HitMotion_Montage;
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+		UAnimMontage* HitMotion_Fly_Montage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+		UAnimMontage* HitMontage_Fly;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+		UAnimMontage* DeathMontage_Fly;
 	/* Variables */
 
 	UPROPERTY(VisibleAnywhere, Category = "Flying")
 		bool IsFlyingState;
 	UPROPERTY(VisibleAnywhere, Category = "Spell")
 		bool IsSpellState;
+	UPROPERTY(VisibleAnywhere, Category = "Hit")
+		bool IsNonHitState;
+
 
 };

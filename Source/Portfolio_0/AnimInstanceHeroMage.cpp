@@ -51,6 +51,14 @@ void UAnimInstanceHeroMage::SpellEndAim()
 	}
 }
 
+void UAnimInstanceHeroMage::HitEnd()
+{
+	if (HeroMage)
+	{
+		HeroMage->OnHitable();
+	}
+}
+
 void UAnimInstanceHeroMage::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

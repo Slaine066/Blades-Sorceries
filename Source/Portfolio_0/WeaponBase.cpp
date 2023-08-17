@@ -40,12 +40,13 @@ void AWeaponBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 	if (!Character || !OtherCharacter)
 		return;
 
+	if (OtherCharacter->Get_IsDead())
+		return;
+
 	// Damage to the Overlapped Character
 	if (Character->Get_CanDamage())
 	{
-			// TODO: Make Damage Blueprintable.
-
-			UGameplayStatics::ApplyDamage(OtherCharacter, 10.f, GetInstigatorController(), Character, DamageType);
+			UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
 			/*UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());*/
 

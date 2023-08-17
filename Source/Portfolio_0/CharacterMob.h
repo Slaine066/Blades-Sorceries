@@ -20,6 +20,8 @@ public:
 	* Methods Inherited
 	*/
 	virtual void Attack() override;
+	virtual void Hit() override;
+	virtual void Die() override;
 
 	/*
 	* Methods
@@ -40,7 +42,8 @@ protected:
 	*/
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted) override;
+	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) override;
 
 	/*
 	* Methods
@@ -56,8 +59,6 @@ private:
 	/*
 	* Methods
 	*/
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/*
 	* Variables
