@@ -24,7 +24,7 @@ enum class EItem : uint8
 
 
 	/* Last Element */
-	LAST
+
 };
 
 UENUM(BlueprintType)
@@ -84,6 +84,9 @@ public:
 	void Set_ItemData(FItemData& _ItemData) { ItemData = _ItemData; }
 
 	void Initialize(class ACharacterHero* Hero);
+
+	UFUNCTION(BlueprintCallable)
+	EItem GetItem() { return ItemData.Item; }
 
 	/*
 	* Variables

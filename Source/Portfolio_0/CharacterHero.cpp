@@ -497,6 +497,8 @@ void ACharacterHero::AddItem(AItemBase* Item)
 		Items.Add(Item);
 		Item->Initialize(this);
 	}
+
+	TriggerPickupItemEvent(Items);
 }
 
 void ACharacterHero::Log()
@@ -639,4 +641,9 @@ void ACharacterHero::OnPickup(EPickupableType Type)
 		GenerateChoices();
 		break;
 	}
+}
+
+void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray)
+{
+	OnPickUpItem.Broadcast(InventoryArray);
 }

@@ -11,6 +11,8 @@
 class UInputMappingContext;
 class UInputAction;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUpItemEvent, const TArray<class AItemBase*>&, InventoryArray);
+
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
 {
@@ -27,8 +29,18 @@ public:
 	/*
 	* Methods
 	*/
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	int GetItemCount() { return Items.Num(); }
 
 	void OnPickup(EPickupableType Type);
+
+	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
+	FOnPickUpItemEvent OnPickUpItem;
+
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray);
+
+	
 
 	// AnimNotify
 	void OnUnsheath();
@@ -39,6 +51,7 @@ public:
 	/*
 	* Variables
 	*/
+
 
 protected:
 	/*
