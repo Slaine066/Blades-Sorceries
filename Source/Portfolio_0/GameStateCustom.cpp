@@ -16,4 +16,16 @@ void AGameStateCustom::DefaultTimer()
 
 	// Log MobCount
 	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Spawned: %d"), MobCount), false);
+
+	TriggerGetTimeEvent(GameTimer.Minutes, GameTimer.Seconds);
+}
+
+void AGameStateCustom::TriggerGetTimeEvent(int Minutes, int Seconds)
+{
+	OnGetTime.Broadcast(Minutes, Seconds);
+}
+
+void AGameStateCustom::TriggerGetMobCount(int MobCountGet)
+{
+	OnGetMonsterCount.Broadcast(MobCountGet);
 }
