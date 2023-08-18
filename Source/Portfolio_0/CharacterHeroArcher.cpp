@@ -117,6 +117,8 @@ void ACharacterHeroArcher::UpdateMousePos()
 
 void ACharacterHeroArcher::ArrowFire()
 {
+	
+
 	if (Controller != nullptr)
 	{
 		FVector CurrentPosition = GetActorLocation();
@@ -125,6 +127,8 @@ void ACharacterHeroArcher::ArrowFire()
 	
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		
+		
+
 		//UGameplayStatics::DeprojectScreenToWorld
 
 		if (PlayerController->DeprojectScreenPositionToWorld(MousePosition.X, MousePosition.Y, WorldLocation, WorldDirection))
@@ -147,9 +151,9 @@ void ACharacterHeroArcher::ArrowFire()
 			UE_LOG(LogTemp, Log, TEXT("Rotate"));
 			UE_LOG(LogTemp, Log, TEXT("Rotate"));
 
-			Fire(RealDir);
+			//Fire(RealDir);
 
-			//HandlePicking();
+			HandlePicking();
 		}
 
 		// Add yaw and pitch input to Controller
@@ -217,35 +221,58 @@ void ACharacterHeroArcher::Fire(FVector vDirection)
 
 void ACharacterHeroArcher::HandlePicking()
 {
-	UE_LOG(LogTemp, Log, TEXT("HandlePicking"));
 
-	FVector StartLocation;
-	FRotator CamLot;
-	FVector EndLocation;
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	FVector MouseWorldLocation, MouseWorldDirection;
+	PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
 
 	FHitResult HitResult;
+	Temp = GetActorLocation();
 
+	FVector TTfdadf = Temp;
+	FVector StartLocation = MouseWorldLocation;
+	FVector EndLocation = MouseWorldLocation + MouseWorldDirection * 10000.f;
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this); // 이 액터를 무시하도록 설정하거나 필요에 따라 추가 설정
+
+	
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECC_Visibility, // 라인 트레이스에 사용할 채널 설정 (다른 채널로 변경 가능)
+		CollisionParams
+	);
+
+	if (bHit)
 	{
-		
-		PlayerController->GetPlayerViewPoint(StartLocation, CamLot);
+		// 라인 트레이스 충돌이 감지되었을 때 수행할 작업
+		// HitResult 변수를 사용하여 충돌한 정보에 접근 가능
 
-		EndLocation = StartLocation + GetControlRotation().Vector() * 100.f;
+		FVector NewLocation = HitResult.ImpactPoint;
+		//SetActorLocation(NewLocation);
 
-		FCollisionQueryParams CollisionParams;
-		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+		FVector SpawnLocation = GetActorLocation(); // 원하는 위치 설정
+		FRotator SpawnRotation = GetActorRotation(); // 원하는 회전 설정
+		FActorSpawnParameters SpawnParams;
+		AArrowProjectile* Projectile = GetWorld()->SpawnActor<AArrowProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
-		if (bHit)
+		if (Projectile)
 		{
-			AActor* HitActor = HitResult.GetActor();
-			if(HitActor)
-			{
-				Fire(HitActor->GetActorLocation());
-			}
+			FVector ShootDir = NewLocation.GetSafeNormal() - GetActorLocation().GetSafeNormal();
+		
+			
+
+			// 생성된 프로젝타일 객체 사용
+			Projectile->FireArrowDirection(ShootDir);
 		}
+
 	}
+
+
+
 }
 
 

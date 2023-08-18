@@ -46,4 +46,5 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
 	UMaterialInstanceDynamic* ProjectileMaterialInstance;
 
+
 };

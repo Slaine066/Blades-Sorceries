@@ -23,6 +23,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "NormalAttack")
 	void NormalAttackFunc();
 
+
+
+
 protected:
 	virtual void NativeInitializeAnimation() override;
 

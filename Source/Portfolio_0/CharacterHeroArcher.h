@@ -51,11 +51,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "NormalAttack")
 	UAnimMontage* NormalAttack;
 
+	UPROPERTY(EditAnywhere, Category = "Hit")
+	UAnimMontage* Hit;
+
+	UPROPERTY(EditAnywhere, Category = "Death")
+	UAnimMontage* Death;
+
 	UPROPERTY(EditAnywhere, Category = "NormalAttack")
 	bool bIsAttack;
 
 	FVector m_vMousePosition;
 
+	FVector Temp;
 
 
 };

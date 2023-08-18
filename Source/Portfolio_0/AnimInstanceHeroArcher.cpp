@@ -19,6 +19,8 @@ void UAnimInstanceHeroArcher::NormalAttackFunc()
 		Archer->OnNormalAttack();
 }
 
+
+
 void UAnimInstanceHeroArcher::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();

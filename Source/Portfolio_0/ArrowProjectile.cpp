@@ -63,8 +63,7 @@ AArrowProjectile::AArrowProjectile()
     }
 
  
-   
-
+    //InitialLifeSpan = 3.f;
     
 }
 
@@ -79,6 +78,9 @@ void AArrowProjectile::BeginPlay()
 void AArrowProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+
 
 }
 
