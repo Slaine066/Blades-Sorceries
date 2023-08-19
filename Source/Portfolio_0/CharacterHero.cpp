@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include <EnhancedInputSubsystems.h>
@@ -14,6 +15,7 @@
 #include "WeaponBase.h"
 #include "Engine/DataTable.h"
 #include "ItemBase.h"
+#include "Pickupable.h"
 #include "Utility.h"
 
 ACharacterHero::ACharacterHero() 
@@ -56,9 +58,10 @@ ACharacterHero::ACharacterHero()
 
 	CameraComponent->AddAdditiveOffset(AddCamOffset, 10.f);
 	
-
-	//Camera Setup to Player Location
-
+	// SphereCollisionComponent
+	SphereCollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	SphereCollisionComponent->InitSphereRadius(200.f);
+	SphereCollisionComponent->SetupAttachment(RootComponent);
 }
 
 void ACharacterHero::BeginPlay()
@@ -70,9 +73,14 @@ void ACharacterHero::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 
-	// Setup Collision Profile
+	// Setup Collision Profiles
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Hero"));
+	SphereCollisionComponent->SetCollisionProfileName(TEXT("PickupSphere"));
 
+	// Overlap Delegates
+	SphereCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACharacterHero::OnSphereOverlapBegin);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacterHero::OnCapsuleOverlapBegin);
+	
 	// Spawn Weapon at run-time.
 	if (WeaponClassLeft)
 	{
@@ -357,6 +365,48 @@ void ACharacterHero::IncreaseHealth(int Amount)
 		Attributes.Health = Attributes.HealthMax;
 }
 
+void ACharacterHero::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APickupable* Pickupable = Cast<APickupable>(OtherActor);
+	if (!Pickupable)
+		return;
+
+	switch (Pickupable->Get_Type())
+	{
+		case EPickupableType::EXPERIENCE_SMALL:
+		case EPickupableType::EXPERIENCE_MEDIUM:
+		case EPickupableType::EXPERIENCE_BIG:
+		{
+			Pickupable->Set_Hero(this);
+			break;
+		}
+	}	
+}
+
+void ACharacterHero::OnCapsuleOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APickupable* Pickupable = Cast<APickupable>(OtherActor);
+	if (!Pickupable)
+		return;
+
+	switch (Pickupable->Get_Type())
+	{
+	case EPickupableType::EXPERIENCE_SMALL:
+	case EPickupableType::EXPERIENCE_MEDIUM:
+	case EPickupableType::EXPERIENCE_BIG:
+		GainExperience(Pickupable->Get_GivenExperience());
+		break;
+	case EPickupableType::POTION:
+		IncreaseHealth(Pickupable->Get_GivenHealth());
+		break;
+	case EPickupableType::CHEST:
+		GenerateChoices();
+		break;
+	}
+
+	Pickupable->Destroy();
+}
+
 void ACharacterHero::LevelUp()
 {
 	Attributes.Level += 1;
@@ -369,9 +419,9 @@ void ACharacterHero::LevelUp()
 void ACharacterHero::GenerateChoices()
 {
 	/* Pause Game */
-	/*APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
-		PlayerController->SetPause(true);*/
+		PlayerController->SetPause(true);
 
 		/* Get Choosable Items */
 	TArray<FItemData*> AllItems;
@@ -425,6 +475,19 @@ void ACharacterHero::GenerateChoices()
 	Choices.Add(ChoosableItems[0]);
 	Choices.Add(ChoosableItems[1]);
 	Choices.Add(ChoosableItems[2]);
+
+	/*
+	* Log Item Choices
+	*/
+	if (!Choices.IsEmpty())
+	{
+		// Log Choice 1
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()), false);
+		// Log Choice 2
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
+		// Log Choice 3
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
+	}
 }
 
 /*
@@ -497,6 +560,10 @@ void ACharacterHero::AddItem(AItemBase* Item)
 		Items.Add(Item);
 		Item->Initialize(this);
 	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+		PlayerController->SetPause(false);
 }
 
 void ACharacterHero::Log()
@@ -548,17 +615,11 @@ void ACharacterHero::Log()
 	}
 
 	/*
-	* Log Item Choices
+	* Remove Log Choices
 	*/
-	if (!Choices.IsEmpty())
-	{
-		// Log Choice 1
-		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1, 1.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()), false);
-		// Log Choice 2
-		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 1.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
-		// Log Choice 3
-		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 1.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
-	}
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1);
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2);
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3);
 }
 
 void ACharacterHero::OnUnsheath()
@@ -617,26 +678,4 @@ void ACharacterHero::OnNormalAttackCombo()
 void ACharacterHero::OnSkillEnd()
 {
 	IsSkilling = false;
-}
-
-void ACharacterHero::OnPickup(EPickupableType Type)
-{
-	switch (Type)
-	{
-	case EPickupableType::EXPERIENCE_SMALL:
-		GainExperience(10);
-		break;
-	case EPickupableType::EXPERIENCE_MEDIUM:
-		GainExperience(50);
-		break;
-	case EPickupableType::EXPERIENCE_BIG:
-		GainExperience(250);
-		break;
-	case EPickupableType::POTION:
-		IncreaseHealth(10);
-		break;
-	case EPickupableType::CHEST:
-		GenerateChoices();
-		break;
-	}
 }

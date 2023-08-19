@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 
+/* Enum used for AddOnScreenDebugMessage(). */
 UENUM()
 enum class ELOG
 {
