@@ -31,8 +31,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	int GetItemCount() { return Items.Num(); }
 
-	void OnPickup(EPickupableType Type);
-
 	void GainExperience(int Amount);
 	void IncreaseHealth(int Amount);
 	void GenerateChoices();
