@@ -10,6 +10,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameStateCustom.h"
+#include "Pickupable.h"
 
 ACharacterMob::ACharacterMob()
 {
@@ -123,6 +124,13 @@ void ACharacterMob::Die()
 	if (MobAIController)
 		MobAIController->UnPossess();
 
+	// Drop Item
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	GetWorld()->SpawnActor<APickupable>(DropItemClass, GetActorLocation(), GetActorRotation(), SpawnParams);
+
+	// Decrease Mob Count
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
 	if (!GameMode)
 		return;

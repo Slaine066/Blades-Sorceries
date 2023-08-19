@@ -7,7 +7,7 @@
 #include "Pickupable.generated.h"
 
 UENUM()
-enum class EPickupableType { DEFAULT, EXPERIENCE_SMALL, EXPERIENCE_MEDIUM, EXPERIENCE_BIG, POTION, CHEST };
+enum class EPickupableType { EXPERIENCE_SMALL, EXPERIENCE_MEDIUM, EXPERIENCE_BIG, POTION, CHEST };
 
 UCLASS()
 class PORTFOLIO_0_API APickupable : public AActor
@@ -25,6 +25,10 @@ public:
 	* Methods
 	*/
 	UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
+	EPickupableType Get_Type() { return Type; }
+	int Get_GivenExperience() { return GivenExperience; }
+	int Get_GivenHealth() { return GivenHealth; }
+	void Set_Hero(AActor* _Hero) { Hero = _Hero; }
 
 	/*
 	* Variables
@@ -47,12 +51,6 @@ protected:
 
 private:
 	/*
-	* Methods
-	*/
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	/*
 	* Variables
 	*/
 	UPROPERTY(VisibleAnywhere)
@@ -61,5 +59,11 @@ private:
 	class UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Type")
-	EPickupableType Type = EPickupableType::DEFAULT;
+	EPickupableType Type;
+	UPROPERTY(EditDefaultsOnly, Category = "Experience")
+	int GivenExperience;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	int GivenHealth;
+
+	AActor* Hero = nullptr;
 };

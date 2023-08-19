@@ -100,8 +100,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	int OutlineSize = 0;
 	
-
-
 protected:
 	/*
 	* Methods Inherited
@@ -136,9 +134,6 @@ protected:
 	TSubclassOf<AClothPartsBase> ClothHairClass;
 	UPROPERTY()
 	AClothPartsBase* ClothHair;
-
-
-
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsDead;
