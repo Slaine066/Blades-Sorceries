@@ -355,6 +355,8 @@ void ACharacterHero::GainExperience(int Amount)
 
 	if (Attributes.Experience >= Attributes.ExperienceMax)
 		LevelUp();
+
+	TriggerPickupExpEvent();
 }
 
 void ACharacterHero::IncreaseHealth(int Amount)
@@ -685,4 +687,9 @@ void ACharacterHero::OnSkillEnd()
 void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray)
 {
 	OnPickUpItem.Broadcast(InventoryArray);
+}
+
+void ACharacterHero::TriggerPickupExpEvent()
+{
+	OnPickUpExp.Broadcast();
 }

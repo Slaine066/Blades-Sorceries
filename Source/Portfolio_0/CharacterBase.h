@@ -15,6 +15,8 @@
 class AWeaponBase;
 class AClothPartsBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitDamageEvent, int, iDamage);
+
 USTRUCT(BlueprintType)
 struct FAttributes
 {
@@ -83,6 +85,12 @@ public:
 	virtual void Attack();
 	virtual void Hit();
 	virtual void Die();
+
+	UPROPERTY(BlueprintAssignable, Category = "HitDamage")
+	FOnHitDamageEvent OnHitDamage;
+
+	UFUNCTION(BlueprintCallable, Category = "HitDamage")
+	void TriggerHitDamageEvent(int iDamage);
 
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	virtual void FloatingDamageFont(float Damage);

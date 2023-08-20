@@ -11,6 +11,7 @@ class UInputMappingContext;
 class UInputAction;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUpItemEvent, const TArray<class AItemBase*>&, InventoryArray);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUpExpEvent);
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
@@ -37,9 +38,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
 	FOnPickUpItemEvent OnPickUpItem;
+	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
+	FOnPickUpExpEvent OnPickUpExp;
 
 	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
 	void TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray);
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void TriggerPickupExpEvent();
+
 
 	// AnimNotify
 	void OnUnsheath();
