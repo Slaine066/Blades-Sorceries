@@ -29,6 +29,9 @@ public:
 public:
 	void FireArrowDirection(const FVector& vDirection);
 
+	// 프로젝타일이 무언가에 맞으면 호출되는 함수입니다.
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 public:
 	// Sphere Collision Com

@@ -63,6 +63,9 @@ private:
 	FVector m_vMousePosition;
 
 	FVector Temp;
+	
 
-
+	
+	float fShootTime = 0.f;
+	bool bShoot = false;
 };

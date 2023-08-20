@@ -38,6 +38,19 @@ void ACharacterHeroArcher::Tick(float DeltaTime)
 
 	UpdateMousePos();
 
+	if (bShoot == true)
+	{
+		fShootTime += DeltaTime;
+	}
+
+
+ 	if (fShootTime >= 1.f)
+	{
+		bShoot = false;
+		fShootTime = 0.f;
+	}
+
+
 }
 
 void ACharacterHeroArcher::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -47,7 +60,7 @@ void ACharacterHeroArcher::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// NormallAttack
-		EnhancedInputComponent->BindAction(NormalAttackArcherAction, ETriggerEvent::Triggered, this, &ACharacterHeroArcher::NormalAttackFunc);
+			EnhancedInputComponent->BindAction(NormalAttackArcherAction, ETriggerEvent::Triggered, this, &ACharacterHeroArcher::NormalAttackFunc);
 
 	}
 
@@ -78,8 +91,11 @@ void ACharacterHeroArcher::SetWeapon()
 
 void ACharacterHeroArcher::NormalAttackFunc(const FInputActionValue& Value)
 {
-	PlayAnimMontage(NormalAttack);
-	ArrowFire();
+	if (bShoot == false)
+	{
+		PlayAnimMontage(NormalAttack);
+		ArrowFire();
+	}
 }
 
 void ACharacterHeroArcher::UpdateMousePos()
@@ -117,49 +133,70 @@ void ACharacterHeroArcher::UpdateMousePos()
 
 void ACharacterHeroArcher::ArrowFire()
 {
-	
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	FVector MouseWorldLocation, MouseWorldDirection;
+	PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
 
-	if (Controller != nullptr)
+	FHitResult HitResult;
+	Temp = GetActorLocation();
+
+	FVector TTfdadf = Temp;
+	FVector StartLocation = MouseWorldLocation;
+	FVector EndLocation = MouseWorldLocation + MouseWorldDirection * 5000.f;
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this); // 이 액터를 무시하도록 설정하거나 필요에 따라 추가 설정
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECC_Visibility, // 라인 트레이스에 사용할 채널 설정 (다른 채널로 변경 가능)
+		CollisionParams
+	);
+	
+	if (bHit)
 	{
-		FVector CurrentPosition = GetActorLocation();
-		FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
-		FVector WorldLocation, WorldDirection;
+		bShoot = true;
+		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 1.0f);
 	
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		
-		
+		// 라인 트레이스 충돌이 감지되었을 때 수행할 작업
+		// HitResult 변수를 사용하여 충돌한 정보에 접근 가능
 
-		//UGameplayStatics::DeprojectScreenToWorld
+		FVector NewLocation = HitResult.ImpactPoint;
+		//SetActorLocation(NewLocation);
 
-		if (PlayerController->DeprojectScreenPositionToWorld(MousePosition.X, MousePosition.Y, WorldLocation, WorldDirection))
+		FVector SpawnLocation = GetActorLocation(); // 원하는 위치 설정
+		FRotator SpawnRotation = GetActorRotation(); // 원하는 회전 설정
+		FActorSpawnParameters SpawnParams;
+		AArrowProjectile* Projectile = GetWorld()->SpawnActor<AArrowProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+		if (Projectile)
 		{
-			FVector Direction = CurrentPosition - WorldLocation;
-			FVector RealDir = Direction;
-			Direction.Z = 0.0f; // Z 방향 회전은 제한합니다.
+			FVector ShootDir = NewLocation.GetSafeNormal() - GetActorLocation().GetSafeNormal();
+			ShootDir.Z = 0.f;
 
-			//// 보간된 방향 벡터를 얻습니다.
-			//FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-			//FRotator NewRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 45.f);
+			//MouseWorldDirection.Z = 0.f;
+			//FQuat RotationDelta = FQuat::FindBetweenVectors(GetActorForwardVector(), MouseWorldDirection);
+			//AddActorLocalRotation(RotationDelta);
 
-			//// 캐릭터 회전을 보간된 회전으로 설정합니다.
-			//SetActorRotation(NewRotation);
+			FVector ForwardVector = NewLocation - GetActorLocation();
+			ForwardVector.Z = 0.0f; // Keep the rotation in the horizontal plane
 
-			FQuat RotationDelta = FQuat::FindBetweenVectors(GetActorForwardVector(), Direction);
-			AddActorLocalRotation(RotationDelta);
+			FRotator NewRotation = ForwardVector.Rotation();
+			SetActorRotation(NewRotation);
 
-			UE_LOG(LogTemp, Log, TEXT("Rotate"));
-			UE_LOG(LogTemp, Log, TEXT("Rotate"));
-			UE_LOG(LogTemp, Log, TEXT("Rotate"));
 
-			//Fire(RealDir);
+			
 
-			HandlePicking();
+			// 생성된 프로젝타일 객체 사용
+			Projectile->FireArrowDirection(GetActorForwardVector());
 		}
 
-		// Add yaw and pitch input to Controller
-		//AddControllerYawInput();
-		
 	}
+
+
+
 }
 
 void ACharacterHeroArcher::Fire(FVector vDirection)
@@ -231,12 +268,13 @@ void ACharacterHeroArcher::HandlePicking()
 
 	FVector TTfdadf = Temp;
 	FVector StartLocation = MouseWorldLocation;
-	FVector EndLocation = MouseWorldLocation + MouseWorldDirection * 10000.f;
+	FVector EndLocation = MouseWorldLocation + MouseWorldDirection * 5000.f;
 
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this); // 이 액터를 무시하도록 설정하거나 필요에 따라 추가 설정
 
-	
+
+
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
@@ -250,7 +288,7 @@ void ACharacterHeroArcher::HandlePicking()
 	{
 		// 라인 트레이스 충돌이 감지되었을 때 수행할 작업
 		// HitResult 변수를 사용하여 충돌한 정보에 접근 가능
-
+		
 		FVector NewLocation = HitResult.ImpactPoint;
 		//SetActorLocation(NewLocation);
 
@@ -262,8 +300,7 @@ void ACharacterHeroArcher::HandlePicking()
 		if (Projectile)
 		{
 			FVector ShootDir = NewLocation.GetSafeNormal() - GetActorLocation().GetSafeNormal();
-		
-			
+			ShootDir.Z = 0.f;
 
 			// 생성된 프로젝타일 객체 사용
 			Projectile->FireArrowDirection(ShootDir);
@@ -271,7 +308,47 @@ void ACharacterHeroArcher::HandlePicking()
 
 	}
 
+	//if (Controller != nullptr)
+//{
+//	FVector CurrentPosition = GetActorLocation();
+//	FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+//	FVector WorldLocation, WorldDirection;
+//
+//	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+//	
+//	
 
+//	//UGameplayStatics::DeprojectScreenToWorld
+
+//	if (PlayerController->DeprojectScreenPositionToWorld(MousePosition.X, MousePosition.Y, WorldLocation, WorldDirection))
+//	{
+//		FVector Direction = CurrentPosition - WorldLocation;
+//		FVector RealDir = Direction;
+//		Direction.Z = 0.0f; // Z 방향 회전은 제한합니다.
+
+//		//// 보간된 방향 벡터를 얻습니다.
+//		//FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+//		//FRotator NewRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, GetWorld()->GetDeltaSeconds(), 45.f);
+
+//		//// 캐릭터 회전을 보간된 회전으로 설정합니다.
+//		//SetActorRotation(NewRotation);
+
+//		FQuat RotationDelta = FQuat::FindBetweenVectors(GetActorForwardVector(), Direction);
+//		AddActorLocalRotation(RotationDelta);
+
+//		UE_LOG(LogTemp, Log, TEXT("Rotate"));
+//		UE_LOG(LogTemp, Log, TEXT("Rotate"));
+//		UE_LOG(LogTemp, Log, TEXT("Rotate"));
+
+//		//Fire(RealDir);
+
+//		HandlePicking();
+//	}
+
+//	// Add yaw and pitch input to Controller
+//	//AddControllerYawInput();
+//	
+//}
 
 }
 

@@ -21,10 +21,15 @@ AArrowProjectile::AArrowProjectile()
     {
         // Use a sphere as a simple collision representation.
         CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+        // Set the Collision Prifile name to "Weapon"
+        CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponHero"));
         // Set the sphere's collision radius.
-        CollisionComponent->InitSphereRadius(15.0f);
+        CollisionComponent->InitSphereRadius(30.0f);
         // Set the root component to be the collision component.
+
         RootComponent = CollisionComponent;
+
+        CollisionComponent->OnComponentHit.AddDynamic(this, &AArrowProjectile::OnHit);
     }
 
     if (!ProjectileMovementComponent)
@@ -38,6 +43,8 @@ AArrowProjectile::AArrowProjectile()
         ProjectileMovementComponent->bShouldBounce = false;
         ProjectileMovementComponent->Bounciness = 0.3f;
         ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+
+    
     }
 
     if (!ProjectileMeshComponent)
@@ -60,10 +67,14 @@ AArrowProjectile::AArrowProjectile()
         FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
         ProjectileMeshComponent->SetWorldRotation(NewRotation);
 
+        ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponHero"));
+
     }
 
  
-    //InitialLifeSpan = 3.f;
+
+
+   InitialLifeSpan = 3.f;
     
 }
 
@@ -90,5 +101,18 @@ void AArrowProjectile::FireArrowDirection(const FVector& vDirection)
     UE_LOG(LogTemp, Log, TEXT("FireArrowDirection"));
     UE_LOG(LogTemp, Log, TEXT("FireArrowDirection"));
     ProjectileMovementComponent->Velocity = vDirection * ProjectileMovementComponent->InitialSpeed;
+}
+
+void AArrowProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor != this && OtherComponent->IsSimulatingPhysics())
+	{
+		OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
+	}
+
+	// Logging
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, TEXT("Arrow Hit"));
+
+	Destroy();
 }
 
