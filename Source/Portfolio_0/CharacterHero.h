@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
 #include "InputActionValue.h"
-#include "Pickupable.h"
 #include "CharacterHero.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUpItemEvent, const TArray<class AItemBase*>&, InventoryArray);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUpExpEvent);
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
@@ -27,16 +29,34 @@ public:
 	/*
 	* Methods
 	*/
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	int GetItemCount() { return Items.Num(); }
+
+	void GainExperience(int Amount);
+	void IncreaseHealth(int Amount);
+	void GenerateChoices();
+
+	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
+	FOnPickUpItemEvent OnPickUpItem;
+	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
+	FOnPickUpExpEvent OnPickUpExp;
+
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray);
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void TriggerPickupExpEvent();
+
+
 	// AnimNotify
 	void OnUnsheath();
 	void OnSheath();
 	void OnNormalAttackCombo();
 	void OnSkillEnd();
-	void OnPickup(EPickupableType Type);
 
 	/*
 	* Variables
 	*/
+
 
 protected:
 	/*
@@ -105,14 +125,18 @@ private:
 	/*
 	* Methods
 	*/
-	void GainExperience(int Amount);
-	void IncreaseHealth(int Amount);
+	UFUNCTION()
+	void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnCapsuleOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	void LevelUp();
-	void GenerateChoices();
 	void CheckChoices();
 	void Choice1();
 	void Choice2();
 	void Choice3();
+	void AddItem(class AItemBase* Item);
+	void Log();
 
 	/*
 	* Variables
@@ -120,6 +144,9 @@ private:
 	// Spring Arm & Camera
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComponent;
+	// Sphere Collision
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* SphereCollisionComponent;
 
 	// Input Mapping Context
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -130,7 +157,6 @@ private:
 	UAnimMontage* UnsheathMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	UAnimMontage* SheathMontage;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	UAnimMontage* UnsheathAttackMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
@@ -153,6 +179,5 @@ private:
 	class UDataTable* ItemsDataTable = nullptr;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	TArray<class AItemBase*> Items;
-
 	TArray<struct FItemData> Choices;
 };

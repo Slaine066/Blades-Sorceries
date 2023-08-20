@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "ItemBase.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItem : uint8
 { 
 	/* Attributes Boost */
@@ -22,18 +22,19 @@ enum class EItem : uint8
 
 	/* Abilities */
 
+
 	/* Last Element */
-	LAST
+
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	ATTRIBUTE_BOOST,
 	ABILITY
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EItemGrade : uint8
 {
 	COMMON,
@@ -81,6 +82,11 @@ public:
 	*/
 	FItemData Get_ItemData() { return ItemData; }
 	void Set_ItemData(FItemData& _ItemData) { ItemData = _ItemData; }
+
+	void Initialize(class ACharacterHero* Hero);
+
+	UFUNCTION(BlueprintCallable)
+	EItem GetItem() { return ItemData.Item; }
 
 	/*
 	* Variables

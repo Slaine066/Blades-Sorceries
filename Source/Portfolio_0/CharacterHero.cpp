@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include <EnhancedInputSubsystems.h>
@@ -14,6 +15,8 @@
 #include "WeaponBase.h"
 #include "Engine/DataTable.h"
 #include "ItemBase.h"
+#include "Pickupable.h"
+#include "Utility.h"
 
 ACharacterHero::ACharacterHero() 
 	: IsComboActive(false), ComboCounter(0)
@@ -55,9 +58,10 @@ ACharacterHero::ACharacterHero()
 
 	CameraComponent->AddAdditiveOffset(AddCamOffset, 10.f);
 	
-
-	//Camera Setup to Player Location
-
+	// SphereCollisionComponent
+	SphereCollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	SphereCollisionComponent->InitSphereRadius(200.f);
+	SphereCollisionComponent->SetupAttachment(RootComponent);
 }
 
 void ACharacterHero::BeginPlay()
@@ -69,34 +73,41 @@ void ACharacterHero::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 
-	// Setup Collision Profile
+	// Setup Collision Profiles
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Hero"));
+	SphereCollisionComponent->SetCollisionProfileName(TEXT("PickupSphere"));
 
-	//// Spawn Weapon at run-time.
-	//if (WeaponClassLeft)
-	//{
-	//	WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
+	// Overlap Delegates
+	SphereCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACharacterHero::OnSphereOverlapBegin);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACharacterHero::OnCapsuleOverlapBegin);
+	
+	// Spawn Weapon at run-time.
+	if (WeaponClassLeft)
+	{
+		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
 
-	//	const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
-	//	if (!WeaponSocket)
-	//		return;
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
+		if (!WeaponSocket)
+			return;
 
-	//	// Retrieve WeaponSocket.
-	//	if (WeaponSocket)
-	//	{
-	//		// Attach Weapon to WeaponSocket and set Owner.
-	//		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
-	//		WeaponLeft->SetOwner(this);
+		// Retrieve WeaponSocket.
+		if (WeaponSocket)
+		{
+			// Attach Weapon to WeaponSocket and set Owner.
+			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+			WeaponLeft->SetOwner(this);
 
-	//		// Setup Collision Profile
-	//		WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
-	//	}
-	//}
+			// Setup Collision Profile
+			WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
+		}
+	}
 }
 
 void ACharacterHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Log();
 }
 
 void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -344,6 +355,8 @@ void ACharacterHero::GainExperience(int Amount)
 
 	if (Attributes.Experience >= Attributes.ExperienceMax)
 		LevelUp();
+
+	TriggerPickupExpEvent();
 }
 
 void ACharacterHero::IncreaseHealth(int Amount)
@@ -352,6 +365,48 @@ void ACharacterHero::IncreaseHealth(int Amount)
 
 	if (Attributes.Health >= Attributes.HealthMax)
 		Attributes.Health = Attributes.HealthMax;
+}
+
+void ACharacterHero::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APickupable* Pickupable = Cast<APickupable>(OtherActor);
+	if (!Pickupable)
+		return;
+
+	switch (Pickupable->Get_Type())
+	{
+		case EPickupableType::EXPERIENCE_SMALL:
+		case EPickupableType::EXPERIENCE_MEDIUM:
+		case EPickupableType::EXPERIENCE_BIG:
+		{
+			Pickupable->Set_Hero(this);
+			break;
+		}
+	}	
+}
+
+void ACharacterHero::OnCapsuleOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APickupable* Pickupable = Cast<APickupable>(OtherActor);
+	if (!Pickupable)
+		return;
+
+	switch (Pickupable->Get_Type())
+	{
+	case EPickupableType::EXPERIENCE_SMALL:
+	case EPickupableType::EXPERIENCE_MEDIUM:
+	case EPickupableType::EXPERIENCE_BIG:
+		GainExperience(Pickupable->Get_GivenExperience());
+		break;
+	case EPickupableType::POTION:
+		IncreaseHealth(Pickupable->Get_GivenHealth());
+		break;
+	case EPickupableType::CHEST:
+		GenerateChoices();
+		break;
+	}
+
+	Pickupable->Destroy();
 }
 
 void ACharacterHero::LevelUp()
@@ -366,9 +421,9 @@ void ACharacterHero::LevelUp()
 void ACharacterHero::GenerateChoices()
 {
 	/* Pause Game */
-	/*APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
-		PlayerController->SetPause(true);*/
+		PlayerController->SetPause(true);
 
 		/* Get Choosable Items */
 	TArray<FItemData*> AllItems;
@@ -423,10 +478,18 @@ void ACharacterHero::GenerateChoices()
 	Choices.Add(ChoosableItems[1]);
 	Choices.Add(ChoosableItems[2]);
 
-	// Debug Log ChoosableItems
-	GEngine->AddOnScreenDebugMessage(10, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()));
-	GEngine->AddOnScreenDebugMessage(11, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()));
-	GEngine->AddOnScreenDebugMessage(12, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()));
+	/*
+	* Log Item Choices
+	*/
+	if (!Choices.IsEmpty())
+	{
+		// Log Choice 1
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()), false);
+		// Log Choice 2
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
+		// Log Choice 3
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
+	}
 }
 
 /*
@@ -448,24 +511,7 @@ void ACharacterHero::Choice1()
 	/* Empty Choices Array. */
 	Choices.Empty();
 	
-	auto Predicate = [&](AItemBase* ItemPtr) {
-		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
-	};
-
-	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
-	if (CurrentItem)
-	{
-		/* Replace Item */
-		int Index = Items.IndexOfByPredicate(Predicate);
-
-		if (Items.IsValidIndex(Index))
-			Items[Index] = Item;
-	}
-	else
-	{
-		/* Add Item to Items Array. */
-		Items.Add(Item);
-	}
+	AddItem(Item);
 }
 
 void ACharacterHero::Choice2()
@@ -477,24 +523,7 @@ void ACharacterHero::Choice2()
 	/* Empty Choices Array. */
 	Choices.Empty();
 
-	auto Predicate = [&](AItemBase* ItemPtr) {
-		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
-	};
-
-	AItemBase** CurrentItem = Items.FindByPredicate(Predicate);
-	if (CurrentItem)
-	{
-		/* Replace Item */
-		int Index = Items.IndexOfByPredicate(Predicate);
-
-		if (Items.IsValidIndex(Index))
-			Items[Index] = Item;
-	}
-	else
-	{
-		/* Add Item to Items Array. */
-		Items.Add(Item);
-	}
+	AddItem(Item);
 }
 
 void ACharacterHero::Choice3()
@@ -506,6 +535,11 @@ void ACharacterHero::Choice3()
 	/* Empty Choices Array. */
 	Choices.Empty();
 
+	AddItem(Item);
+}
+
+void ACharacterHero::AddItem(AItemBase* Item)
+{
 	auto Predicate = [&](AItemBase* ItemPtr) {
 		return ItemPtr && ItemPtr->Get_ItemData().Item == Item->Get_ItemData().Item;
 	};
@@ -517,13 +551,79 @@ void ACharacterHero::Choice3()
 		int Index = Items.IndexOfByPredicate(Predicate);
 
 		if (Items.IsValidIndex(Index))
+		{
 			Items[Index] = Item;
+			Item->Initialize(this);
+		}
 	}
 	else
 	{
 		/* Add Item to Items Array. */
 		Items.Add(Item);
+		Item->Initialize(this);
 	}
+
+	TriggerPickupItemEvent(Items);
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+		PlayerController->SetPause(false);
+}
+
+void ACharacterHero::Log()
+{
+	/*
+	* Log Attributes
+	*/
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ATTRIBUTES, 999.f, FColor::Green, TEXT("Attributes"), false);
+	// Log Level
+	GEngine->AddOnScreenDebugMessage((int)ELOG::LEVEL, 999.f, FColor::Emerald, FString::Printf(TEXT("Level: %d"), Attributes.Level), false);
+	// Log ExperienceMax
+	GEngine->AddOnScreenDebugMessage((int)ELOG::EXPERIENCE_MAX, 999.f, FColor::Emerald, FString::Printf(TEXT("Experience Max: %d"), Attributes.ExperienceMax), false);
+	// Log Experience
+	GEngine->AddOnScreenDebugMessage((int)ELOG::EXPERIENCE, 999.f, FColor::Emerald, FString::Printf(TEXT("Experience: %d"), Attributes.Experience), false);
+	// Log HealthMax
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH_MAX, 999.f, FColor::Emerald, FString::Printf(TEXT("Health Max: %d"), Attributes.HealthMax), false);
+	// Log Health
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH, 999.f, FColor::Emerald, FString::Printf(TEXT("Health: %d"), Attributes.Health), false);
+	// Log HealthRegen
+	GEngine->AddOnScreenDebugMessage((int)ELOG::HEALTH_REGEN, 999.f, FColor::Emerald, FString::Printf(TEXT("Health Regen: %f"), Attributes.HealthRegen), false);
+	// Log Damage
+	GEngine->AddOnScreenDebugMessage((int)ELOG::DAMAGE, 999.f, FColor::Emerald, FString::Printf(TEXT("Damage: %d"), Attributes.Damage), false);
+	// Log AttackSpeed
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ATTACK_SPEED, 999.f, FColor::Emerald, FString::Printf(TEXT("Attack Speed: %f"), Attributes.AttackSpeed), false);
+	// Log Armor
+	GEngine->AddOnScreenDebugMessage((int)ELOG::ARMOR, 999.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Attributes.Armor), false);
+	// Log MovementSpeed
+	GEngine->AddOnScreenDebugMessage((int)ELOG::MOVEMENT_SPEED, 999.f, FColor::Emerald, FString::Printf(TEXT("Movement Speed: %f"), Attributes.MovementSpeed), false);
+	// Log PickupRange
+	GEngine->AddOnScreenDebugMessage((int)ELOG::PICKUP_RANGE, 999.f, FColor::Emerald, FString::Printf(TEXT("Pickup Range: %f"), Attributes.PickupRange), false);
+	// Log CooldownReduction
+	GEngine->AddOnScreenDebugMessage((int)ELOG::COOLDOWN_REDUCTION, 999.f, FColor::Emerald, FString::Printf(TEXT("Cooldown Reduction: %f"), Attributes.CooldownReduction), false);
+
+	/*
+	* Log Items
+	*/
+	if (!Items.IsEmpty())
+	{
+		FString ItemsString;
+		for (int i = 0; i < Items.Num(); i++)
+		{
+			FString Index = FString::Printf(TEXT("%i. "), i + 1);
+			ItemsString.Append(Index);
+			ItemsString.Append(*Items[i]->Get_ItemData().Name.ToString());
+			ItemsString.Append(" ");
+		}
+
+		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEMS, 999.f, FColor::Magenta, ItemsString, false);
+	}
+
+	/*
+	* Remove Log Choices
+	*/
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1);
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2);
+	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3);
 }
 
 void ACharacterHero::OnUnsheath()
@@ -584,24 +684,12 @@ void ACharacterHero::OnSkillEnd()
 	IsSkilling = false;
 }
 
-void ACharacterHero::OnPickup(EPickupableType Type)
+void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray)
 {
-	switch (Type)
-	{
-	case EPickupableType::EXPERIENCE_SMALL:
-		GainExperience(10);
-		break;
-	case EPickupableType::EXPERIENCE_MEDIUM:
-		GainExperience(50);
-		break;
-	case EPickupableType::EXPERIENCE_BIG:
-		GainExperience(250);
-		break;
-	case EPickupableType::POTION:
-		IncreaseHealth(10);
-		break;
-	case EPickupableType::CHEST:
-		GenerateChoices();
-		break;
-	}
+	OnPickUpItem.Broadcast(InventoryArray);
+}
+
+void ACharacterHero::TriggerPickupExpEvent()
+{
+	OnPickUpExp.Broadcast();
 }

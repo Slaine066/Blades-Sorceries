@@ -15,6 +15,8 @@
 class AWeaponBase;
 class AClothPartsBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHitDamageEvent, int, iDamage);
+
 USTRUCT(BlueprintType)
 struct FAttributes
 {
@@ -71,10 +73,24 @@ public:
 	bool Get_IsHit() { return IsHit; }
 	bool Get_IsAttacking() { return IsAttacking; }
 	bool Get_CanDamage() { return CanDamage; }
+	void Set_HealthMax(int HealthMax) { Attributes.HealthMax = HealthMax; }
+	void Set_HealthRegen(float HealthRegen) { Attributes.HealthRegen = HealthRegen; }
+	void Set_Damage(int Damage) { Attributes.Damage = Damage; }
+	void Set_AttackSpeed(float AttackSpeed) { Attributes.AttackSpeed = AttackSpeed; }
+	void Set_Armor(float Armor) { Attributes.Armor = Armor; }
+	void Set_MovementSpeed(float MovementSpeed) { Attributes.MovementSpeed = MovementSpeed; }
+	void Set_PickupRange(float PickupRange) { Attributes.PickupRange = PickupRange; }
+	void Set_CooldownReduction(float CooldownReduction) { Attributes.CooldownReduction = CooldownReduction; }
 	
 	virtual void Attack();
 	virtual void Hit();
 	virtual void Die();
+
+	UPROPERTY(BlueprintAssignable, Category = "HitDamage")
+	FOnHitDamageEvent OnHitDamage;
+
+	UFUNCTION(BlueprintCallable, Category = "HitDamage")
+	void TriggerHitDamageEvent(int iDamage);
 
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	virtual void FloatingDamageFont(float Damage);
@@ -92,8 +108,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	int OutlineSize = 0;
 	
-
-
 protected:
 	/*
 	* Methods Inherited
@@ -128,9 +142,6 @@ protected:
 	TSubclassOf<AClothPartsBase> ClothHairClass;
 	UPROPERTY()
 	AClothPartsBase* ClothHair;
-
-
-
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsDead;

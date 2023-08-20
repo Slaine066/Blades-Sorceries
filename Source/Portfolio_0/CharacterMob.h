@@ -7,6 +7,7 @@
 #include "CharacterMob.generated.h"
 
 class UBehaviorTree;
+enum class EPickupableType;
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterMob : public ACharacterBase
@@ -70,4 +71,7 @@ private:
 	UAnimMontage* SpawnMontage = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	UAnimMontage* NormalAttackMontage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Drop")
+	TSubclassOf<class APickupable> DropItemClass;
 };

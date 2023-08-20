@@ -54,7 +54,8 @@ void ACharacterBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 		FText DamageText = FText::FromString(DamageString);
 		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());*/
 
-		// Call DamageFont
+		// Call DamageHitEvent
+		TriggerHitDamageEvent(Damage);
 
 		// Check if Character is Dead
 		if (Attributes.Health == 0)
@@ -92,6 +93,11 @@ void ACharacterBase::Die()
 
 	// Play Death Montage
 	PlayAnimMontage(DeathMontage);
+}
+
+void ACharacterBase::TriggerHitDamageEvent(int iDamage)
+{
+	OnHitDamage.Broadcast(iDamage);
 }
 
 void ACharacterBase::FloatingDamageFont(float Damage)
