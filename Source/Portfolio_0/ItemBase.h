@@ -44,24 +44,24 @@ enum class EItemGrade : uint8
 	LEGENDARY
 };
 
-USTRUCT()
+USTRUCT(BlueprintType, meta = (AbleSplitPin))
 struct FItemData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	EItem Item;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	EItemType Type;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	EItemGrade Grade;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	UTexture2D* Icon;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FText Name;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FText Description;
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	float Amount;
 };
 
