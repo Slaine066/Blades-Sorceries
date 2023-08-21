@@ -21,6 +21,7 @@ void AItemBase::Initialize(ACharacterHero* Hero)
 			int HealthBonus = HealthMax / ItemData.Amount;
 			HealthMax += HealthBonus;
 			Hero->Set_HealthMax(HealthMax);
+			Hero->TriggerIncreaseHealth();
 			break;
 		}
 		case EItem::HEALTH_REGEN:

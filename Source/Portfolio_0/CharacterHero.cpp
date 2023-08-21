@@ -17,6 +17,7 @@
 #include "ItemBase.h"
 #include "Pickupable.h"
 #include "Utility.h"
+#include "Misc/App.h"
 
 ACharacterHero::ACharacterHero() 
 	: IsComboActive(false), ComboCounter(0)
@@ -364,7 +365,7 @@ void ACharacterHero::IncreaseHealth(int Amount)
 	Attributes.Health += Amount;
 
 	if (Attributes.Health >= Attributes.HealthMax)
-		Attributes.Health = Attributes.HealthMax;
+		Attributes.Health = Attributes.HealthMax;	
 }
 
 void ACharacterHero::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -413,9 +414,10 @@ void ACharacterHero::LevelUp()
 {
 	Attributes.Level += 1;
 	Attributes.Experience = 0;
-	Attributes.ExperienceMax *= 1.25f;
+	Attributes.ExperienceMax *= 1.25f;	
 
 	GenerateChoices();
+	TriggerLevelUpItemSelection(Choices);
 }
 
 void ACharacterHero::GenerateChoices()
@@ -423,7 +425,17 @@ void ACharacterHero::GenerateChoices()
 	/* Pause Game */
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
+	{
 		PlayerController->SetPause(true);
+
+		/*fDelayEventTime += FApp::GetDeltaTime();*/
+
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->bEnableClickEvents = true;
+		PlayerController->bEnableTouchEvents = true;
+		PlayerController->bEnableMouseOverEvents = true;
+		PlayerController->bEnableTouchOverEvents = true;
+	}
 
 		/* Get Choosable Items */
 	TArray<FItemData*> AllItems;
@@ -567,7 +579,16 @@ void ACharacterHero::AddItem(AItemBase* Item)
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
+	{
 		PlayerController->SetPause(false);
+		PlayerController->bShowMouseCursor = false;		
+		PlayerController->bEnableClickEvents = false;
+		PlayerController->bEnableTouchEvents = false;
+		PlayerController->bEnableMouseOverEvents = false;
+		PlayerController->bEnableTouchOverEvents = false;
+	}		
+
+	TriggerLevelUpItemSelectionEnd();
 }
 
 void ACharacterHero::Log()
@@ -684,6 +705,17 @@ void ACharacterHero::OnSkillEnd()
 	IsSkilling = false;
 }
 
+void ACharacterHero::PickItemSelection(FItemData ItemData)
+{
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(ItemData);
+
+	/* Empty Choices Array. */
+	Choices.Empty();
+
+	AddItem(Item);
+}
+
 void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray)
 {
 	OnPickUpItem.Broadcast(InventoryArray);
@@ -692,4 +724,19 @@ void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& Inve
 void ACharacterHero::TriggerPickupExpEvent()
 {
 	OnPickUpExp.Broadcast();
+}
+
+void ACharacterHero::TriggerIncreaseHealth()
+{
+	OnIncreaseHealth.Broadcast();
+}
+
+void ACharacterHero::TriggerLevelUpItemSelection(const TArray<struct FItemData>& ChoiceItemArray)
+{
+	OnLevelUpItemSelection.Broadcast(ChoiceItemArray);
+}
+
+void ACharacterHero::TriggerLevelUpItemSelectionEnd()
+{
+	OnLevelUpItemSelectionEnd.Broadcast();
 }

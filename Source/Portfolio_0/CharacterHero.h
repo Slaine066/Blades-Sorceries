@@ -12,6 +12,9 @@ class UInputAction;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUpItemEvent, const TArray<class AItemBase*>&, InventoryArray);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUpExpEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncreaseHealthEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUpItemSelectionEvent, const TArray<struct FItemData>&, ChoiceItemArray);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpItemSelectionEndEvent);
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
@@ -40,11 +43,26 @@ public:
 	FOnPickUpItemEvent OnPickUpItem;
 	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
 	FOnPickUpExpEvent OnPickUpExp;
+	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
+	FOnPickUpExpEvent OnIncreaseHealth;
+	UPROPERTY(BlueprintAssignable, Category = "Level Up")
+	FOnLevelUpItemSelectionEvent OnLevelUpItemSelection;
+	UPROPERTY(BlueprintAssignable, Category = "Level Up")
+	FOnLevelUpItemSelectionEndEvent OnLevelUpItemSelectionEnd;
+
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void PickItemSelection(FItemData ItemData);
 
 	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
 	void TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray);
 	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
 	void TriggerPickupExpEvent();
+	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
+	void TriggerIncreaseHealth();
+	UFUNCTION(BlueprintCallable, Category = "Level Up")
+	void TriggerLevelUpItemSelection(const TArray<struct FItemData>& ChoiceItemArray);
+	UFUNCTION(BlueprintCallable, Category = "Level Up")
+	void TriggerLevelUpItemSelectionEnd();
 
 
 	// AnimNotify
@@ -180,4 +198,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	TArray<class AItemBase*> Items;
 	TArray<struct FItemData> Choices;
+
+	float fDelayEventTime = 0.f;
 };
