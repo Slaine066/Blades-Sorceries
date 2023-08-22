@@ -52,7 +52,7 @@ void UAnimInstanceCharacter::Die()
 	{
 		Character->GetMesh()->bPauseAnims = true;
 		Character->GetMesh()->bNoSkeletonUpdate = true;
-
+		
 		// Remove Collisions
 		Character->GetCapsuleComponent()->SetCollisionProfileName(TEXT("NoCollision"));
 	}

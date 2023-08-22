@@ -16,3 +16,8 @@ void AMobSkeletonSoldier::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void AMobSkeletonSoldier::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
+}
