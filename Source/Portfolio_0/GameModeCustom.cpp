@@ -4,7 +4,7 @@
 #include "GameModeCustom.h"
 #include "CharacterMob.h"
 #include "Kismet/GameplayStatics.h"
-#include "MobGoblin.h"
+#include "CharacterMob.h"
 #include "Utility.h"
 
 void AGameModeCustom::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -105,7 +105,7 @@ void AGameModeCustom::Spawn(FGameTimer GameTimer)
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-		AMobGoblin* Mob = GetWorld()->SpawnActor<AMobGoblin>(SpawnableMobs[MobType], SpawnLocation, SpawnRotation, SpawnParams);
+		ACharacterMob* Mob = GetWorld()->SpawnActor<ACharacterMob>(SpawnableMobs[MobType], SpawnLocation, SpawnRotation, SpawnParams);
 	
 		if (Mob)
 			GameStateCustom->IncreaseMobCount();

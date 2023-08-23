@@ -8,12 +8,15 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
 
+UENUM()
+enum class EProjectileType { PROJECTILE_HERO, PROJECTILE_MOB };
+
 UCLASS()
 class PORTFOLIO_0_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AProjectileBase();
 
@@ -21,6 +24,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UStaticMeshComponent* GetMeshComponent() const { return ProjectileMeshComponent; }
+
+	void Set_ProjectileType(EProjectileType ProjectileType);
 
 	// Function that initializes the projectile's velocity in the shoot direction.
 	void FireInDirection(const FVector& ShootDirection);
@@ -33,19 +38,15 @@ public:
 	// Sphere collision component.
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	USphereComponent* CollisionComponent;
-
 	// Projectile movement component
 	UPROPERTY(VisibleAnywhere, Category = "ProjectileMovement")
 	UProjectileMovementComponent* ProjectileMovementComponent;
-
 	// Projectile Mesh
 	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
 	class UStaticMeshComponent* ProjectileMeshComponent;
-
 	// Projectile Material
 	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
-		UMaterialInstanceDynamic* ProjectileMaterialInstance;
-
+	UMaterialInstanceDynamic* ProjectileMaterialInstance;
 
 protected:
 	// Called when the game starts or when spawned
@@ -55,12 +56,9 @@ protected:
 
 	/* Variables */
 
-
 private:
-
 	/* Methods */
 
 	/* Variables */
-
 
 };

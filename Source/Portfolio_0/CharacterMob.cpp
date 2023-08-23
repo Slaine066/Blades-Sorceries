@@ -14,7 +14,6 @@
 
 ACharacterMob::ACharacterMob()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
 void ACharacterMob::BeginPlay()

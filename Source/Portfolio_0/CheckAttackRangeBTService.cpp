@@ -3,8 +3,9 @@
 
 #include "CheckAttackRangeBTService.h"
 #include "MobAIController.h"
-#include "CharacterMob.h"
 #include "CharacterHero.h"
+#include "CharacterMob.h"
+#include "MobGoblinShaman.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UCheckAttackRangeBTService::UCheckAttackRangeBTService()
@@ -21,7 +22,13 @@ void UCheckAttackRangeBTService::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 	if (Hero && Mob)
 	{
-		bool IsInAttackRange = (Mob->GetDistanceTo(Hero) <= 50);
+		int AttackRange = 50;
+
+		AMobGoblinShaman* GoblinShaman = Cast<AMobGoblinShaman>(Mob);
+		if (GoblinShaman)
+			AttackRange = 500;
+		
+		bool IsInAttackRange = (Mob->GetDistanceTo(Hero) <= AttackRange);
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsInAttackRange", IsInAttackRange);
 	}
 }
