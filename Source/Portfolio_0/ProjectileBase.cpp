@@ -18,8 +18,6 @@ AProjectileBase::AProjectileBase()
 	{
 		// Use a sphere as a simple collision representation.
 		CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-		// Set the Collision Prifile name to "Weapon"
-		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponHero"));
 		// Set the sphere's collision radius.
 		CollisionComponent->InitSphereRadius(30.0f);
 		// Set the root component to be the collision component.
@@ -56,11 +54,24 @@ AProjectileBase::AProjectileBase()
 		{
 			ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
 		}
+
 		ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
 		ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09, 0.09f, 0.09f));
 		ProjectileMeshComponent->SetupAttachment(RootComponent);
+	}
+}
 
+void AProjectileBase::Set_ProjectileType(EProjectileType ProjectileType)
+{
+	if (ProjectileType == EProjectileType::PROJECTILE_HERO)
+	{
+		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponHero"));
 		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponHero"));
+	}
+	else if (ProjectileType == EProjectileType::PROJECTILE_MOB)
+	{
+		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponMob"));
+		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponMob"));
 	}
 }
 
@@ -76,8 +87,10 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
 	}
 
-	// Logging
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, TEXT("Spell Magic Hit"));
+
+	// Play Hit Effect
+
+	// Play Hit Sound
 
 	Destroy();
 }

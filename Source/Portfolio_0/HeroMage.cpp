@@ -241,6 +241,9 @@ void AHeroMage::NormalAttackFire()
 
 			if (Projectile)
 			{
+				// Set Projectile Collision Profile
+				Projectile->Set_ProjectileType(EProjectileType::PROJECTILE_HERO);
+
 				// Set the projectiles's initial trajectory.
 				FVector LaunchDirection = MuzzleRotation.Vector();
 				Projectile->FireInDirection(LaunchDirection);
