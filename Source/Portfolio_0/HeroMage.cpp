@@ -10,6 +10,10 @@
 #include "ProjectileBase.h"
 #include "Camera/CameraComponent.h"
 
+#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include <Engine/Classes/Kismet/KismetMathLibrary.h>
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+
 AHeroMage::AHeroMage()
 	:IsFlyingState(false), IsSpellState(false), IsNonHitState(false)
 {
@@ -36,12 +40,10 @@ void AHeroMage::OnNormalAttackSpell()
 void AHeroMage::OnSpellEnd()
 {
 	IsSpellState = false;
-	bUseControllerRotationYaw = false;
 }
 
 void AHeroMage::OnAimEnd()
 {
-	bUseControllerRotationYaw = false;
 }
 
 void AHeroMage::OnHitable()
@@ -112,8 +114,7 @@ void AHeroMage::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(FlyingAction, ETriggerEvent::Triggered, this, &AHeroMage::Flying);
 
 		// NormalAttackSpell
-		EnhancedInputComponent->BindAction(NormalAttackSpellAction, ETriggerEvent::Triggered, this, &AHeroMage::NormalAttackSpell);
-		
+		EnhancedInputComponent->BindAction(NormalAttackSpellAction, ETriggerEvent::Triggered, this, &AHeroMage::NormalAttackSpell);		
 	}
 }
 
@@ -200,6 +201,8 @@ void AHeroMage::NormalAttackSpell(const FInputActionValue& Value)
 	}
 	else
 	{
+		PickingTurnToAim();
+
 		if (AnimInstanceHeroMage->IsFlying)
 		{
 			PlayAnimMontage(NormalAttackSpell_Fly_Montage);
@@ -210,9 +213,37 @@ void AHeroMage::NormalAttackSpell(const FInputActionValue& Value)
 		}
 
 		IsSpellState = true;
-
-		bUseControllerRotationYaw = true;
 	}
+}
+
+void AHeroMage::PickingTurnToAim()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		FHitResult Hit;
+		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+		if (Hit.bBlockingHit)
+		{
+			//FVector PickingLocation = Hit.ImpactPoint;
+			//FVector PlayerLocation = GetActorLocation();
+
+			//FVector PlayerForwardVector = GetActorForwardVector();			
+			//FVector ToPickingVector = PickingLocation - PlayerLocation;
+
+			//PlayerForwardVector.Normalize();
+			//ToPickingVector.Normalize();
+
+			//float Dot = FVector::DotProduct(PlayerForwardVector, ToPickingVector);
+			//float AcosAngle = FMath::Acos(Dot);
+			//float AngleDegree = FMath::RadiansToDegrees(AcosAngle);
+
+			FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
+				FVector(Hit.Location.X, Hit.Location.Y, GetActorLocation().Z));
+
+			SetActorRotation(LookRotation);			
+		}		
+	}	
 }
 
 void AHeroMage::NormalAttackFire()
@@ -286,8 +317,6 @@ void AHeroMage::Skill_1(const FInputActionValue& Value)
 		}
 
 		IsSpellState = true;
-
-		bUseControllerRotationYaw = true;
 	}
 }
 
@@ -315,8 +344,6 @@ void AHeroMage::Skill_2(const FInputActionValue& Value)
 		}
 
 		IsSpellState = true;
-
-		bUseControllerRotationYaw = true;
 	}
 
 }
@@ -345,7 +372,5 @@ void AHeroMage::Skill_3(const FInputActionValue& Value)
 		}
 
 		IsSpellState = true;
-
-		bUseControllerRotationYaw = true;
 	}
 }
