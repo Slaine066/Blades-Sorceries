@@ -41,6 +41,7 @@ protected:
 	/* Methods */
 	void Flying(const FInputActionValue& Value);
 	void NormalAttackSpell(const FInputActionValue& Value);
+	void PickingTurnToAim();
 
 	UFUNCTION()
 	void NormalAttackFire();
@@ -52,7 +53,7 @@ protected:
 	virtual void Skill_2(const FInputActionValue& Value);
 	//ChargeAttackSpell
 	virtual void Skill_3(const FInputActionValue& Value);
-
+	
 	/* Variables */
 
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -63,8 +64,6 @@ protected:
 	//projectile class to spawn
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectileBase> ProjectileClass;
-
-
 
 private:
 	/* Methods */

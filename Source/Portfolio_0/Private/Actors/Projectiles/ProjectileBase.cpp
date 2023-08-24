@@ -2,6 +2,8 @@
 
 
 #include "Actors/Projectiles/ProjectileBase.h"
+#include "Actors/Characters/CharacterBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -12,6 +14,7 @@ AProjectileBase::AProjectileBase()
 	if (RootComponent)
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSceneComponent"));
+		SetRootComponent(RootComponent);
 	}
 
 	if (!CollisionComponent)
@@ -25,6 +28,8 @@ AProjectileBase::AProjectileBase()
 
 		//Event called when component hits somthing
 		CollisionComponent->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBase::OnOverlapBegin);
+		CollisionComponent->SetGenerateOverlapEvents(true);
 	}
 
 	if (!ProjectileMovementComponent)
@@ -37,7 +42,7 @@ AProjectileBase::AProjectileBase()
 		ProjectileMovementComponent->bRotationFollowsVelocity = true;
 		ProjectileMovementComponent->bShouldBounce = false;
 		ProjectileMovementComponent->Bounciness = 0.3f;
-		ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+		ProjectileMovementComponent->ProjectileGravityScale = 0.0f;		
 	}
 
 	if (!ProjectileMeshComponent)
@@ -65,12 +70,12 @@ void AProjectileBase::Set_ProjectileType(EProjectileType ProjectileType)
 {
 	if (ProjectileType == EProjectileType::PROJECTILE_HERO)
 	{
-		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponHero"));
+		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponHero"));
 	}
 	else if (ProjectileType == EProjectileType::PROJECTILE_MOB)
 	{
-		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("WeaponMob"));
+		CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 		ProjectileMeshComponent->SetCollisionProfileName(TEXT("WeaponMob"));
 	}
 }
@@ -87,6 +92,7 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
 	}
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, TEXT("Projectile Hit"));
 
 	// Play Hit Effect
 
@@ -99,7 +105,25 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+}
+
+void AProjectileBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ACharacterBase* Character = Cast<ACharacterBase>(GetOwner());
+	ACharacterBase* OtherCharacter = Cast<ACharacterBase>(OtherActor);
+
+	if (!Character || !OtherCharacter)
+		return;
+
+	if (OtherCharacter == Cast<ACharacterBase>(GetOwner()))
+		return;
+
+	if (OtherCharacter->Get_IsDead())
+		return;
+
+	// Damage to the Overlapped Character
+	UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
 }
 
 // Called every frame

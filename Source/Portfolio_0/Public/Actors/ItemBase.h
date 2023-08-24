@@ -65,7 +65,7 @@ struct FItemData : public FTableRowBase
 	float Amount;
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class PORTFOLIO_0_API AItemBase : public AActor
 {
 	GENERATED_BODY()

@@ -6,7 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Actors/WeaponBase.h"
-#include "Actors/Controllers/Mob/AIControllerMob.h"
+#include "Actors/Controllers/Mob/MobAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Actors/GameStates/GameStateCustom.h"
@@ -91,9 +91,9 @@ void ACharacterMob::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	}
 	else if (Montage->GetName() == HitMontage->GetName())
 	{
-		AAIControllerMob* AIControllerMob = Cast<AAIControllerMob>(GetController());
-		if (AIControllerMob)
-			AIControllerMob->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", false);
+		AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+		if (MobAIController)
+			MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", false);
 	}
 }
 
@@ -108,10 +108,12 @@ void ACharacterMob::Hit()
 {
 	Super::Hit();
 
-	AAIControllerMob* AIControllerMob = Cast<AAIControllerMob>(GetController());
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
 
-	if (AIControllerMob)
-		AIControllerMob->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", true);
+	if (MobAIController)
+		MobAIController->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", true);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Hit")));
 }
 
 void ACharacterMob::Die()
@@ -119,9 +121,9 @@ void ACharacterMob::Die()
 	Super::Die();
 
 	// UnPossess
-	AAIControllerMob* AIControllerMob = Cast<AAIControllerMob>(GetController());
-	if (AIControllerMob)
-		AIControllerMob->UnPossess();
+	AMobAIController* MobAIController = Cast<AMobAIController>(GetController());
+	if (MobAIController)
+		MobAIController->UnPossess();
 
 	// Drop Item
 	FActorSpawnParameters SpawnParams;

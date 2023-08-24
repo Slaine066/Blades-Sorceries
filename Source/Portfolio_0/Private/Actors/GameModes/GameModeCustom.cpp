@@ -77,7 +77,7 @@ void AGameModeCustom::CheckGameTimer()
 	// Log MobCountLimit
 	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT_LIMIT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Count Limit: %d"), MobCountLimit), false);
 
-	Spawn(GameTimer);
+	//Spawn(GameTimer);
 }
 
 void AGameModeCustom::Spawn(FGameTimer GameTimer)

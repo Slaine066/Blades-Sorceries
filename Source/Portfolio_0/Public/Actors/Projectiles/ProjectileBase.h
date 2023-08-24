@@ -21,7 +21,6 @@ public:
 	AProjectileBase();
 
 	/* Methods */
-	virtual void Tick(float DeltaTime) override;
 
 	UStaticMeshComponent* GetMeshComponent() const { return ProjectileMeshComponent; }
 
@@ -51,13 +50,22 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	/* Methods */
 
 	/* Variables */
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+		float Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+		TSubclassOf<UDamageType> DamageType;
 
 private:
 	/* Methods */
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 	/* Variables */
 
