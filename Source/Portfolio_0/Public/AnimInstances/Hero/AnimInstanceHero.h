@@ -21,10 +21,6 @@ public:
 	void Unsheath();
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Sheath();
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void NormalAttackCombo();
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void SkillEnd();
 
 	/*
 	** Variables

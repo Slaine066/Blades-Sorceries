@@ -98,7 +98,6 @@ public:
 	/*
 	* Variables
 	*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	FLinearColor HitDamageColorRGBA{1.f, 1.f, 1.f, 1.f};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")

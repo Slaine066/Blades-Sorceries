@@ -9,8 +9,6 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
-#include <EnhancedInputSubsystems.h>
-#include <EnhancedInputComponent.h>
 #include "AnimInstances/Hero/AnimInstanceHero.h"
 #include "Actors/WeaponBase.h"
 #include "Engine/DataTable.h"
@@ -20,7 +18,6 @@
 #include "Misc/App.h"
 
 ACharacterHero::ACharacterHero() 
-	: IsComboActive(false), ComboCounter(0)
 {
 	// Character
 	// Doesn't rotate when Camera rotates.
@@ -56,7 +53,6 @@ ACharacterHero::ACharacterHero()
 	FTransform AddCamOffset;	
 	AddCamOffset.SetLocation(FVector(200.f, 0.f, 600.f));
 	AddCamOffset.SetRotation(FRotator(-45.f, 0.f, 0.f).Quaternion());	
-
 	CameraComponent->AddAdditiveOffset(AddCamOffset, 10.f);
 	
 	// SphereCollisionComponent
@@ -68,11 +64,6 @@ ACharacterHero::ACharacterHero()
 void ACharacterHero::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Setup Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-			Subsystem->AddMappingContext(InputMappingContext, 0);
 
 	// Setup Collision Profiles
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Hero"));
@@ -111,51 +102,6 @@ void ACharacterHero::Tick(float DeltaTime)
 	Log();
 }
 
-void ACharacterHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	// Set up action bindings.
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacterHero::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacterHero::StopJumping);
-
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACharacterHero::Move);
-
-		// Looking
-		//EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACharacterHero::Look);
-
-		// Unsheath
-		EnhancedInputComponent->BindAction(UnsheathAction, ETriggerEvent::Triggered, this, &ACharacterHero::Unsheath);
-
-		// Normal Attack
-		EnhancedInputComponent->BindAction(NormalAttackAction, ETriggerEvent::Triggered, this, &ACharacterHero::NormalAttack);
-
-		// Skills
-		EnhancedInputComponent->BindAction(Skill_1_Action, ETriggerEvent::Triggered, this, &ACharacterHero::Skill_1);
-		EnhancedInputComponent->BindAction(Skill_2_Action, ETriggerEvent::Triggered, this, &ACharacterHero::Skill_2);
-		EnhancedInputComponent->BindAction(Skill_3_Action, ETriggerEvent::Triggered, this, &ACharacterHero::Skill_3);
-
-		// Dash
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACharacterHero::Dash);
-
-		// Pause
-		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &ACharacterHero::Pause);
-
-		// Level Up (Testing)
-		EnhancedInputComponent->BindAction(LevelUpAction, ETriggerEvent::Triggered, this, &ACharacterHero::LevelUp);
-		// Choice 1 (Testing)
-		EnhancedInputComponent->BindAction(Choice1Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice1);
-		// Choice 2 (Testing)
-		EnhancedInputComponent->BindAction(Choice2Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice2);
-		// Choice 3 (Testing)
-		EnhancedInputComponent->BindAction(Choice3Action, ETriggerEvent::Triggered, this, &ACharacterHero::Choice3);
-	}
-}
-
 void ACharacterHero::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
@@ -182,7 +128,7 @@ void ACharacterHero::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 void ACharacterHero::Move(const FInputActionValue& Value)
 {
 	// Can't move while using Skills.
-	if (IsSkilling || IsHit)
+	if (IsHit)
 		return;
 
 	// Input is a Vector2D
@@ -219,10 +165,30 @@ void ACharacterHero::Look(const FInputActionValue& Value)
 	}
 }
 
-void ACharacterHero::Unsheath(const FInputActionValue& Value)
+void ACharacterHero::NormalAttack()
+{
+}
+
+void ACharacterHero::Fly()
+{
+}
+
+void ACharacterHero::Pause()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		if (PlayerController->IsPaused())
+			PlayerController->SetPause(false);
+		else
+			PlayerController->SetPause(true);
+	}
+}
+
+void ACharacterHero::Unsheath()
 {
 	// Can't Unsheath/Sheath while using Normal Attacks or Skills.
-	if (IsAttacking || IsSkilling || IsHit)
+	if (IsAttacking || IsHit)
 		return;
 
 	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
@@ -235,119 +201,50 @@ void ACharacterHero::Unsheath(const FInputActionValue& Value)
 		PlayAnimMontage(UnsheathMontage);
 }
 
-void ACharacterHero::NormalAttack(const FInputActionValue& Value)
+void ACharacterHero::LevelUp()
 {
-	// Can't use Normal Attacks while Skilling.
-	if (IsSkilling || IsHit)
-		return;
+	Attributes.Level += 1;
+	Attributes.Experience = 0;
+	Attributes.ExperienceMax *= 1.25f;
 
-	// If already Attacking, toggle Combo variable.
-	if (IsAttacking)
-	{
-		if (ComboCounter != 0)
-			IsComboActive = true;
-	}
-	else
-	{
-		UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-		if (!AnimInstanceHero)
-			return;
-
-		if (AnimInstanceHero->IsWeaponUnsheathed)
-			PlayAnimMontage(NormalAttackMontages[0]);
-		else
-		{
-			PlayAnimMontage(UnsheathAttackMontage);
-		}
-
-		IsAttacking = true;
-		ComboCounter = 1;
-	}
+	GenerateChoices();
+	TriggerLevelUpItemSelection(Choices);
 }
 
-void ACharacterHero::Skill_1(const FInputActionValue& Value)
+void ACharacterHero::Choice1()
 {
-	// Can't use Skills when Skilling.
-	if (IsSkilling || IsHit)
-		return;
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[0]);
 
-	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHero)
-		return;
+	/* Empty Choices Array. */
+	Choices.Empty();
 
-	// Can't use Skills when Jumping.
-	if (AnimInstanceHero->IsFalling)
-		return;
-
-	// Can't use Skills when Weapon is Sheathed.
-	if (!AnimInstanceHero->IsWeaponUnsheathed)
-		return;
-
-	PlayAnimMontage(Skill_1_Montage);
-	IsSkilling = true;
-	IsAttacking = false;
+	AddItem(Item);
 }
 
-void ACharacterHero::Skill_2(const FInputActionValue& Value)
+void ACharacterHero::Choice2()
 {
-	// Can't use Skills when Skilling.
-	if (IsSkilling || IsHit)
-		return;
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[1]);
 
-	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHero)
-		return;
+	/* Empty Choices Array. */
+	Choices.Empty();
 
-	// Can't use Skills when Jumping.
-	if (AnimInstanceHero->IsFalling)
-		return;
-
-	// Can't use Skills when Weapon is Sheathed.
-	if (!AnimInstanceHero->IsWeaponUnsheathed)
-		return;
-
-	PlayAnimMontage(Skill_2_Montage);
-	IsSkilling = true;
-	IsAttacking = false;
+	AddItem(Item);
 }
 
-void ACharacterHero::Skill_3(const FInputActionValue& Value)
+void ACharacterHero::Choice3()
 {
-	// Can't use Skills when Skilling.
-	if (IsSkilling || IsHit)
-		return;
+	/* Create Item based on Chosen Item. */
+	AItemBase* Item = NewObject<AItemBase>();
+	Item->Set_ItemData(Choices[2]);
 
-	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHero)
-		return;
+	/* Empty Choices Array. */
+	Choices.Empty();
 
-	// Can't use Skills when Jumping.
-	if (AnimInstanceHero->IsFalling)
-		return;
-
-	// Can't use Skills when Weapon is Sheathed.
-	if (!AnimInstanceHero->IsWeaponUnsheathed)
-		return;
-
-	PlayAnimMontage(Skill_3_Montage);
-	IsSkilling = true;
-	IsAttacking = false;
-}
-
-void ACharacterHero::Dash(const FInputActionValue& Value)
-{
-}
-
-void ACharacterHero::Pause(const FInputActionValue& Value)
-{
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
-	{
-		if (PlayerController->IsPaused())
-			PlayerController->SetPause(false);
-		else
-			PlayerController->SetPause(true);
-	}
+	AddItem(Item);
 }
 
 void ACharacterHero::GainExperience(int Amount)
@@ -408,16 +305,6 @@ void ACharacterHero::OnCapsuleOverlapBegin(UPrimitiveComponent* OverlappedCompon
 	}
 
 	Pickupable->Destroy();
-}
-
-void ACharacterHero::LevelUp()
-{
-	Attributes.Level += 1;
-	Attributes.Experience = 0;
-	Attributes.ExperienceMax *= 1.25f;	
-
-	GenerateChoices();
-	TriggerLevelUpItemSelection(Choices);
 }
 
 void ACharacterHero::GenerateChoices()
@@ -512,42 +399,6 @@ void ACharacterHero::GenerateChoices()
 void ACharacterHero::CheckChoices()
 {
 	// TODO
-}
-
-void ACharacterHero::Choice1()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[0]);
-	
-	/* Empty Choices Array. */
-	Choices.Empty();
-	
-	AddItem(Item);
-}
-
-void ACharacterHero::Choice2()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[1]);
-
-	/* Empty Choices Array. */
-	Choices.Empty();
-
-	AddItem(Item);
-}
-
-void ACharacterHero::Choice3()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[2]);
-
-	/* Empty Choices Array. */
-	Choices.Empty();
-
-	AddItem(Item);
 }
 
 void ACharacterHero::AddItem(AItemBase* Item)
@@ -667,42 +518,6 @@ void ACharacterHero::OnSheath()
 		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
 		WeaponLeft->SetOwner(this);
 	}
-}
-
-void ACharacterHero::OnNormalAttackCombo()
-{
-	if (IsComboActive)
-	{
-		IsComboActive = false;
-
-		switch (ComboCounter)
-		{
-		case 1:
-			ComboCounter = 2;
-			PlayAnimMontage(NormalAttackMontages[1]);
-			break;
-		case 2:
-			ComboCounter = 3;
-			PlayAnimMontage(NormalAttackMontages[2]);
-			break;
-		case 3:
-			ComboCounter = 0;
-			PlayAnimMontage(NormalAttackMontages[3]);
-			break;
-		default:
-			UE_LOG(LogTemp, Warning, TEXT("ACharacterHero::OnNormalAttackCombo(): Default"));
-		}
-	}
-	else
-	{
-		IsAttacking = false;
-		ComboCounter = 0;
-	}
-}
-
-void ACharacterHero::OnSkillEnd()
-{
-	IsSkilling = false;
 }
 
 void ACharacterHero::PickItemSelection(FItemData ItemData)

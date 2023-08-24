@@ -20,8 +20,6 @@ void UAnimInstanceHero::CheckHero()
 {
 	if (Character)
 		Hero = Cast<ACharacterHero>(Character);
-
-	
 }
 
 void UAnimInstanceHero::Unsheath()
@@ -40,16 +38,4 @@ void UAnimInstanceHero::Sheath()
 		Hero->OnSheath();
 		IsWeaponUnsheathed = false;
 	}
-}
-
-void UAnimInstanceHero::NormalAttackCombo()
-{
-	if (Hero)
-		Hero->OnNormalAttackCombo();
-}
-
-void UAnimInstanceHero::SkillEnd()
-{
-	if (Hero)
-		Hero->OnSkillEnd();
 }

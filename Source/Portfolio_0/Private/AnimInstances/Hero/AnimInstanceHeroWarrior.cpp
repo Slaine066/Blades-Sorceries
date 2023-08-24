@@ -8,6 +8,12 @@ UAnimInstanceHeroWarrior::UAnimInstanceHeroWarrior()
 {
 }
 
+void UAnimInstanceHeroWarrior::NormalAttackCombo()
+{
+	if (HeroWarrior)
+		HeroWarrior->OnNormalAttackCombo();
+}
+
 void UAnimInstanceHeroWarrior::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
