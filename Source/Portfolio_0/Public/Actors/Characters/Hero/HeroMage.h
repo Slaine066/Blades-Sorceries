@@ -17,6 +17,10 @@ class PORTFOLIO_0_API AHeroMage : public ACharacterHero
 public:
 	AHeroMage();
 
+	/* Inherited Methods */
+	virtual void NormalAttack() override;
+	virtual void Fly() override;
+
 	/* Methods */
 	void OnFlying();
 	void OnLanding();
@@ -28,19 +32,16 @@ public:
 	/* Variables */
 	// Magic muzzle offset from the camera location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
-		FVector SpellMuzzleOffset;
+	FVector SpellMuzzleOffset;
 
 protected:
 	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	/* Methods */
-	void Flying(const FInputActionValue& Value);
-	void NormalAttackSpell(const FInputActionValue& Value);
 	void PickingTurnToAim();
 
 	UFUNCTION()
@@ -53,61 +54,51 @@ protected:
 	virtual void Skill_2(const FInputActionValue& Value);
 	//ChargeAttackSpell
 	virtual void Skill_3(const FInputActionValue& Value);
-	
-	/* Variables */
 
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-		UInputAction* FlyingAction;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-		UInputAction* NormalAttackSpellAction;
-
-	//projectile class to spawn
+	// Projectile Class to Spawn
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectileBase> ProjectileClass;
 
 private:
 	/* Methods */
-
 	UPROPERTY(EditDefaultsOnly, Category = "Flying")
-		UAnimMontage* Flying_Montage;
+	UAnimMontage* Flying_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Flying")
-		UAnimMontage* Landing_Montage;
+	UAnimMontage* Landing_Montage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* NormalAttackSpell_Montage;
+	UAnimMontage* NormalAttackSpell_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* NormalAttackSpell_Fly_Montage;
+	UAnimMontage* NormalAttackSpell_Fly_Montage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* RangeAttackSpell_Montage;
+	UAnimMontage* RangeAttackSpell_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* RangeAttackSpell_Fly_Montage;
+	UAnimMontage* RangeAttackSpell_Fly_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* PirecingAttackSpell_Montage;
+	UAnimMontage* PirecingAttackSpell_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* PirecingAttackSpell_Fly_Montage;
+	UAnimMontage* PirecingAttackSpell_Fly_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* ChargeAttackSpell_Montage;
+	UAnimMontage* ChargeAttackSpell_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Spell")
-		UAnimMontage* ChargeAttackSpell_Fly_Montage;
+	UAnimMontage* ChargeAttackSpell_Fly_Montage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
-		UAnimMontage* HitMotion_Montage;
+	UAnimMontage* HitMotion_Montage;
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
-		UAnimMontage* HitMotion_Fly_Montage;
+	UAnimMontage* HitMotion_Fly_Montage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-		UAnimMontage* HitMontage_Fly;
+	UAnimMontage* HitMontage_Fly;
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-		UAnimMontage* DeathMontage_Fly;
+	UAnimMontage* DeathMontage_Fly;
+	
 	/* Variables */
-
 	UPROPERTY(VisibleAnywhere, Category = "Flying")
-		bool IsFlyingState;
+	bool IsFlyingState;
 	UPROPERTY(VisibleAnywhere, Category = "Spell")
-		bool IsSpellState;
+	bool IsSpellState;
 	UPROPERTY(VisibleAnywhere, Category = "Hit")
-		bool IsNonHitState;
-
-
+	bool IsNonHitState;
 };

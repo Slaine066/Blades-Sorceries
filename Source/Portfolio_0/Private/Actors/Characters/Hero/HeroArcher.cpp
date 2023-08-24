@@ -14,19 +14,25 @@ AHeroArcher::AHeroArcher()
 {
 }
 
+void AHeroArcher::NormalAttack()
+{
+	if (bShoot == false)
+	{
+		PlayAnimMontage(NormalAttackMontage);
+		ArrowFire();
+	}
+}
+
 void AHeroArcher::OnNormalAttack()
 {
 	bIsAttack = true;
 }
-
-
 
 void AHeroArcher::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SetWeapon();
-
 }
 
 void AHeroArcher::Tick(float DeltaTime)
@@ -40,27 +46,11 @@ void AHeroArcher::Tick(float DeltaTime)
 		fShootTime += DeltaTime;
 	}
 
-
  	if (fShootTime >= 1.f)
 	{
 		bShoot = false;
 		fShootTime = 0.f;
 	}
-
-
-}
-
-void AHeroArcher::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// NormallAttack
-			EnhancedInputComponent->BindAction(NormalAttackArcherAction, ETriggerEvent::Triggered, this, &AHeroArcher::NormalAttackFunc);
-
-	}
-
 }
 
 void AHeroArcher::SetWeapon()
@@ -88,11 +78,7 @@ void AHeroArcher::SetWeapon()
 
 void AHeroArcher::NormalAttackFunc(const FInputActionValue& Value)
 {
-	if (bShoot == false)
-	{
-		PlayAnimMontage(NormalAttack);
-		ArrowFire();
-	}
+	
 }
 
 void AHeroArcher::UpdateMousePos()
@@ -100,8 +86,6 @@ void AHeroArcher::UpdateMousePos()
 	m_vMousePosition = FVector::ZeroVector;
 	float fMouseX = 0.f;
 	float fMouseY = 0.f;
-
-	
 
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
@@ -189,11 +173,7 @@ void AHeroArcher::ArrowFire()
 			// 생성된 프로젝타일 객체 사용
 			Projectile->FireArrowDirection(GetActorForwardVector());
 		}
-
 	}
-
-
-
 }
 
 void AHeroArcher::Fire(FVector vDirection)
@@ -248,9 +228,6 @@ void AHeroArcher::Fire(FVector vDirection)
 	}
 	else
 		UE_LOG(LogTemp, Log, TEXT("Fuck"));
-
-
-
 }
 
 void AHeroArcher::HandlePicking()
@@ -269,9 +246,6 @@ void AHeroArcher::HandlePicking()
 
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this); // 이 액터를 무시하도록 설정하거나 필요에 따라 추가 설정
-
-
-
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
@@ -346,7 +320,4 @@ void AHeroArcher::HandlePicking()
 //	//AddControllerYawInput();
 //	
 //}
-
 }
-
-

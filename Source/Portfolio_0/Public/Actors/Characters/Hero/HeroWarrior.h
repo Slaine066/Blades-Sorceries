@@ -15,8 +15,14 @@ public:
 	AHeroWarrior();
 
 	/*
+	* Methods Inherited
+	*/
+	virtual void NormalAttack() override;
+
+	/*
 	* Methods
 	*/
+	void OnNormalAttackCombo();
 
 	/*
 	* Variables
@@ -42,9 +48,18 @@ private:
 	/*
 	* Methods
 	*/
+	
 
 	/*
 	* Variables
 	*/
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TArray<UAnimMontage*> NormalAttackMontages;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* UnsheathAttackMontage;
 
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool IsComboActive;
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	int ComboCounter;
 };
