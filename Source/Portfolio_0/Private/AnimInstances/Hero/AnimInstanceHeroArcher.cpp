@@ -2,7 +2,7 @@
 
 
 #include "AnimInstances/Hero/AnimInstanceHeroArcher.h"
-#include "Actors/Characters/Hero/CharacterHeroArcher.h"
+#include "Actors/Characters/Hero/HeroArcher.h"
 
 UAnimInstanceHeroArcher::UAnimInstanceHeroArcher()
 {
@@ -25,6 +25,6 @@ void UAnimInstanceHeroArcher::CheckHeroArcher()
 {
 	if (Hero)
 	{
-		Archer = Cast<ACharacterHeroArcher>(Hero);
+		Archer = Cast<AHeroArcher>(Hero);
 	}
 }

@@ -18,7 +18,7 @@ public:
 	UAnimInstanceHeroArcher();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class ACharacterHeroArcher* Archer;
+	class AHeroArcher* Archer;
 
 	UFUNCTION(BlueprintCallable, Category = "NormalAttack")
 	void NormalAttackFunc();

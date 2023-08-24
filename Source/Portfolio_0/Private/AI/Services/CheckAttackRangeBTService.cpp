@@ -2,7 +2,7 @@
 
 
 #include "AI/Services/CheckAttackRangeBTService.h"
-#include "Actors/Controllers/Mob/MobAIController.h"
+#include "Actors/Controllers/Mob/AIControllerMob.h"
 #include "Actors/Characters/Hero/CharacterHero.h"
 #include "Actors/Characters/Mob/CharacterMob.h"
 #include "Actors/Characters/Mob/MobGoblinShaman.h"
