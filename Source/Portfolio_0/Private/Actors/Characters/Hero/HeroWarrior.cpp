@@ -3,6 +3,8 @@
 
 #include "Actors/Characters/Hero/HeroWarrior.h"
 #include "AnimInstances/Hero/AnimInstanceHero.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Actors/WeaponBase.h"
 #include <EnhancedInputComponent.h>
 
 AHeroWarrior::AHeroWarrior()
@@ -43,6 +45,27 @@ void AHeroWarrior::NormalAttack()
 void AHeroWarrior::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Spawn Weapon at run-time.
+	if (WeaponClassLeft)
+	{
+		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
+
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
+		if (!WeaponSocket)
+			return;
+
+		// Retrieve WeaponSocket.
+		if (WeaponSocket)
+		{
+			// Attach Weapon to WeaponSocket and set Owner.
+			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
+			WeaponLeft->SetOwner(this);
+
+			// Setup Collision Profile
+			WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
+		}
+	}
 }
 
 void AHeroWarrior::Tick(float DeltaTime)
