@@ -97,6 +97,7 @@ void ACharacterBase::Die()
 
 void ACharacterBase::TriggerHitDamageEvent(int iDamage)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Damage Broadcast Called;"));
 	OnHitDamage.Broadcast(iDamage);
 }
 

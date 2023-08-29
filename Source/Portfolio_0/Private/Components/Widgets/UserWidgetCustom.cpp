@@ -10,14 +10,38 @@
 UUserWidgetCustom::UUserWidgetCustom(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
-	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
+}
 
-	ExampleButton = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), TEXT("ExampleButtonName"));
+void UUserWidgetCustom::NativeOnInitialized()
+{
+	//Only one called at create
+	Super::NativeOnInitialized();
+}
+
+void UUserWidgetCustom::NativePreConstruct()
+{
+	//Called every add viewport time
+	Super::NativePreConstruct();
+
+}
+
+void UUserWidgetCustom::NativeDestruct()
+{
+	//Called every remove viewport time
+	Super::NativeDestruct();
+
 }
 
 void UUserWidgetCustom::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//Bind delegates here
+
+}
+
+FReply UUserWidgetCustom::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	return Reply;
 }

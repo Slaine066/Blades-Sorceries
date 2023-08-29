@@ -3,23 +3,119 @@
 
 #include "Actors/Controllers/Hero/PlayerControllerHero.h"
 #include "Actors/Characters/Hero/CharacterHero.h"
+#include "Components/Widgets/UserWidgetCustom.h"
+#include "Components/Widgets/PlayerScreenInfoUI.h"
+#include "Components/Widgets/ItemSelectionUI.h"
+#include "Actors/GameStates/GameStateCustom.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
 
 APlayerControllerHero::APlayerControllerHero()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_MainPlayScreen_C(TEXT("'/Game/Portfolio_0/UI/WBP_MainPlayScreen.WBP_MainPlayScreen_C'"));
+	if (WBP_MainPlayScreen_C.Succeeded())
+	{
+		UUserWidget = WBP_MainPlayScreen_C.Class;
+	}
+	
+	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_ItemSelectionSpace_C(TEXT("'/Game/Portfolio_0/UI/WBP_ItemSelectionSpace.WBP_ItemSelectionSpace_C'"));
+	if (WBP_ItemSelectionSpace_C.Succeeded())
+	{
+		UItemSelectionWidget = WBP_ItemSelectionSpace_C.Class;
+	}
+}
+
+void APlayerControllerHero::SetPlayerHpInfoToWidget(int iDamage)
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes_Ref());
+}
+
+void APlayerControllerHero::IncreasePlayerHpInfoToWidget()
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes_Ref());
+}
+
+void APlayerControllerHero::SetPlayerExpInfoToWidget()
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerExpInfo(Hero->Get_Attributes_Ref());
+}
+
+void APlayerControllerHero::SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray)
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetItemInventoryInfo(InventoryArray);
+}
+
+void APlayerControllerHero::SetGameTimer(int Minutes, int Seconds)
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetTimerInfo(Minutes, Seconds);
+
+	SetStage(Minutes);
+}
+
+void APlayerControllerHero::SetMobCount(int MobCount)
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetMobCountInfo(MobCount);
+}
+
+void APlayerControllerHero::SetStage(int Stage)
+{
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetStageInfo(Stage);
+}
+
+void APlayerControllerHero::SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray)
+{
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(true);
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SetItemSelectionInfotoSlot(ChoiceItemArray);
+}
+
+void APlayerControllerHero::EndSwitchItemSelection()
+{
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
+}
+
+UUserWidgetCustom* APlayerControllerHero::GetUserWidget() const
+{
+	return UUserScreenInfoWidget;
+}
+
+UUserWidgetCustom* APlayerControllerHero::GetItemSelectionWidget() const
+{
+	return UUserItemSelectionWidget;	
 }
 
 void APlayerControllerHero::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameState = GetWorld()->GetGameState<AGameStateCustom>();
+
 	Hero = Cast<ACharacterHero>(GetPawn());
 
 	// Setup Input Mapping Context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		Subsystem->AddMappingContext(InputMappingContext, 0);
+
+	UUserScreenInfoWidget = CreateWidget<UUserWidgetCustom>(this, UUserWidget);
+	UUserScreenInfoWidget->AddToViewport();
+
+	UUserItemSelectionWidget = CreateWidget<UUserWidgetCustom>(this, UItemSelectionWidget);
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
+	UUserItemSelectionWidget->AddToViewport();
+
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->BindAttribute(Hero->Get_Attributes());
+
+	Hero->OnHitDamage.AddDynamic(this, &APlayerControllerHero::SetPlayerHpInfoToWidget);
+	Hero->OnIncreaseHealth.AddDynamic(this, &APlayerControllerHero::IncreasePlayerHpInfoToWidget);
+	Hero->OnPickUpExp.AddDynamic(this, &APlayerControllerHero::SetPlayerExpInfoToWidget);
+	Hero->OnPickUpItem.AddDynamic(this, &APlayerControllerHero::SetPlayerItemInventory);
+
+	GameState->OnGetTime.AddDynamic(this, &APlayerControllerHero::SetGameTimer);
+	GameState->OnGetMonsterCount.AddDynamic(this, &APlayerControllerHero::SetMobCount);
+
+	Hero->OnLevelUpItemSelection.AddDynamic(this, &APlayerControllerHero::SetItemSelectionItem);
+	Hero->OnLevelUpItemSelectionEnd.AddDynamic(this, &APlayerControllerHero::EndSwitchItemSelection);
 }
 
 void APlayerControllerHero::SetupInputComponent()

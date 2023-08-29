@@ -28,10 +28,39 @@ public:
 	/*
 	* Methods 
 	*/
+	UFUNCTION()
+	void SetPlayerHpInfoToWidget(int iDamage);
+
+	UFUNCTION()
+	void IncreasePlayerHpInfoToWidget();
+
+	UFUNCTION()
+	void SetPlayerExpInfoToWidget();
+
+	UFUNCTION()
+	void SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray);
+
+	UFUNCTION()
+	void SetGameTimer(int Minutes, int Seconds);
+
+	UFUNCTION()
+	void SetMobCount(int MobCount);
+
+	UFUNCTION()
+	void SetStage(int Stage);
+
+	UFUNCTION()
+	void SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray);
+
+	UFUNCTION()
+	void EndSwitchItemSelection();
 
 	/*
 	* Variables
 	*/
+
+	class UUserWidgetCustom* GetUserWidget() const;
+	class UUserWidgetCustom* GetItemSelectionWidget() const;
 
 protected:
 	/*
@@ -89,6 +118,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* Choice3Action;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UUserWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
 
 private:
 	/*
@@ -102,5 +135,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputMappingContext* InputMappingContext;
 
+	UPROPERTY()
+	class UUserWidgetCustom* UUserScreenInfoWidget;
+	UPROPERTY()
+	class UUserWidgetCustom* UUserItemSelectionWidget;
+
 	class ACharacterHero* Hero;
+	class AGameStateCustom* GameState;
 };
