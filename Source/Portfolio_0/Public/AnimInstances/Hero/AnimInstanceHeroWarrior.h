@@ -20,6 +20,8 @@ public:
 	/*
 	** Methods
 	*/
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void NormalAttackCombo();
 
 	/*
 	** Variables

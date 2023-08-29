@@ -18,6 +18,8 @@ class PORTFOLIO_0_API AHeroArcher : public ACharacterHero
 public:
 	AHeroArcher();
 
+	virtual void NormalAttack() override;
+
 	void OnNormalAttack();
 	FVector GetMousePos() const { return m_vMousePosition; }
 
@@ -27,13 +29,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectileArrow> ProjectileClass;
 
-
-
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 
 private:
@@ -45,11 +43,8 @@ private:
 	void HandlePicking();
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* NormalAttackArcherAction;
-
 	UPROPERTY(EditAnywhere, Category = "NormalAttack")
-	UAnimMontage* NormalAttack;
+	UAnimMontage* NormalAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Hit")
 	UAnimMontage* Hit;

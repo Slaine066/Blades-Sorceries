@@ -19,6 +19,40 @@ AHeroMage::AHeroMage()
 {
 }
 
+void AHeroMage::NormalAttack()
+{
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+		return;
+
+	if (!IsSpellState)
+	{
+		PickingTurnToAim();
+
+		if (AnimInstanceHeroMage->IsFlying)
+			PlayAnimMontage(NormalAttackSpell_Fly_Montage);
+		else
+			PlayAnimMontage(NormalAttackSpell_Montage);
+
+		IsSpellState = true;
+	}
+}
+
+void AHeroMage::Fly()
+{
+	if (IsSpellState)
+		return;
+
+	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
+	if (!AnimInstanceHeroMage)
+		return;
+
+	if (AnimInstanceHeroMage->IsFlying)
+		PlayAnimMontage(Landing_Montage);
+	else
+		PlayAnimMontage(Flying_Montage);
+}
+
 void AHeroMage::OnFlying()
 {
 	IsFlyingState = true;
@@ -104,20 +138,6 @@ void AHeroMage::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AHeroMage::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Flying
-		EnhancedInputComponent->BindAction(FlyingAction, ETriggerEvent::Triggered, this, &AHeroMage::Flying);
-
-		// NormalAttackSpell
-		EnhancedInputComponent->BindAction(NormalAttackSpellAction, ETriggerEvent::Triggered, this, &AHeroMage::NormalAttackSpell);		
-	}
-}
-
 void AHeroMage::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
@@ -161,58 +181,6 @@ void AHeroMage::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	{
 		IsHit = false;
 		IsAttacking = false;
-	}
-}
-
-void AHeroMage::Flying(const FInputActionValue& Value)
-{
-	if (IsSpellState)
-	{
-		return;
-	}
-
-	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHeroMage)
-	{
-		return;
-	}
-
-	if (AnimInstanceHeroMage->IsFlying)
-	{
-		PlayAnimMontage(Landing_Montage);
-	}
-	else
-	{
-		PlayAnimMontage(Flying_Montage);
-	}
-}
-
-void AHeroMage::NormalAttackSpell(const FInputActionValue& Value)
-{
-	UAnimInstanceHeroMage* AnimInstanceHeroMage = Cast<UAnimInstanceHeroMage>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHeroMage)
-	{
-		return;
-	}
-
-	if (IsSpellState)
-	{
-
-	}
-	else
-	{
-		PickingTurnToAim();
-
-		if (AnimInstanceHeroMage->IsFlying)
-		{
-			PlayAnimMontage(NormalAttackSpell_Fly_Montage);
-		}
-		else
-		{
-			PlayAnimMontage(NormalAttackSpell_Montage);
-		}
-
-		IsSpellState = true;
 	}
 }
 
