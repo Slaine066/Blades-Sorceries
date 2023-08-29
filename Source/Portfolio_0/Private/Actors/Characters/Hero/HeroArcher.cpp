@@ -166,7 +166,7 @@ void AHeroArcher::ArrowFire()
 		FVector SpawnLocation = GetActorLocation(); // 원하는 위치 설정
 		FRotator SpawnRotation = GetActorRotation(); // 원하는 회전 설정
 		FActorSpawnParameters SpawnParams;
-		AArrowProjectile* Projectile = GetWorld()->SpawnActor<AArrowProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+		AProjectileArrow* Projectile = GetWorld()->SpawnActor<AProjectileArrow>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 		if (Projectile)
 		{
@@ -222,7 +222,7 @@ void AHeroArcher::Fire(FVector vDirection)
 			SpawnParams.Instigator = GetInstigator();
 
 			// Spawn the projectile at the muzzle
-			AArrowProjectile* Projectile = World->SpawnActor<AArrowProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+			AProjectileArrow* Projectile = World->SpawnActor<AProjectileArrow>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 
 			//if (Projectile)
 			//{
@@ -292,7 +292,7 @@ void AHeroArcher::HandlePicking()
 		FVector SpawnLocation = GetActorLocation(); // 원하는 위치 설정
 		FRotator SpawnRotation = GetActorRotation(); // 원하는 회전 설정
 		FActorSpawnParameters SpawnParams;
-		AArrowProjectile* Projectile = GetWorld()->SpawnActor<AArrowProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+		AProjectileArrow* Projectile = GetWorld()->SpawnActor<AProjectileArrow>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 		if (Projectile)
 		{

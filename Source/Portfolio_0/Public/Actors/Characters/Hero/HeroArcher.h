@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
-#include "../../Projectiles/ArrowProjectile.h"
+#include "../../Projectiles/ProjectileArrow.h"
 #include "HeroArcher.generated.h"
 
 /**
@@ -25,7 +25,7 @@ public:
 	FVector MuzzleOffset;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	TSubclassOf<class AArrowProjectile> ProjectileClass;
+	TSubclassOf<class AProjectileArrow> ProjectileClass;
 
 
 
