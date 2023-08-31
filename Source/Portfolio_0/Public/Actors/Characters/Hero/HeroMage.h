@@ -59,6 +59,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<class AProjectileBase> ProjectileClass;
 
+
 private:
 	/* Methods */
 	UPROPERTY(EditDefaultsOnly, Category = "Flying")

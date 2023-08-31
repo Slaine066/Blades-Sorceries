@@ -4,8 +4,8 @@
 #include "Actors/Controllers/Hero/PlayerControllerHero.h"
 #include "Actors/Characters/Hero/CharacterHero.h"
 #include "Components/Widgets/UserWidgetCustom.h"
-#include "Components/Widgets/PlayerScreenInfoUI.h"
-#include "Components/Widgets/ItemSelectionUI.h"
+#include "Components/Widgets/PlayerScreenInfo/PlayerScreenInfoUI.h"
+#include "Components/Widgets/ItemSelection/ItemSelectionUI.h"
 #include "Actors/GameStates/GameStateCustom.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
