@@ -5,4 +5,18 @@
 
 UAnimInstanceMobGolem::UAnimInstanceMobGolem()
 {
+	
+}
+
+void UAnimInstanceMobGolem::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+
+	CheckMobGolem();
+}
+
+void UAnimInstanceMobGolem::CheckMobGolem()
+{
+	if (Mob)
+		MobGolem = Cast<AMobGolem>(Mob);
 }
