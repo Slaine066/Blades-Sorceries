@@ -92,6 +92,19 @@ protected:
 	/*
 	* Variables
 	*/
+	
+private:
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+	// Input Mapping Context
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputMappingContext* InputMappingContext;
+
 	// Input Actions
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* MoveAction;
