@@ -28,10 +28,39 @@ public:
 	/*
 	* Methods 
 	*/
+	UFUNCTION()
+	void SetPlayerHpInfoToWidget(int iDamage);
+
+	UFUNCTION()
+	void IncreasePlayerHpInfoToWidget();
+
+	UFUNCTION()
+	void SetPlayerExpInfoToWidget();
+
+	UFUNCTION()
+	void SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray);
+
+	UFUNCTION()
+	void SetGameTimer(int Minutes, int Seconds);
+
+	UFUNCTION()
+	void SetMobCount(int MobCount);
+
+	UFUNCTION()
+	void SetStage(int Stage);
+
+	UFUNCTION()
+	void SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray);
+
+	UFUNCTION()
+	void EndSwitchItemSelection();
 
 	/*
 	* Variables
 	*/
+
+	class UUserWidgetCustom* GetUserWidget() const;
+	class UUserWidgetCustom* GetItemSelectionWidget() const;
 
 protected:
 	/*
@@ -63,6 +92,23 @@ protected:
 	/*
 	* Variables
 	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UUserWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
+
+private:
+	/*
+	* Methods
+	*/
+
+	/*
+	* Variables
+	*/
+	// Input Mapping Context
+	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
+	UInputMappingContext* InputMappingContext;
+
 	// Input Actions
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* MoveAction;
@@ -88,19 +134,12 @@ protected:
 	UInputAction* Choice2Action;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* Choice3Action;
-	
 
-private:
-	/*
-	* Methods
-	*/
-
-	/*
-	* Variables
-	*/
-	// Input Mapping Context
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* InputMappingContext;
+	UPROPERTY()
+	class UUserWidgetCustom* UUserScreenInfoWidget;
+	UPROPERTY()
+	class UUserWidgetCustom* UUserItemSelectionWidget;
 
 	class ACharacterHero* Hero;
+	class AGameStateCustom* GameState;
 };

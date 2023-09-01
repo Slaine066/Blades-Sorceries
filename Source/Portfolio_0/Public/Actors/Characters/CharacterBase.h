@@ -69,6 +69,7 @@ public:
 	* Methods
 	*/
 	FAttributes Get_Attributes() { return Attributes; }
+	FAttributes& Get_Attributes_Ref() { return Attributes; }
 	bool Get_IsDead() { return IsDead; }
 	bool Get_IsHit() { return IsHit; }
 	bool Get_IsAttacking() { return IsAttacking; }
@@ -103,10 +104,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	FVector LocationOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
-	int FontSize = 0;
+	int FontSize = 24;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
-	int OutlineSize = 0;
-	
+	int OutlineSize = 2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
+		FLinearColor HitDamageOutlineColorRGBA {0.f, 0.f, 0.f, 1.f	};
+
 protected:
 	/*
 	* Methods Inherited
@@ -141,6 +144,11 @@ protected:
 	TSubclassOf<AClothPartsBase> ClothHairClass;
 	UPROPERTY()
 	AClothPartsBase* ClothHair;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<class ADamageFloatingActor> DamageFloatingClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float SpawnFloatingSpeed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	bool IsDead;
