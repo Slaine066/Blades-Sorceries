@@ -3,12 +3,62 @@
 
 #include "Actors/Controllers/Hero/PlayerControllerHero.h"
 #include "Actors/Characters/Hero/CharacterHero.h"
+#include "InputMappingContext.h"
+#include "InputAction.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
 
 APlayerControllerHero::APlayerControllerHero()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Move"));
+	if (MoveActionAsset.Succeeded())
+		MoveAction = MoveActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LookActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Look"));
+	if (LookActionAsset.Succeeded())
+		LookAction = LookActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> JumpActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Jump"));
+	if (JumpActionAsset.Succeeded())
+		JumpAction = JumpActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> NormalAttackActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_NormalAttack"));
+	if (NormalAttackActionAsset.Succeeded())
+		NormalAttackAction = NormalAttackActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> FlyActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Flying"));
+	if (FlyActionAsset.Succeeded())
+		FlyingAction = FlyActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> PauseActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_PauseGame"));
+	if (PauseActionAsset.Succeeded())
+		PauseAction = PauseActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> UnsheathActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Unsheath"));
+	if (UnsheathActionAsset.Succeeded())
+		UnsheathAction = UnsheathActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> LevelUpActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_LevelUp"));
+	if (LevelUpActionAsset.Succeeded())
+		LevelUpAction = LevelUpActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Choice1ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice1"));
+	if (Choice1ActionAsset.Succeeded())
+		Choice1Action = Choice1ActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Choice2ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice2"));
+	if (Choice2ActionAsset.Succeeded())
+		Choice2Action = Choice2ActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Choice3ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice3"));
+	if (Choice3ActionAsset.Succeeded())
+		Choice3Action = Choice3ActionAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/IMC_Character"));
+	if (InputMappingContextAsset.Succeeded())
+		InputMappingContext = InputMappingContextAsset.Object;
 }
 
 void APlayerControllerHero::BeginPlay()

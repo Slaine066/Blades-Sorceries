@@ -32,7 +32,6 @@ void ACharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-
 void ACharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage->GetName() == HitMontage->GetName())
@@ -49,11 +48,6 @@ void ACharacterBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 		// Decrease Health
 		Attributes.Health = FMath::Max(Attributes.Health - Damage, 0.f);
 
-		// Spawn Damage Indicators
-		/*const FString DamageString = FString::SanitizeFloat(Damage, 0);
-		FText DamageText = FText::FromString(DamageString);
-		GetDamageIndicatorComponent()->AppendDamageIndicator(DamageText, GetActorLocation());*/
-
 		// Call DamageHitEvent
 		TriggerHitDamageEvent(Damage);
 
@@ -67,12 +61,14 @@ void ACharacterBase::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 
 void ACharacterBase::OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	CanDamage = true;
+	if (NotifyName == "Damage")
+		CanDamage = true;
 }
 
 void ACharacterBase::OnMontageNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	CanDamage = false;
+	if (NotifyName == "Damage")
+		CanDamage = false;
 }
 
 void ACharacterBase::Attack()
