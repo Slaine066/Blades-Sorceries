@@ -92,7 +92,11 @@ protected:
 	/*
 	* Variables
 	*/
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UUserWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
+
 private:
 	/*
 	* Methods
@@ -130,23 +134,6 @@ private:
 	UInputAction* Choice2Action;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* Choice3Action;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidgetCustom> UUserWidget;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
-
-private:
-	/*
-	* Methods
-	*/
-
-	/*
-	* Variables
-	*/
-	// Input Mapping Context
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY()
 	class UUserWidgetCustom* UUserScreenInfoWidget;
