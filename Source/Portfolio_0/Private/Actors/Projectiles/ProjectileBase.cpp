@@ -124,6 +124,11 @@ void AProjectileBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 
 	// Damage to the Overlapped Character
 	UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
+
+	// Play Hit Effect
+
+	// Play Hit Sound
+
 }
 
 // Called every frame

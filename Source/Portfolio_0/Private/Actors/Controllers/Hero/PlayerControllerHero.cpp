@@ -7,6 +7,7 @@
 #include "Components/Widgets/PlayerScreenInfo/PlayerScreenInfoUI.h"
 #include "Components/Widgets/ItemSelection/ItemSelectionUI.h"
 #include "Actors/GameStates/GameStateCustom.h"
+#include "Actors/Characters/Hero/HeroMage.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
 
