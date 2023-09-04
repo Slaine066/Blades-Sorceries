@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PORTFOLIO_0_API AMobGoblin : public ACharacterMob
 {
 	GENERATED_BODY()

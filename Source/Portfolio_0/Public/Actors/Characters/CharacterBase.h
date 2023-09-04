@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include <Components/TimelineComponent.h>
 #include "CharacterBase.generated.h"
 
 /*
@@ -108,7 +109,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	int OutlineSize = 2;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
-		FLinearColor HitDamageOutlineColorRGBA {0.f, 0.f, 0.f, 1.f	};
+	FLinearColor HitDamageOutlineColorRGBA {0.f, 0.f, 0.f, 1.f	};
 
 protected:
 	/*
@@ -173,8 +174,20 @@ private:
 	UFUNCTION()
 	void OnMontageNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 
+	UFUNCTION()
+	void StartDissolveTimeline();
+	UFUNCTION()
+	void Dissolve(float Value);
+
 	/*
 	* Variables
 	*/
-	
+	FTimeline DissolveTimeline;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	float DissolveAfter;
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UCurveFloat* DissolveFloatCurve;
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	class UNiagaraSystem* DissolveSystem;
 };

@@ -9,7 +9,7 @@
 class UBehaviorTree;
 enum class EPickupableType;
 
-UCLASS()
+UCLASS(Blueprintable)
 class PORTFOLIO_0_API ACharacterMob : public ACharacterBase
 {
 	GENERATED_BODY()

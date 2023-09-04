@@ -26,16 +26,7 @@ void AHeroWarrior::NormalAttack()
 	}
 	else
 	{
-		UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-		if (!AnimInstanceHero)
-			return;
-
-		if (AnimInstanceHero->IsWeaponUnsheathed)
-			PlayAnimMontage(NormalAttackMontages[0]);
-		else
-		{
-			PlayAnimMontage(UnsheathAttackMontage);
-		}
+		PlayAnimMontage(NormalAttackMontages[0]);
 
 		IsAttacking = true;
 		ComboCounter = 1;
@@ -47,11 +38,11 @@ void AHeroWarrior::BeginPlay()
 	Super::BeginPlay();
 
 	//Spawn Weapon at run-time.
-	if (WeaponClassLeft)
+	if (WeaponClassRight)
 	{
-		WeaponLeft = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassLeft);
+		WeaponRight = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassRight);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket");
 		if (!WeaponSocket)
 			return;
 
@@ -59,11 +50,11 @@ void AHeroWarrior::BeginPlay()
 		if (WeaponSocket)
 		{
 			// Attach Weapon to WeaponSocket and set Owner.
-			WeaponSocket->AttachActor(WeaponLeft, GetMesh());
-			WeaponLeft->SetOwner(this);
+			WeaponSocket->AttachActor(WeaponRight, GetMesh());
+			WeaponRight->SetOwner(this);
 
 			// Setup Collision Profile
-			WeaponLeft->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
+			WeaponRight->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
 		}
 	}
 }

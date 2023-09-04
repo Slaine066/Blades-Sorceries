@@ -83,7 +83,6 @@ protected:
 	void Pause();
 
 	// Testing Input Action Functions
-	void Unsheath();
 	void LevelUp();
 	void Choice1();
 	void Choice2();
@@ -124,8 +123,6 @@ private:
 	UInputAction* PauseAction;
 
 	// Testing Input Actions
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* UnsheathAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* LevelUpAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
