@@ -8,10 +8,10 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EProjectileType { PROJECTILE_HERO, PROJECTILE_MOB };
 
-UCLASS()
+UCLASS(Blueprintable)
 class PORTFOLIO_0_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
@@ -35,7 +35,7 @@ public:
 	
 	/* Variables */
 	// Sphere collision component.
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
 	USphereComponent* CollisionComponent;
 	// Projectile movement component
 	UPROPERTY(VisibleAnywhere, Category = "ProjectileMovement")
@@ -53,19 +53,20 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	/* Methods */
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	/* Variables */
+
+	///* Variables */
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 		float Damage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 		TSubclassOf<UDamageType> DamageType;
 
+
 private:
 	/* Methods */
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	/* Variables */
 
