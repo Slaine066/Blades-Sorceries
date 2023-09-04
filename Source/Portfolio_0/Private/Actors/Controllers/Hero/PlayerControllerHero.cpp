@@ -9,6 +9,7 @@
 #include "Actors/GameStates/GameStateCustom.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
+#include "Actors/Characters/Hero/HeroMage.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
 

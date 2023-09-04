@@ -11,7 +11,8 @@
 
 AHeroArcher::AHeroArcher()
 	: bIsAttack(false)
-{
+{	
+	JobClass = EJOBCLASS::ARCHER;
 }
 
 void AHeroArcher::NormalAttack()

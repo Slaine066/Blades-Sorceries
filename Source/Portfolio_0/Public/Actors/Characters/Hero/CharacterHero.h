@@ -13,6 +13,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncreaseHealthEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUpItemSelectionEvent, const TArray<struct FItemData>&, ChoiceItemArray);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpItemSelectionEndEvent);
 
+UENUM(BlueprintType)
+enum class EJOBCLASS : uint8
+{
+	WARRIOR,
+	MAGE,
+	ARCHER
+};
+
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
 {
@@ -30,11 +38,13 @@ public:
 	* Methods
 	*/
 	// Input Action Functions
-	void Move(const FInputActionValue& Value);
+	virtual void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	virtual void NormalAttack();
 	virtual void Fly();
 	void Pause();
+
+	const EJOBCLASS GetJobClass() { return JobClass; }
 
 	// Testing Input Action Functions
 	void LevelUp();
@@ -95,6 +105,8 @@ protected:
 	*/
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
+
+	EJOBCLASS JobClass;
 
 private:
 	/*

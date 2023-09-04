@@ -17,6 +17,7 @@
 AHeroMage::AHeroMage()
 	:IsFlyingState(false), IsSpellState(false), IsNonHitState(false)
 {
+	JobClass = EJOBCLASS::MAGE;
 }
 
 void AHeroMage::NormalAttack()
@@ -193,19 +194,6 @@ void AHeroMage::PickingTurnToAim()
 
 		if (Hit.bBlockingHit)
 		{
-			//FVector PickingLocation = Hit.ImpactPoint;
-			//FVector PlayerLocation = GetActorLocation();
-
-			//FVector PlayerForwardVector = GetActorForwardVector();			
-			//FVector ToPickingVector = PickingLocation - PlayerLocation;
-
-			//PlayerForwardVector.Normalize();
-			//ToPickingVector.Normalize();
-
-			//float Dot = FVector::DotProduct(PlayerForwardVector, ToPickingVector);
-			//float AcosAngle = FMath::Acos(Dot);
-			//float AngleDegree = FMath::RadiansToDegrees(AcosAngle);
-
 			FRotator LookRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
 				FVector(Hit.Location.X, Hit.Location.Y, GetActorLocation().Z));
 
