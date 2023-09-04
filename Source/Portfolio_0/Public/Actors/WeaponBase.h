@@ -59,4 +59,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")	
+	class UNiagaraSystem* HitParticle;
 };

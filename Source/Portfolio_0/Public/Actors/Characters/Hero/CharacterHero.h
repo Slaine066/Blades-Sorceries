@@ -37,15 +37,10 @@ public:
 	void Pause();
 
 	// Testing Input Action Functions
-	void Unsheath();
 	void LevelUp();
 	void Choice1();
 	void Choice2();
 	void Choice3();
-
-	// AnimNotify
-	void OnUnsheath();
-	void OnSheath();
 
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	int GetItemCount() { return Items.Num(); }
@@ -123,12 +118,6 @@ private:
 	// Sphere Collision
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* SphereCollisionComponent;
-
-	// Montages
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	UAnimMontage* UnsheathMontage;
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	UAnimMontage* SheathMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Item")
 	class UDataTable* ItemsDataTable = nullptr;

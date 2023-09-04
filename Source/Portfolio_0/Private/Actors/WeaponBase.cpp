@@ -3,6 +3,7 @@
 #include "Actors/WeaponBase.h"
 #include "Actors/Characters/CharacterBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -46,9 +47,8 @@ void AWeaponBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 	// Damage to the Overlapped Character
 	if (Character->Get_CanDamage())
 	{
-			UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
-			/*UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());*/
-
+		UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticle, GetActorLocation());
+		/*UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());*/
 	}
 }

@@ -164,22 +164,6 @@ void ACharacterHero::Pause()
 	}
 }
 
-void ACharacterHero::Unsheath()
-{
-	// Can't Unsheath/Sheath while using Normal Attacks or Skills.
-	if (IsAttacking || IsHit)
-		return;
-
-	UAnimInstanceHero* AnimInstanceHero = Cast<UAnimInstanceHero>(GetMesh()->GetAnimInstance());
-	if (!AnimInstanceHero)
-		return;
-
-	if (AnimInstanceHero->IsWeaponUnsheathed)
-		PlayAnimMontage(SheathMontage);
-	else
-		PlayAnimMontage(UnsheathMontage);
-}
-
 void ACharacterHero::LevelUp()
 {
 	Attributes.Level += 1;
@@ -475,28 +459,6 @@ void ACharacterHero::Log()
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1);
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2);
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3);
-}
-
-void ACharacterHero::OnUnsheath()
-{
-	// Retrieve WeaponSocket.
-	if (const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket"))
-	{
-		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
-		WeaponLeft->SetOwner(this);
-	}
-}
-
-void ACharacterHero::OnSheath()
-{
-	// Retrieve WeaponSocketSheath.
-	if (const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketSheath"))
-	{
-		// Attach Weapon to WeaponSocket and set Owner.
-		WeaponSocket->AttachActor(WeaponLeft, GetMesh());
-		WeaponLeft->SetOwner(this);
-	}
 }
 
 void ACharacterHero::PickItemSelection(FItemData ItemData)

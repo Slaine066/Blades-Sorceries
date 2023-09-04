@@ -36,7 +36,7 @@ void APickupable::Tick(float DeltaTime)
 		return;
 
 	FVector AttractionOrigin = Hero->GetActorLocation();
-	float AttractionRadius = 200.f;
+	float AttractionRadius = BIG_NUMBER; // 200.f
 	float AttractionStrength = -2000.0f; // Negative strength to attract
 	ERadialImpulseFalloff AttractionFalloff = RIF_Constant;
 	bool bAffectsVelocity = true;

@@ -17,10 +17,6 @@ public:
 	/*
 	** Methods
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Unsheath();
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Sheath();
 
 	/*
 	** Variables

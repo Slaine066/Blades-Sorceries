@@ -4,6 +4,8 @@
 #include "Actors/Characters/CharacterBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Widgets/DamageFloating/DamageFloatingActor.h"
+#include "Actors/WeaponBase.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase() 
@@ -11,6 +13,16 @@ ACharacterBase::ACharacterBase()
 {
  	// Set this character to call Tick() every frame (you can turn this off to improve performance if you don't need it).
 	PrimaryActorTick.bCanEverTick = true;	
+	
+	DissolveAfter = 3.f;
+
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> CurveFloatAsset(TEXT("/Game/Portfolio_0/Characters/CF_Dissolve"));
+	if (CurveFloatAsset.Succeeded())
+		DissolveFloatCurve = CurveFloatAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> DissolveSystemAsset(TEXT("/Game/Portfolio_0/FX/NS_Dissolve"));
+	if (DissolveSystemAsset.Succeeded())
+		DissolveSystem = DissolveSystemAsset.Object;
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +43,9 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (DissolveTimeline.IsPlaying())
+		DissolveTimeline.TickTimeline(DeltaTime);
 }
 
 void ACharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -73,6 +88,38 @@ void ACharacterBase::OnMontageNotifyEnd(FName NotifyName, const FBranchingPointN
 		CanDamage = false;
 }
 
+void ACharacterBase::StartDissolveTimeline()
+{
+	// Spawn Niagara System
+	UNiagaraFunctionLibrary::SpawnSystemAttached(DissolveSystem, GetMesh(), FName("Dissolve"), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
+	
+	// Initialize Timeline
+	DissolveTimeline = FTimeline();
+	DissolveTimeline.SetTimelineLength(2.f);
+	DissolveTimeline.SetPlayRate(1.f);
+
+	// Bind Dissolve Callback
+	FOnTimelineFloat CurveCallback;
+	CurveCallback.BindUFunction(this, FName("Dissolve"));
+
+	DissolveTimeline.AddInterpFloat(DissolveFloatCurve, CurveCallback);
+
+	// Start Timeline
+	DissolveTimeline.PlayFromStart();
+}
+
+void ACharacterBase::Dissolve(float Value)
+{
+	float MaskLerp = FMath::Lerp(1.f, 0.f, Value);
+
+	// Dissolve Character
+	GetMesh()->CreateDynamicMaterialInstance(0)->SetScalarParameterValue(TEXT("Mask"), MaskLerp);
+
+	// Dissolve Weapons
+	WeaponLeft->GetMeshComponent()->CreateDynamicMaterialInstance(0)->SetScalarParameterValue(TEXT("Mask"), MaskLerp);
+	WeaponRight->GetMeshComponent()->CreateDynamicMaterialInstance(0)->SetScalarParameterValue(TEXT("Mask"), MaskLerp);
+}
+
 void ACharacterBase::Attack()
 {
 }
@@ -91,6 +138,10 @@ void ACharacterBase::Die()
 
 	// Play Death Montage
 	PlayAnimMontage(DeathMontage);
+	
+	// Timer for Dissolve Effect
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACharacterBase::StartDissolveTimeline, DissolveAfter, false);
 }
 
 void ACharacterBase::TriggerHitDamageEvent(int iDamage)

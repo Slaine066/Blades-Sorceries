@@ -55,8 +55,6 @@ private:
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TArray<UAnimMontage*> NormalAttackMontages;
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	UAnimMontage* UnsheathAttackMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool IsComboActive;

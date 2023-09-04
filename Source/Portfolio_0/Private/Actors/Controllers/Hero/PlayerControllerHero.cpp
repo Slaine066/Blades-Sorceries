@@ -40,10 +40,6 @@ APlayerControllerHero::APlayerControllerHero()
 	if (PauseActionAsset.Succeeded())
 		PauseAction = PauseActionAsset.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> UnsheathActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Unsheath"));
-	if (UnsheathActionAsset.Succeeded())
-		UnsheathAction = UnsheathActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> LevelUpActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_LevelUp"));
 	if (LevelUpActionAsset.Succeeded())
 		LevelUpAction = LevelUpActionAsset.Object;
@@ -66,15 +62,11 @@ APlayerControllerHero::APlayerControllerHero()
 
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_MainPlayScreen_C(TEXT("'/Game/Portfolio_0/UI/WBP_MainPlayScreen.WBP_MainPlayScreen_C'"));
 	if (WBP_MainPlayScreen_C.Succeeded())
-	{
 		UUserWidget = WBP_MainPlayScreen_C.Class;
-	}
 	
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_ItemSelectionSpace_C(TEXT("'/Game/Portfolio_0/UI/WBP_ItemSelectionSpace.WBP_ItemSelectionSpace_C'"));
 	if (WBP_ItemSelectionSpace_C.Succeeded())
-	{
 		UItemSelectionWidget = WBP_ItemSelectionSpace_C.Class;
-	}
 }
 
 void APlayerControllerHero::SetPlayerHpInfoToWidget(int iDamage)
@@ -190,8 +182,6 @@ void APlayerControllerHero::SetupInputComponent()
 		// Pause
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Pause);
 		
-		// Unsheath (Testing)
-		EnhancedInputComponent->BindAction(UnsheathAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Unsheath);
 		// Level Up (Testing)
 		EnhancedInputComponent->BindAction(LevelUpAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::LevelUp);
 		// Choice 1 (Testing)
@@ -248,12 +238,6 @@ void APlayerControllerHero::Pause()
 {
 	if (Hero)
 		Hero->Pause();
-}
-
-void APlayerControllerHero::Unsheath()
-{
-	if (Hero)
-		Hero->Unsheath();
 }
 
 void APlayerControllerHero::LevelUp()

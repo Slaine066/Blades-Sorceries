@@ -21,21 +21,3 @@ void UAnimInstanceHero::CheckHero()
 	if (Character)
 		Hero = Cast<ACharacterHero>(Character);
 }
-
-void UAnimInstanceHero::Unsheath()
-{
-	if (Hero && !IsWeaponUnsheathed)
-	{
-		Hero->OnUnsheath();
-		IsWeaponUnsheathed = true;
-	}
-}
-
-void UAnimInstanceHero::Sheath()
-{
-	if (Hero && IsWeaponUnsheathed)
-	{
-		Hero->OnSheath();
-		IsWeaponUnsheathed = false;
-	}
-}
