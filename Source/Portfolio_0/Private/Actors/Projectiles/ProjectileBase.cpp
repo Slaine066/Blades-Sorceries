@@ -4,6 +4,8 @@
 #include "Actors/Projectiles/ProjectileBase.h"
 #include "Actors/Characters/CharacterBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -52,15 +54,8 @@ AProjectileBase::AProjectileBase()
 		if (Mesh.Succeeded())
 		{
 			ProjectileMeshComponent->SetStaticMesh(Mesh.Object);
-		}
-		
-		static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("'/Game/Portfolio_0/Characters/Hero/Mage/Projectile/SphereMaterial.SphereMaterial'"));
-		if (Material.Succeeded())
-		{
-			ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
-		}
+		}		
 
-		ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
 		ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09, 0.09f, 0.09f));
 		ProjectileMeshComponent->SetupAttachment(RootComponent);
 	}
@@ -105,7 +100,6 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AProjectileBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -122,13 +116,24 @@ void AProjectileBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 	if (OtherCharacter->Get_IsDead())
 		return;
 
-	// Damage to the Overlapped Character
-	UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
+	//if (Character->Get_CanDamage())
+	//{
+		// Damage to the Overlapped Character
+		UGameplayStatics::ApplyDamage(OtherCharacter, Character->Get_Attributes().Damage, GetInstigatorController(), Character, DamageType);
 
-	// Play Hit Effect
+		// Play Hit Effect
+		UNiagaraComponent* ParticleEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticle, GetActorLocation());
+
+		//if (ParticleEffect)
+		//{
+		//	FRotator CharacterRotation = Character->GetActorRotation();
+		//	CharacterRotation *= -1;
+
+		//	ParticleEffect->AddWorldRotation(CharacterRotation);
+		//}
+	//}
 
 	// Play Hit Sound
-
 }
 
 // Called every frame

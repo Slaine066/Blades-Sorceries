@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PORTFOLIO_0_API AProjectileMagic : public AProjectileBase
 {
 	GENERATED_BODY()
@@ -18,7 +18,6 @@ public:
 	AProjectileMagic();
 
 	/* Methods */
-	virtual void Tick(float DeltaTime) override;
 
 	/* Variables */
 
@@ -28,6 +27,7 @@ protected:
 	* Methods Inherited
 	*/
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	/* Methods */
 

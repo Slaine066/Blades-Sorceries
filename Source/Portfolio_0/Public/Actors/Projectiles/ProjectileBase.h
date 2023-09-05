@@ -31,7 +31,7 @@ public:
 
 	// Function that is called when the projectile hits something
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	
 	/* Variables */
 	// Sphere collision component.
@@ -44,7 +44,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
 	class UStaticMeshComponent* ProjectileMeshComponent;
 	// Projectile Material
-	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
 	UMaterialInstanceDynamic* ProjectileMaterialInstance;
 
 protected:
@@ -54,7 +54,7 @@ protected:
 
 	/* Methods */
 	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 	///* Variables */
@@ -64,6 +64,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 		TSubclassOf<UDamageType> DamageType;
 
+	UPROPERTY(EditAnywhere, Category = "Effects")
+		class UNiagaraSystem* HitParticle;
 
 private:
 	/* Methods */

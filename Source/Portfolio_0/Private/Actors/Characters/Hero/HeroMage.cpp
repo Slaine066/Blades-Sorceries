@@ -8,6 +8,7 @@
 #include "Actors/WeaponBase.h"
 #include "Actors/ClothPartsBase.h"
 #include "Actors/Projectiles/ProjectileBase.h"
+#include "Actors/Projectiles/ProjectileMagic.h"
 #include "Camera/CameraComponent.h"
 
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
@@ -224,7 +225,7 @@ void AHeroMage::NormalAttackFire()
 			SpawnParams.Instigator = GetInstigator();
 
 			// Spawn the projectile at the muzzle
-			AProjectileBase* Projectile = World->SpawnActor<AProjectileBase>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+			AProjectileBase* Projectile = World->SpawnActor<AProjectileMagic>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 
 			if (Projectile)
 			{
