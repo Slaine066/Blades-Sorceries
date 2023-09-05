@@ -6,6 +6,7 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Portfolio_0LoadingScreen.h"
 
 UMainMenuUI::UMainMenuUI(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -40,7 +41,10 @@ void UMainMenuUI::NativeConstruct()
 
 void UMainMenuUI::StartGameButtonOnClicked()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Map_1"));
+	IPortfolio_0LoadingScreenModule& LoadingScreenModule = IPortfolio_0LoadingScreenModule::Get();
+	LoadingScreenModule.StartInGameLoadingScreen(false, 0.f);
+
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Portfolio_0/Maps/Map_1"));
 }
 
 void UMainMenuUI::StartGameButtonOnHovered()
