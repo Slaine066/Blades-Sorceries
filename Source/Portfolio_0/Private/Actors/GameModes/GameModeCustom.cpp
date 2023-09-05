@@ -160,8 +160,3 @@ FVector AGameModeCustom::Get_RandomSpawnLocation(FVector PlayerLocation)
 
 	return RandomLocation;
 }
-
-FRotator AGameModeCustom::Get_SpawnRotation()
-{
-	return FRotator();
-}

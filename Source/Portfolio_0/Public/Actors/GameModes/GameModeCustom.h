@@ -55,7 +55,6 @@ private:
 	void Spawn(FGameTimer GameTimer);
 	void Despawn();
 	FVector Get_RandomSpawnLocation(FVector PlayerLocation);
-	FRotator Get_SpawnRotation();
 
 	/*
 	* Variables
