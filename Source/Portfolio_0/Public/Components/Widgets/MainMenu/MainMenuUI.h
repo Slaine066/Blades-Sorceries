@@ -18,25 +18,41 @@ public:
 	UMainMenuUI(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
+	void StartFadeIn();
+
 	/* Variables */
 
 protected:
 	/* Methods */
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UFUNCTION()
+	void FadeOutFinished();
+
+	/* Variables */
+	FWidgetAnimationDynamicEvent FadeOutFinishedDelegate;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* StartGameButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UButton* SettingsButton;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UButton* ExitButton;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* StartGameText;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* SettingsText;
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ExitText;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* FadeOut;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* FadeIn;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCharacterSelectionUI> CharacterSelectionUIClass;
 
 private:
 	/* Methods */

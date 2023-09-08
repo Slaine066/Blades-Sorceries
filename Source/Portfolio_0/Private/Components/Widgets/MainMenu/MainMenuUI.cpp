@@ -4,13 +4,18 @@
 #include "Components/Widgets/MainMenu/MainMenuUI.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Animation/WidgetAnimation.h"
+#include "Components/Widgets/MainMenu/CharacterSelectionUI.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/GameplayStatics.h"
-#include "Portfolio_0LoadingScreen.h"
 
 UMainMenuUI::UMainMenuUI(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+void UMainMenuUI::StartFadeIn()
+{
+	PlayAnimation(FadeIn);
 }
 
 void UMainMenuUI::NativeConstruct()
@@ -37,14 +42,24 @@ void UMainMenuUI::NativeConstruct()
 		ExitButton->OnHovered.AddDynamic(this, &UMainMenuUI::ExitButtonOnHovered);
 		ExitButton->OnUnhovered.AddDynamic(this, &UMainMenuUI::ExitButtonOnUnhovered);
 	}
+
+	FadeOutFinishedDelegate.BindDynamic(this, &UMainMenuUI::FadeOutFinished);
+	BindToAnimationFinished(FadeOut, FadeOutFinishedDelegate);
+}
+
+void UMainMenuUI::FadeOutFinished()
+{
+	// Add Character Selection UI to Viewport
+	if (UCharacterSelectionUI* CharacterSelectionUI = CreateWidget<UCharacterSelectionUI>(GetWorld(), CharacterSelectionUIClass))
+	{
+		CharacterSelectionUI->AddToViewport();
+		CharacterSelectionUI->Set_WidgetOwner(this);
+	}
 }
 
 void UMainMenuUI::StartGameButtonOnClicked()
 {
-	IPortfolio_0LoadingScreenModule& LoadingScreenModule = IPortfolio_0LoadingScreenModule::Get();
-	LoadingScreenModule.StartInGameLoadingScreen(false, 0.f);
-
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Portfolio_0/Maps/Map_1"));
+	PlayAnimation(FadeOut);
 }
 
 void UMainMenuUI::StartGameButtonOnHovered()

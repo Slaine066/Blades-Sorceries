@@ -5,10 +5,16 @@
 #include "Actors/Characters/Mob/CharacterMob.h"
 #include "Kismet/GameplayStatics.h"
 #include "Util/Utility.h"
+#include "GameInstanceCustom.h"
 
 void AGameModeCustom::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// Set DefaultPawn to the one selected in the MainMenu Level.
+	UGameInstanceCustom* GameInstanceCustom = Cast<UGameInstanceCustom>(GetGameInstance());
+	if (GameInstanceCustom)
+		DefaultPawnClass = GameInstanceCustom->Get_SelectedCharacter();
 }
 
 void AGameModeCustom::Tick(float DeltaTime)
