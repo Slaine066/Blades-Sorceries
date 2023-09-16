@@ -17,6 +17,15 @@ void AGameModeCustom::InitGame(const FString& MapName, const FString& Options, F
 		DefaultPawnClass = GameInstanceCustom->Get_SelectedCharacter();
 }
 
+void AGameModeCustom::StartPlay()
+{
+	Super::StartPlay();
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerController)
+		PlayerController->SetInputMode(FInputModeGameOnly());
+}
+
 void AGameModeCustom::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

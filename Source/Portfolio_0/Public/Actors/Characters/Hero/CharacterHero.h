@@ -42,7 +42,6 @@ public:
 	void Look(const FInputActionValue& Value);
 	virtual void NormalAttack();
 	virtual void Fly();
-	void Pause();
 
 	const EJOBCLASS GetJobClass() { return JobClass; }
 

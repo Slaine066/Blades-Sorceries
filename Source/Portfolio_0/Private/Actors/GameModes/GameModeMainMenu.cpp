@@ -7,6 +7,25 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Actors/CharacterSelector.h"
 
+AGameModeMainMenu::AGameModeMainMenu()
+{
+    static ConstructorHelpers::FClassFinder<UMainMenuUI>WBP_MainMenu_C(TEXT("'/Game/Portfolio_0/UI/WBP_MainMenu.WBP_MainMenu_C'"));
+    if (WBP_MainMenu_C.Succeeded())
+        MainMenuUIClass = WBP_MainMenu_C.Class;
+
+    static ConstructorHelpers::FClassFinder<ACharacterSelector>WBP_CharacterSelectorWarrior_C(TEXT("'/Game/Portfolio_0/Blueprint/BP_CharacterSelectorWarrior.BP_CharacterSelectorWarrior_C'"));
+    if (WBP_CharacterSelectorWarrior_C.Succeeded())
+        CharacterSelectorWarriorClass = WBP_CharacterSelectorWarrior_C.Class;
+
+    static ConstructorHelpers::FClassFinder<ACharacterSelector>WBP_CharacterSelectorMage_C(TEXT("'/Game/Portfolio_0/Blueprint/BP_CharacterSelectorMage.BP_CharacterSelectorMage_C'"));
+    if (WBP_CharacterSelectorMage_C.Succeeded())
+        CharacterSelectorMageClass = WBP_CharacterSelectorMage_C.Class;
+
+    static ConstructorHelpers::FClassFinder<ACharacterSelector>WBP_CharacterSelectorArcher_C(TEXT("'/Game/Portfolio_0/Blueprint/BP_CharacterSelectorArcher.BP_CharacterSelectorArcher_C'"));
+    if (WBP_CharacterSelectorArcher_C.Succeeded())
+        CharacterSelectorArcherClass = WBP_CharacterSelectorArcher_C.Class;
+}
+
 void AGameModeMainMenu::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
@@ -35,10 +54,8 @@ void AGameModeMainMenu::StartPlay()
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
     if (PlayerController)
     {
-        // Show Mouse Cursor
+        PlayerController->SetInputMode(FInputModeUIOnly());
         PlayerController->bShowMouseCursor = true;
-        PlayerController->bEnableClickEvents = true;
-        PlayerController->bEnableMouseOverEvents = true;
     }
 }
 

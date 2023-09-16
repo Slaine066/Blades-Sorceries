@@ -50,11 +50,13 @@ void UMainMenuUI::NativeConstruct()
 void UMainMenuUI::FadeOutFinished()
 {
 	// Add Character Selection UI to Viewport
-	if (UCharacterSelectionUI* CharacterSelectionUI = CreateWidget<UCharacterSelectionUI>(GetWorld(), CharacterSelectionUIClass))
+	if (!CharacterSelectionUI)
 	{
-		CharacterSelectionUI->AddToViewport();
+		CharacterSelectionUI = CreateWidget<UCharacterSelectionUI>(GetWorld(), CharacterSelectionUIClass);
 		CharacterSelectionUI->Set_WidgetOwner(this);
 	}
+
+	CharacterSelectionUI->AddToViewport();
 }
 
 void UMainMenuUI::StartGameButtonOnClicked()

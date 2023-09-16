@@ -6,6 +6,7 @@
 #include "Components/Widgets/UserWidgetCustom.h"
 #include "Components/Widgets/PlayerScreenInfo/PlayerScreenInfoUI.h"
 #include "Components/Widgets/ItemSelection/ItemSelectionUI.h"
+#include "Components/Widgets/PauseMenu/PauseMenuUI.h"
 #include "Actors/GameStates/GameStateCustom.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
@@ -68,6 +69,10 @@ APlayerControllerHero::APlayerControllerHero()
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_ItemSelectionSpace_C(TEXT("'/Game/Portfolio_0/UI/WBP_ItemSelectionSpace.WBP_ItemSelectionSpace_C'"));
 	if (WBP_ItemSelectionSpace_C.Succeeded())
 		UItemSelectionWidget = WBP_ItemSelectionSpace_C.Class;
+
+	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_PauseMenu_C(TEXT("'/Game/Portfolio_0/UI/WBP_PauseMenu.WBP_PauseMenu_C'"));
+	if (WBP_PauseMenu_C.Succeeded())
+		UPauseMenuWidget = WBP_PauseMenu_C.Class;
 }
 
 void APlayerControllerHero::SetPlayerHpInfoToWidget(int iDamage)
@@ -237,8 +242,18 @@ void APlayerControllerHero::Fly()
 
 void APlayerControllerHero::Pause()
 {
-	if (Hero)
-		Hero->Pause();
+	if (!IsPaused())
+	{
+		// Add PauseMenu UI to Viewport
+		if (!PauseMenuUI)
+			PauseMenuUI = CreateWidget<UPauseMenuUI>(GetWorld(), UPauseMenuWidget);
+			
+		PauseMenuUI->AddToViewport();
+
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		SetPause(true);
+	}
 }
 
 void APlayerControllerHero::LevelUp()

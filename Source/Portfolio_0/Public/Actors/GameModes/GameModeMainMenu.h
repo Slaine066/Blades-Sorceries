@@ -18,6 +18,8 @@ class PORTFOLIO_0_API AGameModeMainMenu : public AGameMode
 	GENERATED_BODY()
 
 public:
+	AGameModeMainMenu();
+
 	/* Methods Inherited */
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void StartPlay() override;
@@ -31,14 +33,10 @@ protected:
 	/* Methods */
 
 	/* Variables */
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UMainMenuUI> MainMenuUIClass;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ACharacterSelector> CharacterSelectorWarriorClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ACharacterSelector> CharacterSelectorMageClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<ACharacterSelector> CharacterSelectorArcherClass;
 	
 	ACharacterSelector* CharacterSelectorWarrior;

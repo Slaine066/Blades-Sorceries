@@ -95,6 +95,8 @@ protected:
 	TSubclassOf<class UUserWidgetCustom> UUserWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> UPauseMenuWidget;
 
 private:
 	/*
@@ -136,6 +138,8 @@ private:
 	class UUserWidgetCustom* UUserScreenInfoWidget;
 	UPROPERTY()
 	class UUserWidgetCustom* UUserItemSelectionWidget;
+	UPROPERTY()
+	class UPauseMenuUI* PauseMenuUI = nullptr;
 
 	class ACharacterHero* Hero;
 	class AGameStateCustom* GameState;

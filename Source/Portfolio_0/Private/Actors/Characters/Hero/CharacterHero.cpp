@@ -152,18 +152,6 @@ void ACharacterHero::Fly()
 {
 }
 
-void ACharacterHero::Pause()
-{
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
-	{
-		if (PlayerController->IsPaused())
-			PlayerController->SetPause(false);
-		else
-			PlayerController->SetPause(true);
-	}
-}
-
 void ACharacterHero::LevelUp()
 {
 	Attributes.Level += 1;

@@ -78,5 +78,5 @@ private:
 	void ExitButtonOnUnhovered();
 
 	/* Variables */
-	
+	class UCharacterSelectionUI* CharacterSelectionUI = nullptr;
 };
