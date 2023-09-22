@@ -4,10 +4,15 @@
 #include "Components/Widgets/ItemSelection/ItemSelectionUI.h"
 #include "Components/Widgets/ItemSelection/ItemSelectionSlot.h"
 #include "Actors/ItemBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actors/Characters/Hero/CharacterHero.h"
 
 UItemSelectionUI::UItemSelectionUI(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
+	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
+	if (Character)
+		CharacterHero = Cast<ACharacterHero>(Character);
 }
 
 void UItemSelectionUI::SetItemSelectionInfotoSlot(const TArray<struct FItemData>& ChoiceItemArray)
@@ -22,15 +27,27 @@ void UItemSelectionUI::SetItemSelectionInfotoSlot(const TArray<struct FItemData>
 
 void UItemSelectionUI::SwitchVisibility(bool IsVisible)
 {
+	APlayerController* PlayerController = Cast<APlayerController>(CharacterHero->GetController());
+	if (!PlayerController)
+		return;
+
 	bIsVisibility = IsVisible;
 
 	if (!bIsVisibility)
 	{
 		SetVisibility(ESlateVisibility::Collapsed);
+
+		PlayerController->bShowMouseCursor = false;
+		PlayerController->SetInputMode(FInputModeGameOnly());
+
+		PlayerController->FlushPressedKeys();
 	}
 	else
 	{		
 		SetVisibility(ESlateVisibility::Visible);
+
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->SetInputMode(FInputModeUIOnly());
 	}
 }
 

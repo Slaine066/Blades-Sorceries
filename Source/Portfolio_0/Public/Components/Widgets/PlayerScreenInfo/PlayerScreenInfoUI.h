@@ -7,19 +7,20 @@
 #include "Actors/Characters/CharacterBase.h"
 #include "PlayerScreenInfoUI.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UPlayerScreenInfoUI : public UUserWidgetCustom
 {
 	GENERATED_BODY()
 
 public:
-
 	UPlayerScreenInfoUI(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
+	void InitAttributes(FAttributes PlayerAttribute);
+	void InitSkills(TArray<class ASkillBase*> Skills);
+
+	void ShowSkillBar();
+	
 	UFUNCTION()
 	void SetPlayerHpInfo(FAttributes PlayerAttributes);
 	UFUNCTION()
@@ -33,11 +34,7 @@ public:
 	UFUNCTION()
 	void SetStageInfo(int iStage);
 
-
-	void BindAttribute(FAttributes PlayerAttribute);
-
 	/* Variables */
-
 
 protected:
 	/* Methods */
@@ -48,13 +45,12 @@ protected:
 private:
 	/* Methods */
 
-
 	/* Variables */
-
 	class UUserWidget* HpBar;
 	class UUserWidget* ExpBar;	
 	class UUserWidget* ItemInventory;
 	class UUserWidget* TimerInfo;
 	class UUserWidget* MobCountInfo;
 	class UUserWidget* StageInfo;	
+	class UUserWidget* SkillBar;
 };

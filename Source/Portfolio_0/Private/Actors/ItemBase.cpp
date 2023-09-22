@@ -76,10 +76,10 @@ void AItemBase::Initialize(ACharacterHero* Hero)
 
 void AItemBase::BeginPlay()
 {
+	Super::BeginPlay();
 }
 
 void AItemBase::Tick(float DeltaTime)
 {
-	if (ItemData.Type == EItemType::ATTRIBUTE_BOOST)
-		return;
+	Super::Tick(DeltaTime);
 }

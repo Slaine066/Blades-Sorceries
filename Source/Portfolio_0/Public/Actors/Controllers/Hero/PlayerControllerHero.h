@@ -21,61 +21,42 @@ class PORTFOLIO_0_API APlayerControllerHero : public APlayerController
 public:
 	APlayerControllerHero();
 
-	/*
-	* Inherited Methods
-	*/
+	/* Inherited Methods */
+	virtual void SetupInputComponent() override;
 
-	/*
-	* Methods 
-	*/
+	/* Methods */
 	UFUNCTION()
 	void SetPlayerHpInfoToWidget(int iDamage);
-
 	UFUNCTION()
 	void IncreasePlayerHpInfoToWidget();
-
 	UFUNCTION()
 	void SetPlayerExpInfoToWidget();
-
 	UFUNCTION()
 	void SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray);
-
 	UFUNCTION()
 	void SetGameTimer(int Minutes, int Seconds);
-
 	UFUNCTION()
 	void SetMobCount(int MobCount);
-
 	UFUNCTION()
 	void SetStage(int Stage);
 
 	UFUNCTION()
 	void SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray);
-
 	UFUNCTION()
 	void EndSwitchItemSelection();
 
-	/*
-	* Variables
-	*/
-
+	/* Variables */
 	class UUserWidgetCustom* GetUserWidget() const;
 	class UUserWidgetCustom* GetItemSelectionWidget() const;
 
 protected:
-	/*
-	* Inherited Methods
-	*/
+	/* Inherited Methods */
 	virtual void BeginPlay() override;
-	virtual void SetupInputComponent() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	// Input Action Functions
 	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
 	void Jump();
 	void StopJumping();
 	void NormalAttack();
@@ -84,28 +65,26 @@ protected:
 
 	// Testing Input Action Functions
 	void LevelUp();
-	void Choice1();
-	void Choice2();
-	void Choice3();
 
-	/*
-	* Variables
-	*/
+	UFUNCTION()
+	void ClassSelection();
+	UFUNCTION()
+	void EndClassSelection();
+
+	/* Variables */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidgetCustom> UUserWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidgetCustom> UItemSelectionWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidgetCustom> UPauseMenuWidget;
+	TSubclassOf<class UUserWidgetCustom> ClassSelectionWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidgetCustom> PauseMenuWidget;
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	// Input Mapping Context
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputMappingContext* InputMappingContext;
@@ -113,8 +92,6 @@ private:
 	// Input Actions
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* MoveAction;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
@@ -127,17 +104,13 @@ private:
 	// Testing Input Actions
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* LevelUpAction;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* Choice1Action;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* Choice2Action;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* Choice3Action;
 
 	UPROPERTY()
-	class UUserWidgetCustom* UUserScreenInfoWidget;
+	class UUserWidgetCustom* UUserScreenInfoWidget = nullptr;
 	UPROPERTY()
-	class UUserWidgetCustom* UUserItemSelectionWidget;
+	class UUserWidgetCustom* UUserItemSelectionWidget = nullptr;
+	UPROPERTY()
+	class UClassSelectionUI* ClassSelectionUI = nullptr;
 	UPROPERTY()
 	class UPauseMenuUI* PauseMenuUI = nullptr;
 

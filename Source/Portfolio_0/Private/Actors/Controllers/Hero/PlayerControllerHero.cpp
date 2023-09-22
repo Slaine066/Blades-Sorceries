@@ -7,6 +7,7 @@
 #include "Components/Widgets/PlayerScreenInfo/PlayerScreenInfoUI.h"
 #include "Components/Widgets/ItemSelection/ItemSelectionUI.h"
 #include "Components/Widgets/PauseMenu/PauseMenuUI.h"
+#include "Components/Widgets/ClassSelection/ClassSelectionUI.h"
 #include "Actors/GameStates/GameStateCustom.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
@@ -18,76 +19,59 @@ APlayerControllerHero::APlayerControllerHero()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	/* Actions */
 	static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Move"));
 	if (MoveActionAsset.Succeeded())
 		MoveAction = MoveActionAsset.Object;
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> LookActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Look"));
-	if (LookActionAsset.Succeeded())
-		LookAction = LookActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> JumpActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Jump"));
 	if (JumpActionAsset.Succeeded())
 		JumpAction = JumpActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> NormalAttackActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_NormalAttack"));
 	if (NormalAttackActionAsset.Succeeded())
 		NormalAttackAction = NormalAttackActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> FlyActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Flying"));
 	if (FlyActionAsset.Succeeded())
 		FlyingAction = FlyActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> PauseActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_PauseGame"));
 	if (PauseActionAsset.Succeeded())
 		PauseAction = PauseActionAsset.Object;
-
 	static ConstructorHelpers::FObjectFinder<UInputAction> LevelUpActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_LevelUp"));
 	if (LevelUpActionAsset.Succeeded())
 		LevelUpAction = LevelUpActionAsset.Object;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> Choice1ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice1"));
-	if (Choice1ActionAsset.Succeeded())
-		Choice1Action = Choice1ActionAsset.Object;
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> Choice2ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice2"));
-	if (Choice2ActionAsset.Succeeded())
-		Choice2Action = Choice2ActionAsset.Object;
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> Choice3ActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Choice3"));
-	if (Choice3ActionAsset.Succeeded())
-		Choice3Action = Choice3ActionAsset.Object;
-
+	/* Input Mapping Context */
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContextAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/IMC_Character"));
 	if (InputMappingContextAsset.Succeeded())
 		InputMappingContext = InputMappingContextAsset.Object;
 
+	/* Widgets */
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_MainPlayScreen_C(TEXT("'/Game/Portfolio_0/UI/WBP_MainPlayScreen.WBP_MainPlayScreen_C'"));
 	if (WBP_MainPlayScreen_C.Succeeded())
 		UUserWidget = WBP_MainPlayScreen_C.Class;
-	
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_ItemSelectionSpace_C(TEXT("'/Game/Portfolio_0/UI/WBP_ItemSelectionSpace.WBP_ItemSelectionSpace_C'"));
 	if (WBP_ItemSelectionSpace_C.Succeeded())
 		UItemSelectionWidget = WBP_ItemSelectionSpace_C.Class;
-
+	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_ClassSelection_C(TEXT("'/Game/Portfolio_0/UI/WBP_ClassSelection.WBP_ClassSelection_C'"));
+	if (WBP_ClassSelection_C.Succeeded())
+		ClassSelectionWidget = WBP_ClassSelection_C.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidgetCustom>WBP_PauseMenu_C(TEXT("'/Game/Portfolio_0/UI/WBP_PauseMenu.WBP_PauseMenu_C'"));
 	if (WBP_PauseMenu_C.Succeeded())
-		UPauseMenuWidget = WBP_PauseMenu_C.Class;
+		PauseMenuWidget = WBP_PauseMenu_C.Class;
 }
 
 void APlayerControllerHero::SetPlayerHpInfoToWidget(int iDamage)
 {
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes_Ref());
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes());
 }
 
 void APlayerControllerHero::IncreasePlayerHpInfoToWidget()
 {
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes_Ref());
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerHpInfo(Hero->Get_Attributes());
 }
 
 void APlayerControllerHero::SetPlayerExpInfoToWidget()
 {
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerExpInfo(Hero->Get_Attributes_Ref());
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerExpInfo(Hero->Get_Attributes());
 }
 
 void APlayerControllerHero::SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray)
@@ -123,6 +107,28 @@ void APlayerControllerHero::EndSwitchItemSelection()
 	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
 }
 
+void APlayerControllerHero::ClassSelection()
+{
+	if (!IsPaused())
+	{
+		SetPause(true);
+
+		// Add PauseMenu UI to Viewport
+		if (!ClassSelectionUI)
+			ClassSelectionUI = CreateWidget<UClassSelectionUI>(GetWorld(), ClassSelectionWidget);
+		
+		ClassSelectionUI->AddToViewport();
+	}
+}
+
+void APlayerControllerHero::EndClassSelection()
+{
+	ClassSelectionUI->RemoveFromViewport();
+
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->InitSkills(Hero->Get_Skills());
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->ShowSkillBar();
+}
+
 UUserWidgetCustom* APlayerControllerHero::GetUserWidget() const
 {
 	return UUserScreenInfoWidget;
@@ -137,33 +143,36 @@ void APlayerControllerHero::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameState = GetWorld()->GetGameState<AGameStateCustom>();
-
 	Hero = Cast<ACharacterHero>(GetPawn());
+	GameState = GetWorld()->GetGameState<AGameStateCustom>();
 
 	// Setup Input Mapping Context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		Subsystem->AddMappingContext(InputMappingContext, 0);
 
+	// PlayerScreenInfoUI
 	UUserScreenInfoWidget = CreateWidget<UUserWidgetCustom>(this, UUserWidget);
 	UUserScreenInfoWidget->AddToViewport();
-
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->InitAttributes(Hero->Get_Attributes());
+	
+	// ItemSelectionUI
 	UUserItemSelectionWidget = CreateWidget<UUserWidgetCustom>(this, UItemSelectionWidget);
-	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
 	UUserItemSelectionWidget->AddToViewport();
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
 
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->BindAttribute(Hero->Get_Attributes());
-
+	// Delegates Bindings
 	Hero->OnHitDamage.AddDynamic(this, &APlayerControllerHero::SetPlayerHpInfoToWidget);
 	Hero->OnIncreaseHealth.AddDynamic(this, &APlayerControllerHero::IncreasePlayerHpInfoToWidget);
 	Hero->OnPickUpExp.AddDynamic(this, &APlayerControllerHero::SetPlayerExpInfoToWidget);
 	Hero->OnPickUpItem.AddDynamic(this, &APlayerControllerHero::SetPlayerItemInventory);
 
-	GameState->OnGetTime.AddDynamic(this, &APlayerControllerHero::SetGameTimer);
-	GameState->OnGetMonsterCount.AddDynamic(this, &APlayerControllerHero::SetMobCount);
-
 	Hero->OnLevelUpItemSelection.AddDynamic(this, &APlayerControllerHero::SetItemSelectionItem);
 	Hero->OnLevelUpItemSelectionEnd.AddDynamic(this, &APlayerControllerHero::EndSwitchItemSelection);
+	Hero->OnLevelUpClassSelection.AddDynamic(this, &APlayerControllerHero::ClassSelection);
+	Hero->OnLevelUpClassSelectionEnd.AddDynamic(this, &APlayerControllerHero::EndClassSelection);
+
+	GameState->OnGetTime.AddDynamic(this, &APlayerControllerHero::SetGameTimer);
+	GameState->OnGetMonsterCount.AddDynamic(this, &APlayerControllerHero::SetMobCount);
 }
 
 void APlayerControllerHero::SetupInputComponent()
@@ -175,8 +184,6 @@ void APlayerControllerHero::SetupInputComponent()
 	{
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Move);
-		// Looking
-		/*EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Look);*/
 		// Jump
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Jump);
 		// Stop Jumping
@@ -190,12 +197,6 @@ void APlayerControllerHero::SetupInputComponent()
 		
 		// Level Up (Testing)
 		EnhancedInputComponent->BindAction(LevelUpAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::LevelUp);
-		// Choice 1 (Testing)
-		EnhancedInputComponent->BindAction(Choice1Action, ETriggerEvent::Triggered, this, &APlayerControllerHero::Choice1);
-		// Choice 2 (Testing)
-		EnhancedInputComponent->BindAction(Choice2Action, ETriggerEvent::Triggered, this, &APlayerControllerHero::Choice2);
-		// Choice 3 (Testing)
-		EnhancedInputComponent->BindAction(Choice3Action, ETriggerEvent::Triggered, this, &APlayerControllerHero::Choice3);
 	}
 }
 
@@ -222,12 +223,6 @@ void APlayerControllerHero::Move(const FInputActionValue& Value)
 		Hero->Move(Value);
 }
 
-void APlayerControllerHero::Look(const FInputActionValue& Value)
-{
-	if (Hero)
-		Hero->Look(Value);
-}
-
 void APlayerControllerHero::NormalAttack()
 {
 	if (Hero)
@@ -246,7 +241,7 @@ void APlayerControllerHero::Pause()
 	{
 		// Add PauseMenu UI to Viewport
 		if (!PauseMenuUI)
-			PauseMenuUI = CreateWidget<UPauseMenuUI>(GetWorld(), UPauseMenuWidget);
+			PauseMenuUI = CreateWidget<UPauseMenuUI>(GetWorld(), PauseMenuWidget);
 			
 		PauseMenuUI->AddToViewport();
 
@@ -260,22 +255,4 @@ void APlayerControllerHero::LevelUp()
 {
 	if (Hero)
 		Hero->LevelUp();
-}
-
-void APlayerControllerHero::Choice1()
-{
-	if (Hero)
-		Hero->Choice1();
-}
-
-void APlayerControllerHero::Choice2()
-{
-	if (Hero)
-		Hero->Choice2();
-}
-
-void APlayerControllerHero::Choice3()
-{
-	if (Hero)
-		Hero->Choice3();
 }

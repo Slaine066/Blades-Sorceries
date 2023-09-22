@@ -10,7 +10,7 @@
 AHeroWarrior::AHeroWarrior()
 	: IsComboActive(false), ComboCounter(0)
 {
-	JobClass = EJOBCLASS::WARRIOR;
+	CharacterType = ECHARACTER::WARRIOR;
 }
 
 void AHeroWarrior::NormalAttack()

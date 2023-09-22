@@ -7,9 +7,6 @@
 #include "Engine/DataTable.h"
 #include "CharacterSelectionUI.generated.h"
 
-/**
- * 
- */
 USTRUCT(BlueprintType, meta = (AbleSplitPin))
 struct FCharacterData : public FTableRowBase
 {

@@ -34,10 +34,11 @@ protected:
 private:
 	/* Methods */
 	/* Variables */
-
 	class UItemSelectionSlot* ItemSelection1;
 	class UItemSelectionSlot* ItemSelection2;
 	class UItemSelectionSlot* ItemSelection3;
 
 	bool bIsVisibility;
+
+	class ACharacterHero* CharacterHero = nullptr;
 };

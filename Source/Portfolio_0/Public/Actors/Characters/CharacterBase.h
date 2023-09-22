@@ -70,7 +70,6 @@ public:
 	* Methods
 	*/
 	FAttributes Get_Attributes() { return Attributes; }
-	FAttributes& Get_Attributes_Ref() { return Attributes; }
 	bool Get_IsDead() { return IsDead; }
 	bool Get_IsHit() { return IsHit; }
 	bool Get_IsAttacking() { return IsAttacking; }

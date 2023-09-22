@@ -22,8 +22,6 @@ public:
 	UFUNCTION()
 	void UpdateHp(FAttributes PlayerAttribute);
 
-	void BindCharacterAttribute(FAttributes PlayerAttribute);
-
 	/* Variables */
 
 protected:
@@ -39,13 +37,11 @@ private:
 
 	/* Variables */
 	UPROPERTY()
+	class UTextBlock* TextHp;
+	UPROPERTY()
+	class UTextBlock* TextMaxHp;
+	UPROPERTY()
 	class UProgressBar*	ProgressHpBar;
-
-	UPROPERTY()
-	class UTextBlock*	TextMaxHp;
-
-	UPROPERTY()
-	class UTextBlock*	TextHp;	
-
-	float				HpRatio;
+	
+	float HpRatio;
 };

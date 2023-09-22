@@ -12,6 +12,7 @@
 #include "AnimInstances/Hero/AnimInstanceHero.h"
 #include "Actors/WeaponBase.h"
 #include "Engine/DataTable.h"
+#include "SkillBase.h"
 #include "Actors/ItemBase.h"
 #include "Actors/Pickupable.h"
 #include "Util/Utility.h"
@@ -36,7 +37,7 @@ ACharacterHero::ACharacterHero()
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	SpringArmComponent->TargetArmLength = 1000.f;
-	SpringArmComponent->TargetOffset = FVector(0.f, 0.f, 200.f);
+	SpringArmComponent->TargetOffset = FVector(300.f, 0.f, 700.f);
 	SpringArmComponent->bUsePawnControlRotation = true;	
 
 	SpringArmComponent->bEnableCameraLag = true;
@@ -50,15 +51,21 @@ ACharacterHero::ACharacterHero()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
 
-	FTransform AddCamOffset;	
-	AddCamOffset.SetLocation(FVector(200.f, 0.f, 600.f));
+	FTransform AddCamOffset;
 	AddCamOffset.SetRotation(FRotator(-45.f, 0.f, 0.f).Quaternion());	
-	CameraComponent->AddAdditiveOffset(AddCamOffset, 10.f);
+	CameraComponent->AddAdditiveOffset(AddCamOffset, 0.f);
 	
 	// SphereCollisionComponent
 	SphereCollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollisionComponent->InitSphereRadius(200.f);
 	SphereCollisionComponent->SetupAttachment(RootComponent);
+
+	// Skills
+	static ConstructorHelpers::FObjectFinder<UDataTable> SkillsDataAsset(TEXT("/Game/Portfolio_0/Data/DT_Skills"));
+	if (SkillsDataAsset.Succeeded())
+		SkillsDataTable = SkillsDataAsset.Object;
+
+	Skills.SetNum(3);
 }
 
 void ACharacterHero::BeginPlay()
@@ -158,44 +165,16 @@ void ACharacterHero::LevelUp()
 	Attributes.Experience = 0;
 	Attributes.ExperienceMax *= 1.25f;
 
-	GenerateChoices();
-	TriggerLevelUpItemSelection(Choices);
-}
-
-void ACharacterHero::Choice1()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[0]);
-
-	/* Empty Choices Array. */
-	Choices.Empty();
-
-	AddItem(Item);
-}
-
-void ACharacterHero::Choice2()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[1]);
-
-	/* Empty Choices Array. */
-	Choices.Empty();
-
-	AddItem(Item);
-}
-
-void ACharacterHero::Choice3()
-{
-	/* Create Item based on Chosen Item. */
-	AItemBase* Item = NewObject<AItemBase>();
-	Item->Set_ItemData(Choices[2]);
-
-	/* Empty Choices Array. */
-	Choices.Empty();
-
-	AddItem(Item);
+	/* Choose Class at Level 5 */
+	if (Attributes.Level == 5)
+	{
+		TriggerLevelUpClassSelection();
+	}
+	else
+	{
+		GenerateChoices();
+		TriggerLevelUpItemSelection(Choices);
+	}
 }
 
 void ACharacterHero::GainExperience(int Amount)
@@ -262,20 +241,10 @@ void ACharacterHero::GenerateChoices()
 {
 	/* Pause Game */
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
-	{
+	if (PlayerController && !PlayerController->IsPaused())
 		PlayerController->SetPause(true);
 
-		/*fDelayEventTime += FApp::GetDeltaTime();*/
-
-		PlayerController->bShowMouseCursor = true;
-		PlayerController->bEnableClickEvents = true;
-		PlayerController->bEnableTouchEvents = true;
-		PlayerController->bEnableMouseOverEvents = true;
-		PlayerController->bEnableTouchOverEvents = true;
-	}
-
-		/* Get Choosable Items */
+	/* Get Choosable Items */
 	TArray<FItemData*> AllItems;
 	ItemsDataTable->GetAllRows("", AllItems);
 
@@ -328,9 +297,7 @@ void ACharacterHero::GenerateChoices()
 	Choices.Add(ChoosableItems[1]);
 	Choices.Add(ChoosableItems[2]);
 
-	/*
-	* Log Item Choices
-	*/
+	/* Log Item Choices */
 	if (!Choices.IsEmpty())
 	{
 		// Log Choice 1
@@ -339,6 +306,37 @@ void ACharacterHero::GenerateChoices()
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
 		// Log Choice 3
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
+	}
+}
+
+void ACharacterHero::InitSkills()
+{
+	TArray<FSkillData*> AllSkills;
+	SkillsDataTable->GetAllRows("", AllSkills);
+
+	/* Filter Skills by ECLASS */
+	for (FSkillData* Row : AllSkills)
+	{
+		if (Row->Class == CharacterClass)
+		{
+			/* Create Skill Object */
+			ASkillBase* Skill = NewObject<ASkillBase>();
+			Skill->Set_SkillData(*Row);
+
+			/* Add Skill */
+			switch (Row->Type)
+			{
+			case EItemType::SKILL_1:
+				Skills[0] = Skill;
+				break;
+			case EItemType::SKILL_2:
+				Skills[1] = Skill;
+				break;
+			case EItemType::SKILL_3:
+				Skills[2] = Skill;
+				break;
+			}
+		}
 	}
 }
 
@@ -377,27 +375,18 @@ void ACharacterHero::AddItem(AItemBase* Item)
 		Item->Initialize(this);
 	}
 
-	TriggerPickupItemEvent(Items);
-
+	/* Unpause Game */
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
-	{
+	if (PlayerController && PlayerController->IsPaused())
 		PlayerController->SetPause(false);
-		PlayerController->bShowMouseCursor = false;		
-		PlayerController->bEnableClickEvents = false;
-		PlayerController->bEnableTouchEvents = false;
-		PlayerController->bEnableMouseOverEvents = false;
-		PlayerController->bEnableTouchOverEvents = false;
-	}		
 
 	TriggerLevelUpItemSelectionEnd();
+	TriggerPickupItemEvent(Items);
 }
 
 void ACharacterHero::Log()
 {
-	/*
-	* Log Attributes
-	*/
+	/* Log Attributes */
 	GEngine->AddOnScreenDebugMessage((int)ELOG::ATTRIBUTES, 999.f, FColor::Green, TEXT("Attributes"), false);
 	// Log Level
 	GEngine->AddOnScreenDebugMessage((int)ELOG::LEVEL, 999.f, FColor::Emerald, FString::Printf(TEXT("Level: %d"), Attributes.Level), false);
@@ -424,9 +413,7 @@ void ACharacterHero::Log()
 	// Log CooldownReduction
 	GEngine->AddOnScreenDebugMessage((int)ELOG::COOLDOWN_REDUCTION, 999.f, FColor::Emerald, FString::Printf(TEXT("Cooldown Reduction: %f"), Attributes.CooldownReduction), false);
 
-	/*
-	* Log Items
-	*/
+	/* Log Items */
 	if (!Items.IsEmpty())
 	{
 		FString ItemsString;
@@ -441,9 +428,7 @@ void ACharacterHero::Log()
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEMS, 999.f, FColor::Magenta, ItemsString, false);
 	}
 
-	/*
-	* Remove Log Choices
-	*/
+	/* Remove Log Choices */
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1);
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2);
 	GEngine->RemoveOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3);
@@ -458,6 +443,19 @@ void ACharacterHero::PickItemSelection(FItemData ItemData)
 	Choices.Empty();
 
 	AddItem(Item);
+}
+
+void ACharacterHero::ChooseClass(ECLASS Class)
+{
+	// Class & Skills
+	CharacterClass = Class;
+
+	InitSkills();
+	TriggerLevelUpClassSelectionEnd();	
+
+	// Items
+	GenerateChoices();
+	TriggerLevelUpItemSelection(Choices);
 }
 
 void ACharacterHero::TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray)
@@ -483,4 +481,14 @@ void ACharacterHero::TriggerLevelUpItemSelection(const TArray<struct FItemData>&
 void ACharacterHero::TriggerLevelUpItemSelectionEnd()
 {
 	OnLevelUpItemSelectionEnd.Broadcast();
+}
+
+void ACharacterHero::TriggerLevelUpClassSelection()
+{
+	OnLevelUpClassSelection.Broadcast();
+}
+
+void ACharacterHero::TriggerLevelUpClassSelectionEnd()
+{
+	OnLevelUpClassSelectionEnd.Broadcast();
 }

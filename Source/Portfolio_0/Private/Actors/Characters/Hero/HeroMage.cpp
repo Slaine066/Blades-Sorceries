@@ -18,7 +18,7 @@
 AHeroMage::AHeroMage()
 	:IsFlyingState(false), IsSpellState(false), IsNonHitState(false)
 {
-	JobClass = EJOBCLASS::MAGE;
+	CharacterType = ECHARACTER::MAGE;
 }
 
 void AHeroMage::NormalAttack()

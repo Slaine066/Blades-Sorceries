@@ -19,10 +19,7 @@ public:
 	UPlayerExpWidget(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
-	UFUNCTION()
 	void UpdateExp(FAttributes PlayerAttribute);
-
-	void BindCharacterAttribute(FAttributes PlayerAttribute);
 
 protected:
 	/* Methods */
