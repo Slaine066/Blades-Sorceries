@@ -82,22 +82,11 @@ void APlayerControllerHero::SetPlayerItemInventory(const TArray<class AItemBase*
 void APlayerControllerHero::SetGameTimer(int Minutes, int Seconds)
 {
 	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetTimerInfo(Minutes, Seconds);
-
-	SetStage(Minutes);
-}
-
-void APlayerControllerHero::SetMobCount(int MobCount)
-{
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetMobCountInfo(MobCount);
-}
-
-void APlayerControllerHero::SetStage(int Stage)
-{
-	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetStageInfo(Stage);
 }
 
 void APlayerControllerHero::SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray)
 {
+	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerLevelInfo(Hero->Get_Attributes());
 	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(true);
 	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SetItemSelectionInfotoSlot(ChoiceItemArray);
 }
@@ -172,7 +161,6 @@ void APlayerControllerHero::BeginPlay()
 	Hero->OnLevelUpClassSelectionEnd.AddDynamic(this, &APlayerControllerHero::EndClassSelection);
 
 	GameState->OnGetTime.AddDynamic(this, &APlayerControllerHero::SetGameTimer);
-	GameState->OnGetMonsterCount.AddDynamic(this, &APlayerControllerHero::SetMobCount);
 }
 
 void APlayerControllerHero::SetupInputComponent()

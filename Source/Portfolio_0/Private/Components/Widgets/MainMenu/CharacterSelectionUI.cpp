@@ -112,7 +112,7 @@ void UCharacterSelectionUI::PlayButtonOnClicked()
 	LoadingScreenModule.StartInGameLoadingScreen(false, 0.f);
 
 	// Open Gameplay Level
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Portfolio_0/Maps/Map_1"));
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Portfolio_0/Maps/Gameplay"));
 }
 
 void UCharacterSelectionUI::PlayButtonOnHovered()

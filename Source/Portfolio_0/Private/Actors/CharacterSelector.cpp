@@ -23,6 +23,13 @@ ACharacterSelector::ACharacterSelector()
 
 	// Don't show background
 	SceneCaptureComponent->ShowOnlyActors = { this };
+
+	SceneCaptureComponentProfile = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponentProfile"));
+	SceneCaptureComponentProfile->SetupAttachment(RootComponent);
+	SceneCaptureComponentProfile->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+
+	// Don't show background
+	SceneCaptureComponentProfile->ShowOnlyActors = { this };
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +54,7 @@ void ACharacterSelector::BeginPlay()
 		ClothHair->GetMeshComponent()->SetCollisionProfileName(TEXT("WeaponHero"));
 		
 		SceneCaptureComponent->ShowOnlyActors.Add(ClothHair);
+		SceneCaptureComponentProfile->ShowOnlyActors.Add(ClothHair);
 	}
 }
 

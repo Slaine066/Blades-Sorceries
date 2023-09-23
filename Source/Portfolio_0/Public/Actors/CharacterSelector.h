@@ -41,4 +41,6 @@ private:
 	class USkeletalMeshComponent* MeshComponent;
 	UPROPERTY(VisibleAnywhere)
 	class USceneCaptureComponent2D* SceneCaptureComponent;
+	UPROPERTY(VisibleAnywhere)
+	class USceneCaptureComponent2D* SceneCaptureComponentProfile;
 };

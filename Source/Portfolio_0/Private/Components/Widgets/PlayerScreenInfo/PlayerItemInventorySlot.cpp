@@ -13,6 +13,7 @@ UPlayerItemInventorySlot::UPlayerItemInventorySlot(const FObjectInitializer& Obj
 
 void UPlayerItemInventorySlot::UpdateInfo(FItemData ItemData)
 {
+	ImageSlot->SetBrushFromTexture(ItemData.Slot);
 	ImageItem->SetBrushFromTexture(ItemData.Icon);
 	ImageItem->Brush.DrawAs = ESlateBrushDrawType::Image;
 	ImageGrade->Brush.DrawAs = ESlateBrushDrawType::Image;
@@ -20,29 +21,29 @@ void UPlayerItemInventorySlot::UpdateInfo(FItemData ItemData)
 	switch (ItemData.Grade)
 	{
 	case EItemGrade::COMMON:
-		ImageSlot->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.0f));
 		TextGrade->SetText(FText::FromString("I"));
 		TextGrade->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
+		ImageGrade->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
 		break;
 	case EItemGrade::UNCOMMON:
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
 		TextGrade->SetText(FText::FromString("II"));
 		TextGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
+		ImageGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
 		break;
 	case EItemGrade::RARE:
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
 		TextGrade->SetText(FText::FromString("III"));
 		TextGrade->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
+		ImageGrade->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
 		break;
 	case EItemGrade::EPIC:
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
 		TextGrade->SetText(FText::FromString("IV"));
 		TextGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
+		ImageGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
 		break;
 	case EItemGrade::LEGENDARY:
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
 		TextGrade->SetText(FText::FromString("V"));
 		TextGrade->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
+		ImageGrade->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
 		break;
 	default:
 		break;

@@ -46,6 +46,8 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	UTexture2D* Icon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	UTexture2D* Slot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FText Description;

@@ -35,10 +35,6 @@ public:
 	void SetPlayerItemInventory(const TArray<class AItemBase*>& InventoryArray);
 	UFUNCTION()
 	void SetGameTimer(int Minutes, int Seconds);
-	UFUNCTION()
-	void SetMobCount(int MobCount);
-	UFUNCTION()
-	void SetStage(int Stage);
 
 	UFUNCTION()
 	void SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray);

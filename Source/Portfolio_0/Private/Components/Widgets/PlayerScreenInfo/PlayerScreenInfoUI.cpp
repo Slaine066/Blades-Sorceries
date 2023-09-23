@@ -19,6 +19,7 @@ UPlayerScreenInfoUI::UPlayerScreenInfoUI(const FObjectInitializer& ObjectInitial
 
 void UPlayerScreenInfoUI::InitAttributes(FAttributes PlayerAttribute)
 {
+	Cast<UPlayerHpWidget>(HpBar)->UpdateLevel(PlayerAttribute);
 	Cast<UPlayerHpWidget>(HpBar)->UpdateHp(PlayerAttribute);
 	Cast<UPlayerExpWidget>(ExpBar)->UpdateExp(PlayerAttribute);
 }
@@ -31,6 +32,11 @@ void UPlayerScreenInfoUI::InitSkills(TArray<ASkillBase*> Skills)
 void UPlayerScreenInfoUI::ShowSkillBar()
 {
 	Cast<UPlayerSkillBarUI>(SkillBar)->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerScreenInfoUI::SetPlayerLevelInfo(FAttributes PlayerAttributes)
+{
+	Cast<UPlayerHpWidget>(HpBar)->UpdateLevel(PlayerAttributes);
 }
 
 void UPlayerScreenInfoUI::SetPlayerHpInfo(FAttributes PlayerAttributes)
@@ -53,43 +59,25 @@ void UPlayerScreenInfoUI::SetTimerInfo(int iMin, int iSec)
 	Cast<UPlayerScreenTimer>(TimerInfo)->UpdateTime(iMin, iSec);
 }
 
-void UPlayerScreenInfoUI::SetMobCountInfo(int iMobCount)
-{
-	Cast<UPlayerMobCount>(MobCountInfo)->UpdateMobCount(iMobCount);
-}
-
-void UPlayerScreenInfoUI::SetStageInfo(int iStage)
-{
-	Cast<UPlayerStageInfo>(StageInfo)->UpdateStage(iStage);
-}
-
 void UPlayerScreenInfoUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	HpBar = Cast<UPlayerHpWidget>(GetWidgetFromName(TEXT("WBP_HealthBar")));
-	if (!HpBar)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_HealthBar")));
-
-	ExpBar = Cast<UPlayerExpWidget>(GetWidgetFromName(TEXT("WBP_Exp_LevelBar")));
-	if (!ExpBar)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Exp_LevelBar")));
-
-	ItemInventory = Cast<UPlayerItemInventory>(GetWidgetFromName(TEXT("WBP_Item_Inventory")));
-	if (!ItemInventory)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Item_Inventory")));
 
 	TimerInfo = Cast<UPlayerScreenTimer>(GetWidgetFromName(TEXT("WBP_Screen_Timer")));
 	if (!TimerInfo)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Screen_Timer")));
 
-	MobCountInfo = Cast<UPlayerMobCount>(GetWidgetFromName(TEXT("WBP_Current_MobCount")));
-	if (!MobCountInfo)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Current_MobCount")));
+	HpBar = Cast<UPlayerHpWidget>(GetWidgetFromName(TEXT("WBP_HealthBar")));
+	if (!HpBar)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_HealthBar")));
 
-	StageInfo = Cast<UPlayerStageInfo>(GetWidgetFromName(TEXT("WBP_Current_Stage")));
-	if (!StageInfo)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Current_Stage")));
+	ItemInventory = Cast<UPlayerItemInventory>(GetWidgetFromName(TEXT("WBP_Item_Inventory")));
+	if (!ItemInventory)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Item_Inventory")));
+
+	ExpBar = Cast<UPlayerExpWidget>(GetWidgetFromName(TEXT("WBP_Exp_LevelBar")));
+	if (!ExpBar)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided to get Widget: WBP_Exp_LevelBar")));
 
 	SkillBar = Cast<UPlayerSkillBarUI>(GetWidgetFromName(TEXT("WBP_SkillBar")));
 	if (!SkillBar)

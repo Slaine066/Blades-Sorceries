@@ -17,6 +17,14 @@ void UItemSelectionSlot::UpdateInfo(FItemData _ItemData)
 {
 	ItemData = _ItemData;
 
+	FVector2D BrushSize;
+	if (ItemData.Type == EItemType::ATTRIBUTE_BOOST)
+		BrushSize = FVector2D(90.f, 90.f);
+	else
+		BrushSize = FVector2D(97.5f, 97.5f);
+
+	ImageSlot->SetBrushSize(BrushSize);
+	ImageSlot->SetBrushFromTexture(ItemData.Slot);
 	ImageItem->SetBrushFromTexture(ItemData.Icon);
 	TextItemName->SetText(ItemData.Name);
 	TextItemDescription->SetText(ItemData.Description);
@@ -26,27 +34,22 @@ void UItemSelectionSlot::UpdateInfo(FItemData _ItemData)
 	case EItemGrade::COMMON:
 		TextItemName->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
 		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
-		ImageSlot->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.0f));
 		break;
 	case EItemGrade::UNCOMMON:
 		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
 		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
 		break;
 	case EItemGrade::RARE:
 		TextItemName->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
 		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
 		break;
 	case EItemGrade::EPIC:
 		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
 		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
 		break;
 	case EItemGrade::LEGENDARY:
 		TextItemName->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
 		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
-		ImageSlot->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
 		break;
 	default:
 		break;

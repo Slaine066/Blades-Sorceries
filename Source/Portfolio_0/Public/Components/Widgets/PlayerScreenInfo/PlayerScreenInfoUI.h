@@ -22,6 +22,8 @@ public:
 	void ShowSkillBar();
 	
 	UFUNCTION()
+	void SetPlayerLevelInfo(FAttributes PlayerAttributes);
+	UFUNCTION()
 	void SetPlayerHpInfo(FAttributes PlayerAttributes);
 	UFUNCTION()
 	void SetPlayerExpInfo(FAttributes PlayerAttributes);
@@ -29,10 +31,6 @@ public:
 	void SetItemInventoryInfo(const TArray<class AItemBase*>& InventoryArray);
 	UFUNCTION()
 	void SetTimerInfo(int iMin, int iSec);
-	UFUNCTION()
-	void SetMobCountInfo(int iMobCount);
-	UFUNCTION()
-	void SetStageInfo(int iStage);
 
 	/* Variables */
 
@@ -46,11 +44,9 @@ private:
 	/* Methods */
 
 	/* Variables */
-	class UUserWidget* HpBar;
-	class UUserWidget* ExpBar;	
-	class UUserWidget* ItemInventory;
 	class UUserWidget* TimerInfo;
-	class UUserWidget* MobCountInfo;
-	class UUserWidget* StageInfo;	
+	class UUserWidget* HpBar;
+	class UUserWidget* ItemInventory;
+	class UUserWidget* ExpBar;
 	class UUserWidget* SkillBar;
 };
