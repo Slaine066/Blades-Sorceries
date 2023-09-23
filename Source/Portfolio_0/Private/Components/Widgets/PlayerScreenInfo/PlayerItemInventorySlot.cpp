@@ -4,53 +4,52 @@
 #include "Components/Widgets/PlayerScreenInfo/PlayerItemInventorySlot.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Components/Image.h"
-#include "Blueprint/WidgetTree.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/CanvasPanel.h"
-#include "Components/CanvasPanelSlot.h"
-#include "Styling/SlateBrush.h"
+#include "Components/TextBlock.h"
 
 UPlayerItemInventorySlot::UPlayerItemInventorySlot(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {	
 }
 
-void UPlayerItemInventorySlot::SetItemImagePath(FString Path)
+void UPlayerItemInventorySlot::UpdateInfo(FItemData ItemData)
 {
-	ItemImagePath = Path;
+	ImageItem->SetBrushFromTexture(ItemData.Icon);
+	ImageItem->Brush.DrawAs = ESlateBrushDrawType::Image;
+	ImageGrade->Brush.DrawAs = ESlateBrushDrawType::Image;
+
+	switch (ItemData.Grade)
+	{
+	case EItemGrade::COMMON:
+		ImageSlot->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.0f));
+		TextGrade->SetText(FText::FromString("I"));
+		TextGrade->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
+		break;
+	case EItemGrade::UNCOMMON:
+		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
+		TextGrade->SetText(FText::FromString("II"));
+		TextGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
+		break;
+	case EItemGrade::RARE:
+		ImageSlot->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
+		TextGrade->SetText(FText::FromString("III"));
+		TextGrade->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
+		break;
+	case EItemGrade::EPIC:
+		ImageSlot->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
+		TextGrade->SetText(FText::FromString("IV"));
+		TextGrade->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
+		break;
+	case EItemGrade::LEGENDARY:
+		ImageSlot->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
+		TextGrade->SetText(FText::FromString("V"));
+		TextGrade->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
+		break;
+	default:
+		break;
+	}
 }
 
 void UPlayerItemInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if (WidgetTree)
-	{
-		CanvasPanel = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("CanvasWidget"));
-		CanvasPanel->RenderOpacity = 1.f;
-
-		WidgetTree->RootWidget = CanvasPanel;
-
-		FString CellPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Cell.Cell'");
-		UTexture2D* CellTexture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *CellPath));
-
-		ImageBg = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(), TEXT("Image_ItemSlot"));
-		ImageBg->SetBrushFromTexture(CellTexture);
-		ImageBg->SetDesiredSizeOverride(FVector2D(50.f, 50.f));
-		ImageBg->SetVisibility(ESlateVisibility::Visible);
-
-		UTexture2D* ItemTexture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *ItemImagePath));
-
-		ImageItem = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(), TEXT("Image_ItemImage"));
-		//Change ItemImage
-		ImageItem->SetBrushFromTexture(ItemTexture);
-		ImageItem->SetDesiredSizeOverride(FVector2D(50.f, 50.f));
-		ImageItem->SetVisibility(ESlateVisibility::Visible);
-
-		UCanvasPanelSlot* CanvasImageBgSlot = CanvasPanel->AddChildToCanvas(ImageBg);
-		CanvasImageBgSlot->SetSize(FVector2D(50.f, 50.f));
-
-		UCanvasPanelSlot* CanvasImageItemSlot = CanvasPanel->AddChildToCanvas(ImageItem);
-		CanvasImageItemSlot->SetSize(FVector2D(50.f, 50.f));
-	}	
 }

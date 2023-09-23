@@ -85,7 +85,7 @@ void ACharacterHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Log();
+	// Log();
 }
 
 void ACharacterHero::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -135,19 +135,6 @@ void ACharacterHero::Move(const FInputActionValue& Value)
 		// Add Movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
-	}
-}
-
-void ACharacterHero::Look(const FInputActionValue& Value)
-{
-	// Input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// Add yaw and pitch input to Controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 
@@ -255,6 +242,11 @@ void ACharacterHero::GenerateChoices()
 		/* Filter Choosable Items (EItemGrade::COMMON Items). */
 		for (FItemData* Row : AllItems)
 		{
+			if (Attributes.Level < 5 && Row->Type != EItemType::ATTRIBUTE_BOOST)
+				continue;
+			if (Row->Class != CharacterClass && Row->Class != ECLASS::NONE)
+				continue;
+
 			if (Row->Grade == EItemGrade::COMMON)
 				ChoosableItems.Add(*Row);
 		}
@@ -263,6 +255,11 @@ void ACharacterHero::GenerateChoices()
 	{
 		for (FItemData* Row : AllItems)
 		{
+			if (Attributes.Level < 5 && Row->Type != EItemType::ATTRIBUTE_BOOST)
+				continue;
+			if (Row->Class != CharacterClass && Row->Class != ECLASS::NONE)
+				continue;
+
 			auto Predicate = [&](AItemBase* ItemPtr) { 
 				return ItemPtr && ItemPtr->Get_ItemData().Item == Row->Item; 
 			};
@@ -298,7 +295,7 @@ void ACharacterHero::GenerateChoices()
 	Choices.Add(ChoosableItems[2]);
 
 	/* Log Item Choices */
-	if (!Choices.IsEmpty())
+	/*if (!Choices.IsEmpty())
 	{
 		// Log Choice 1
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_1, 999.f, FColor::Blue, FString::Printf(TEXT("1. First Choice: %s"), *Choices[0].Name.ToString()), false);
@@ -306,7 +303,7 @@ void ACharacterHero::GenerateChoices()
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_2, 999.f, FColor::Blue, FString::Printf(TEXT("2. Second Choice: %s"), *Choices[1].Name.ToString()), false);
 		// Log Choice 3
 		GEngine->AddOnScreenDebugMessage((int)ELOG::ITEM_CHOICE_3, 999.f, FColor::Blue, FString::Printf(TEXT("3. Third Choice: %s"), *Choices[2].Name.ToString()), false);
-	}
+	}*/
 }
 
 void ACharacterHero::InitSkills()

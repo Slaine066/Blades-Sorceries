@@ -37,7 +37,6 @@ public:
 
 	// Input Action Functions
 	virtual void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
 	virtual void NormalAttack();
 	virtual void Fly();
 

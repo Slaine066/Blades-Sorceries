@@ -12,10 +12,10 @@ void AGameStateCustom::DefaultTimer()
 	GameTimer.Seconds = ElapsedTime % 60;
 
 	// Log GameTimer
-	GEngine->AddOnScreenDebugMessage((int)ELOG::TIMER, 999.f, FColor::Red, FString::Printf(TEXT("Minutes: %d, Seconds: %d"), GameTimer.Minutes, GameTimer.Seconds), false);
+	// GEngine->AddOnScreenDebugMessage((int)ELOG::TIMER, 999.f, FColor::Red, FString::Printf(TEXT("Minutes: %d, Seconds: %d"), GameTimer.Minutes, GameTimer.Seconds), false);
 
 	// Log MobCount
-	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Spawned: %d"), MobCount), false);
+	// GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Spawned: %d"), MobCount), false);
 
 	TriggerGetTimeEvent(GameTimer.Minutes, GameTimer.Seconds);
 }
