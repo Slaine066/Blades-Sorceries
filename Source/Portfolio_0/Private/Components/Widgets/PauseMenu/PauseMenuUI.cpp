@@ -59,8 +59,6 @@ void UPauseMenuUI::ResumeButtonOnClicked()
 	{
 		RemoveFromViewport();
 
-		PlayerController->bShowMouseCursor = false;
-		PlayerController->SetInputMode(FInputModeGameOnly());
 		PlayerController->SetPause(false);
 	}
 }

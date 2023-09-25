@@ -12,32 +12,12 @@ UDamageFloatingUI::UDamageFloatingUI(const FObjectInitializer& ObjectInitializer
 {
 }
 
-void UDamageFloatingUI::SetInfo(int iDamageValue, FLinearColor RGBAColorValue, int iFontSizeValue, int iOutlineSizeValue, FLinearColor OutLineColor)
+void UDamageFloatingUI::SetInfo(int iDamageValue)
 {
-	Damage = FText::FromString(FString::FromInt(iDamageValue));
-	RGBAColor = RGBAColorValue;
-	iFontSize = iFontSizeValue;
-	iOutlineSize = iOutlineSizeValue;
-	OutlineColor = OutLineColor;
+	TextDamage->SetText(FText::FromString(FString::FromInt(iDamageValue)));
 }
 
 void UDamageFloatingUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if (WidgetTree)
-	{
-		DamageText = Cast<UTextBlock>(GetWidgetFromName(TEXT("DamageValueText")));		
-
-		DamageText->SetText(Damage);
-
-		FSlateColor SetColor(RGBAColor);
-		DamageText->SetColorAndOpacity(SetColor);
-
-		FSlateFontInfo FontInfo = DamageText->GetFont();
-		FontInfo.OutlineSettings = FFontOutlineSettings(iOutlineSize, OutlineColor);		
-		FontInfo.Size = iFontSize;
-
-		DamageText->SetFont(FontInfo);
-	}
 }

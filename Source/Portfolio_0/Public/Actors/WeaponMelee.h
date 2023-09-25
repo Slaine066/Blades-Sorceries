@@ -11,39 +11,24 @@ class PORTFOLIO_0_API AWeaponMelee : public AWeaponBase
 {
 	GENERATED_BODY()
 
-public:
 	AWeaponMelee();
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	
 };

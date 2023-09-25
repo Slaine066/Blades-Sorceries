@@ -233,8 +233,6 @@ void APlayerControllerHero::Pause()
 			
 		PauseMenuUI->AddToViewport();
 
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeUIOnly());
 		SetPause(true);
 	}
 }

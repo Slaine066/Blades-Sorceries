@@ -12,36 +12,32 @@ class PORTFOLIO_0_API ADamageFloatingActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ADamageFloatingActor();
 
+	/* Methods */
 	UFUNCTION()
-	void SetInfoToSpawn(float fDamage, float fSpeed = 100.f, FVector Direction = FVector(0.f, 0.f, 1.f));
-	void SetToWidgetInfo(FLinearColor RGBAColorValue, int iFontSizeValue, int iOutlineSizeValue, FLinearColor OutLineColor);
+	void SetInfo(float fDamage);
 
-	virtual void Tick(float DeltaTime) override;
-
+	/* Variables */
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void BeginDestroy() override;
 
-	// Floating Mesh
+	/* Methods */
+
+	/* Variables */
 	UPROPERTY(VisibleDefaultsOnly, Category = "Damage")
 	class UStaticMeshComponent* DamageFloatingMeshComponent;
-	// Floating Material
-	UPROPERTY(VisibleDefaultsOnly, Category = "Damage")
-	UMaterialInstanceDynamic* DamageFloatingMaterialInstance;
 
-private:	
-	// Called every frame
+private:
+	/* Methods */
 
-	int		iDamage;
-	FVector SpawnDirection;
-	float Speed;
-
+	/* Variables */
 	UPROPERTY()
 	class UWidgetComponent* DamageFloatingWidgetComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	float Speed = 50.f;
 };

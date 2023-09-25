@@ -96,9 +96,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Widget")
 	virtual void FloatingDamageFont(float Damage);
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")
 	FLinearColor HitDamageColorRGBA{1.f, 1.f, 1.f, 1.f};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitDamage")

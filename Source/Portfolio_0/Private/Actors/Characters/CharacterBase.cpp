@@ -23,6 +23,10 @@ ACharacterBase::ACharacterBase()
 	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> DissolveSystemAsset(TEXT("/Game/Portfolio_0/FX/NS_Dissolve"));
 	if (DissolveSystemAsset.Succeeded())
 		DissolveSystem = DissolveSystemAsset.Object;
+
+	static ConstructorHelpers::FClassFinder<ADamageFloatingActor>DamageFloatingActor_C(TEXT("'/Game/Portfolio_0/Blueprint/BP_DamageFloating.BP_DamageFloating_C'"));
+	if (DamageFloatingActor_C.Succeeded())
+		DamageFloatingClass = DamageFloatingActor_C.Class;
 }
 
 // Called when the game starts or when spawned
@@ -146,7 +150,6 @@ void ACharacterBase::Die()
 
 void ACharacterBase::TriggerHitDamageEvent(int iDamage)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Damage Broadcast Called;"));
 	OnHitDamage.Broadcast(iDamage);
 }
 
@@ -161,7 +164,7 @@ void ACharacterBase::FloatingDamageFont(float Damage)
 		// Set FloatingMuzzle Offset from camera space to world space
 		FVector FloatingLocation = CharacterLocation + LocationOffset;
 
-		//Skew the aim to be slightly upwards
+		// Skew the aim to be slightly upwards
 		FRotator FloatingRotation = CharacterRotation;
 
 		UWorld* World = GetWorld();
@@ -174,12 +177,9 @@ void ACharacterBase::FloatingDamageFont(float Damage)
 			// Spawn the projectile at the muzzle
 			ADamageFloatingActor* DamageFloating = World->SpawnActor<ADamageFloatingActor>(DamageFloatingClass, FloatingLocation, FloatingRotation, SpawnParams);
 
+			// Set DamageFloating Info And Direction
 			if (DamageFloating)
-			{
-				// Set DamageFloating Info And Direction
-				DamageFloating->SetInfoToSpawn(Damage, SpawnFloatingSpeed, FVector(0.f, 0.f, 1.f));
-				DamageFloating->SetToWidgetInfo(HitDamageColorRGBA, FontSize, OutlineSize, HitDamageOutlineColorRGBA);
-			}
+				DamageFloating->SetInfo(Damage);
 		}
 	}
 }

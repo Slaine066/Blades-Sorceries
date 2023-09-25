@@ -6,9 +6,6 @@
 #include "Components/Widgets/UserWidgetCustom.h"
 #include "DamageFloatingUI.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UDamageFloatingUI : public UUserWidgetCustom
 {
@@ -18,7 +15,8 @@ public:
 	UDamageFloatingUI(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
-	void SetInfo(int iDamageValue, FLinearColor RGBAColorValue, int iFontSizeValue, int iOutlineSizeValue, FLinearColor OutLineColor = FLinearColor::Black);
+	void SetInfo(int iDamageValue);
+
 	/* Variables */
 
 protected:
@@ -30,15 +28,9 @@ protected:
 private:
 	/* Methods */
 
-
 	/* Variables */
-
-	UPROPERTY()
-	class UTextBlock* DamageText;
-
-	FText			Damage;
-	FLinearColor	RGBAColor;
-	FLinearColor	OutlineColor;
-	int				iFontSize;
-	int				iOutlineSize;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextDamage;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageDamage;
 };

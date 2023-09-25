@@ -77,13 +77,6 @@ void UClassSelectionUI::NativeConstruct()
 	ReadClassData();
 	InitClass();
 	ChangeClass();
-
-	APlayerController* PlayerController = Cast<APlayerController>(CharacterHero->GetController());
-	if (!PlayerController)
-		return;
-
-	PlayerController->bShowMouseCursor = true;
-	PlayerController->SetInputMode(FInputModeUIOnly());
 }
 
 void UClassSelectionUI::SelectButtonOnClicked()

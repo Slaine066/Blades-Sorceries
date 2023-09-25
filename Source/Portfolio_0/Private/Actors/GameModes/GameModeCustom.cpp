@@ -23,7 +23,10 @@ void AGameModeCustom::StartPlay()
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	if (PlayerController)
-		PlayerController->SetInputMode(FInputModeGameOnly());
+	{
+		PlayerController->SetInputMode(FInputModeGameAndUI());
+		PlayerController->bShowMouseCursor = true;
+	}
 }
 
 void AGameModeCustom::Tick(float DeltaTime)

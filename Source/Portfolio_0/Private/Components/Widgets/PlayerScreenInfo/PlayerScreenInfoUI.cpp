@@ -7,8 +7,6 @@
 #include "Components/Widgets/PlayerScreenInfo/PlayerExpWidget.h"
 #include "Components/Widgets/PlayerScreenInfo/PlayerItemInventory.h"
 #include "Components/Widgets/PlayerScreenInfo/PlayerScreenTimer.h"
-#include "Components/Widgets/PlayerScreenInfo/PlayerMobCount.h"
-#include "Components/Widgets/PlayerScreenInfo/PlayerStageInfo.h"
 #include "Components/Widgets/PlayerScreenInfo/PlayerSkillBarUI.h"
 #include "SkillBase.h"
 

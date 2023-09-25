@@ -19,7 +19,7 @@ void UItemSelectionUI::SetItemSelectionInfotoSlot(const TArray<struct FItemData>
 {
 	int ItemCount = ChoiceItemArray.Num();
 
-	//It`s only three selection list in ChoiceItemArray
+	// Only 3 Items in ChoiceItemArray
 	ItemSelection1->UpdateInfo(ChoiceItemArray[0]);
 	ItemSelection2->UpdateInfo(ChoiceItemArray[1]);
 	ItemSelection3->UpdateInfo(ChoiceItemArray[2]);
@@ -34,21 +34,10 @@ void UItemSelectionUI::SwitchVisibility(bool IsVisible)
 	bIsVisibility = IsVisible;
 
 	if (!bIsVisibility)
-	{
 		SetVisibility(ESlateVisibility::Collapsed);
-
-		PlayerController->bShowMouseCursor = false;
-		PlayerController->SetInputMode(FInputModeGameOnly());
-
-		PlayerController->FlushPressedKeys();
-	}
+		//PlayerController->FlushPressedKeys();
 	else
-	{		
 		SetVisibility(ESlateVisibility::Visible);
-
-		PlayerController->bShowMouseCursor = true;
-		PlayerController->SetInputMode(FInputModeUIOnly());
-	}
 }
 
 void UItemSelectionUI::NativeConstruct()
