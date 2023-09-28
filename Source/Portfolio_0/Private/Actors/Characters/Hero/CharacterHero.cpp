@@ -37,7 +37,7 @@ ACharacterHero::ACharacterHero()
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	SpringArmComponent->TargetArmLength = 1000.f;
-	SpringArmComponent->TargetOffset = FVector(300.f, 0.f, 700.f);
+	SpringArmComponent->TargetOffset = FVector(500.f, 0.f, 700.f);
 	SpringArmComponent->bUsePawnControlRotation = true;	
 
 	SpringArmComponent->bEnableCameraLag = true;
@@ -52,7 +52,7 @@ ACharacterHero::ACharacterHero()
 	CameraComponent->bUsePawnControlRotation = false;
 
 	FTransform AddCamOffset;
-	AddCamOffset.SetRotation(FRotator(-45.f, 0.f, 0.f).Quaternion());	
+	AddCamOffset.SetRotation(FRotator(-55.f, 0.f, 0.f).Quaternion());	
 	CameraComponent->AddAdditiveOffset(AddCamOffset, 0.f);
 	
 	// SphereCollisionComponent
@@ -93,7 +93,7 @@ void ACharacterHero::OnDamageTaken(AActor* DamagedActor, float Damage, const UDa
 	Super::OnDamageTaken(DamagedActor, Damage, DamageType, InstigatedBy, DamageCauser);
 
 	// Logging
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hero Takes Damage: %f."), Damage));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hero Takes Damage: %f."), Damage));
 }
 
 void ACharacterHero::Die()
@@ -113,18 +113,18 @@ void ACharacterHero::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void ACharacterHero::Move(const FInputActionValue& Value)
 {
-	// Can't move while using Skills.
+	// Can't move while Hit.
 	if (IsHit)
 		return;
 
 	// Input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller)
 	{
 		// Find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator YawRotation = FRotator(0, 0, Rotation.Yaw);
 
 		// Get Forward Vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -132,18 +132,10 @@ void ACharacterHero::Move(const FInputActionValue& Value)
 		// Get Right Vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// Add Movement 
+		// Add Movement
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
-}
-
-void ACharacterHero::NormalAttack()
-{
-}
-
-void ACharacterHero::Fly()
-{
 }
 
 void ACharacterHero::LevelUp()

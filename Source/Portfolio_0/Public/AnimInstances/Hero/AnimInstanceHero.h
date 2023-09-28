@@ -14,41 +14,23 @@ class PORTFOLIO_0_API UAnimInstanceHero : public UAnimInstanceCharacter
 public:
 	UAnimInstanceHero();
 
-	/*
-	** Methods
-	*/
+	/* Methods */
 
-	/*
-	** Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACharacterHero* Hero;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool IsWeaponUnsheathed;
-
 protected:
-	/*
-	* Methods Inherited
-	*/
-	// Similar to BeginPlay, but for UAnimInstance
+	/* Methods Inherited */
 	virtual void NativeInitializeAnimation() override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	void CheckHero();
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 };

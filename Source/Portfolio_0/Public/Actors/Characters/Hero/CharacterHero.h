@@ -37,8 +37,6 @@ public:
 
 	// Input Action Functions
 	virtual void Move(const FInputActionValue& Value);
-	virtual void NormalAttack();
-	virtual void Fly();
 
 	// Testing Input Action Functions
 	void LevelUp();
@@ -62,8 +60,6 @@ public:
 	void TriggerLevelUpClassSelection();
 	UFUNCTION(BlueprintCallable, Category = "Level Up")
 	void TriggerLevelUpClassSelectionEnd();
-
-
 
 	/* Variables */
 	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")

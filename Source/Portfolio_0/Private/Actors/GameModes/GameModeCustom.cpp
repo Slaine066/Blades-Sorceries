@@ -24,7 +24,10 @@ void AGameModeCustom::StartPlay()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	if (PlayerController)
 	{
-		PlayerController->SetInputMode(FInputModeGameAndUI());
+		FInputModeGameAndUI InputMode;
+		InputMode.SetHideCursorDuringCapture(false);
+
+		PlayerController->SetInputMode(InputMode);
 		PlayerController->bShowMouseCursor = true;
 	}
 }

@@ -15,7 +15,7 @@ AHeroArcher::AHeroArcher()
 	CharacterType = ECHARACTER::ARCHER;
 }
 
-void AHeroArcher::NormalAttack()
+void AHeroArcher::Attack()
 {
 	if (bShoot == false)
 	{

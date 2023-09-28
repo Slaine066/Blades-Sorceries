@@ -32,15 +32,18 @@ void UAnimInstanceCharacter::UpdateAnimation()
 {
 	if (Character)
 	{
-		if (Character->GetMovementComponent()->IsFalling())
-			IsFalling = true;
-		else
-			IsFalling = false;
+		IsFalling = Character->GetMovementComponent()->IsFalling();
+		
+		FVector CurrentVelocity = Character->GetVelocity();
+		FRotator CurrentRotation = Character->GetActorRotation();
 
-		if (Character->GetVelocity().Size() > 0.f)
-			IsRunning = true;
-		else
-			IsRunning = false;
+		Speed = CurrentVelocity.SquaredLength();
+		Direction = CalculateDirection(CurrentVelocity, CurrentRotation);
+		
+		IsRunning = Speed > 0.0f;
+
+		GEngine->AddOnScreenDebugMessage(111, 999.f, FColor::Blue, FString::Printf(TEXT("Speed: %f"), Speed));
+		GEngine->AddOnScreenDebugMessage(222, 999.f, FColor::Blue, FString::Printf(TEXT("Direction: %f"), Direction));
 	}
 }
 

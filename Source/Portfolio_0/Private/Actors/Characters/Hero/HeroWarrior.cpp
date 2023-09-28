@@ -13,13 +13,9 @@ AHeroWarrior::AHeroWarrior()
 	CharacterType = ECHARACTER::WARRIOR;
 }
 
-void AHeroWarrior::NormalAttack()
+void AHeroWarrior::Attack()
 {
-	// Can't use Normal Attacks while Skilling.
-	if (IsHit)
-		return;
-
-	// If already Attacking, toggle Combo variable.
+	// If already Attacking, toggle Combo.
 	if (IsAttacking)
 	{
 		if (ComboCounter != 0)
@@ -27,7 +23,7 @@ void AHeroWarrior::NormalAttack()
 	}
 	else
 	{
-		PlayAnimMontage(NormalAttackMontages[0]);
+		PlayAnimMontage(AttackMontages[ComboCounter]);
 
 		IsAttacking = true;
 		ComboCounter = 1;
@@ -65,12 +61,7 @@ void AHeroWarrior::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AHeroWarrior::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void AHeroWarrior::OnNormalAttackCombo()
+void AHeroWarrior::OnAttackCombo()
 {
 	if (IsComboActive)
 	{
@@ -79,19 +70,11 @@ void AHeroWarrior::OnNormalAttackCombo()
 		switch (ComboCounter)
 		{
 		case 1:
-			ComboCounter = 2;
-			PlayAnimMontage(NormalAttackMontages[1]);
-			break;
-		case 2:
-			ComboCounter = 3;
-			PlayAnimMontage(NormalAttackMontages[2]);
-			break;
-		case 3:
+			PlayAnimMontage(AttackMontages[ComboCounter]);
 			ComboCounter = 0;
-			PlayAnimMontage(NormalAttackMontages[3]);
 			break;
 		default:
-			UE_LOG(LogTemp, Warning, TEXT("ACharacterHero::OnNormalAttackCombo(): Default"));
+			UE_LOG(LogTemp, Warning, TEXT("ACharacterHero::OnAttack(): Default"));
 		}
 	}
 	else

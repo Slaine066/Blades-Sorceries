@@ -26,6 +26,4 @@ void UPlayerItemInventory::UpdateInventoryInfo(const TArray<class AItemBase*>& I
 void UPlayerItemInventory::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	
 }

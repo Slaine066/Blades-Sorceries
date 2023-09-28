@@ -10,9 +10,7 @@
 UItemSelectionUI::UItemSelectionUI(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
-	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
-	if (Character)
-		CharacterHero = Cast<ACharacterHero>(Character);
+
 }
 
 void UItemSelectionUI::SetItemSelectionInfotoSlot(const TArray<struct FItemData>& ChoiceItemArray)
@@ -25,37 +23,19 @@ void UItemSelectionUI::SetItemSelectionInfotoSlot(const TArray<struct FItemData>
 	ItemSelection3->UpdateInfo(ChoiceItemArray[2]);
 }
 
-void UItemSelectionUI::SwitchVisibility(bool IsVisible)
-{
-	APlayerController* PlayerController = Cast<APlayerController>(CharacterHero->GetController());
-	if (!PlayerController)
-		return;
-
-	bIsVisibility = IsVisible;
-
-	if (!bIsVisibility)
-		SetVisibility(ESlateVisibility::Collapsed);
-		//PlayerController->FlushPressedKeys();
-	else
-		SetVisibility(ESlateVisibility::Visible);
-}
-
 void UItemSelectionUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//ItemSelection1
 	ItemSelection1 = Cast<UItemSelectionSlot>(GetWidgetFromName(TEXT("WBP_ItemSelection_1")));
-	if (nullptr == ItemSelection1)
+	if (!ItemSelection1)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget WBP_ItemSelection_1")));
 
-	//ItemSelection2;
 	ItemSelection2 = Cast<UItemSelectionSlot>(GetWidgetFromName(TEXT("WBP_ItemSelection_2")));
-	if (nullptr == ItemSelection2)
+	if (!ItemSelection2)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget WBP_ItemSelection_2")));
 
-	//ItemSelection3;
 	ItemSelection3 = Cast<UItemSelectionSlot>(GetWidgetFromName(TEXT("WBP_ItemSelection_3")));
-	if (nullptr == ItemSelection3)
+	if (!ItemSelection3)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget WBP_ItemSelection_3")));
 }

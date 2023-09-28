@@ -18,7 +18,7 @@ class PORTFOLIO_0_API AHeroArcher : public ACharacterHero
 public:
 	AHeroArcher();
 
-	virtual void NormalAttack() override;
+	virtual void Attack() override;
 
 	void OnNormalAttack();
 	FVector GetMousePos() const { return m_vMousePosition; }

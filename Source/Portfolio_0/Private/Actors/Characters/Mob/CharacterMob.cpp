@@ -113,7 +113,7 @@ void ACharacterMob::Hit()
 	if (AIControllerMob)
 		AIControllerMob->GetBehaviorTreeComponent()->GetBlackboardComponent()->SetValueAsBool("IsHit", true);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Hit")));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Mob Hit")));
 }
 
 void ACharacterMob::Die()

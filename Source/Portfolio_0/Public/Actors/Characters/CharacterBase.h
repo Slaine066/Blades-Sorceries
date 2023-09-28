@@ -66,9 +66,7 @@ class PORTFOLIO_0_API ACharacterBase : public ACharacter
 public:
 	ACharacterBase();
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	FAttributes Get_Attributes() { return Attributes; }
 	bool Get_IsDead() { return IsDead; }
 	bool Get_IsHit() { return IsHit; }
@@ -109,23 +107,17 @@ public:
 	FLinearColor HitDamageOutlineColorRGBA {0.f, 0.f, 0.f, 1.f	};
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UFUNCTION()
 	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FAttributes Attributes;
 
@@ -163,9 +155,7 @@ protected:
 	UAnimMontage* DeathMontage;
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UFUNCTION()
 	void OnMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 	UFUNCTION()
@@ -176,9 +166,7 @@ private:
 	UFUNCTION()
 	void Dissolve(float Value);
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	FTimeline DissolveTimeline;
 
 	UPROPERTY(EditAnywhere, Category = "Effects")

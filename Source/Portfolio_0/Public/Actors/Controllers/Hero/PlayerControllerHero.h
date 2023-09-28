@@ -10,9 +10,6 @@
 class UInputMappingContext;
 class UInputAction;
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API APlayerControllerHero : public APlayerController
 {
@@ -55,8 +52,7 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Jump();
 	void StopJumping();
-	void NormalAttack();
-	void Fly();
+	void Attack();
 	void Pause();
 
 	// Testing Input Action Functions
@@ -79,6 +75,7 @@ protected:
 
 private:
 	/* Methods */
+	void LookAtCursor();
 
 	/* Variables */
 	// Input Mapping Context
@@ -92,8 +89,6 @@ private:
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* NormalAttackAction;
-	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
-	UInputAction* FlyingAction;
 	UPROPERTY(EditAnywhere, Category = "Enhanced Input")
 	UInputAction* PauseAction;
 
@@ -112,4 +107,6 @@ private:
 
 	class ACharacterHero* Hero;
 	class AGameStateCustom* GameState;
+
+	FRotator LookDirection;
 };

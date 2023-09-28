@@ -14,6 +14,7 @@
 #include "Actors/Characters/Hero/HeroMage.h"
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
+#include <Engine/Classes/Kismet/KismetMathLibrary.h>
 
 APlayerControllerHero::APlayerControllerHero()
 {
@@ -29,9 +30,6 @@ APlayerControllerHero::APlayerControllerHero()
 	static ConstructorHelpers::FObjectFinder<UInputAction> NormalAttackActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_NormalAttack"));
 	if (NormalAttackActionAsset.Succeeded())
 		NormalAttackAction = NormalAttackActionAsset.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> FlyActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_Flying"));
-	if (FlyActionAsset.Succeeded())
-		FlyingAction = FlyActionAsset.Object;
 	static ConstructorHelpers::FObjectFinder<UInputAction> PauseActionAsset(TEXT("/Game/Portfolio_0/Characters/Hero/Inputs/Actions/IA_PauseGame"));
 	if (PauseActionAsset.Succeeded())
 		PauseAction = PauseActionAsset.Object;
@@ -87,13 +85,19 @@ void APlayerControllerHero::SetGameTimer(int Minutes, int Seconds)
 void APlayerControllerHero::SetItemSelectionItem(const TArray<struct FItemData>& ChoiceItemArray)
 {
 	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->SetPlayerLevelInfo(Hero->Get_Attributes());
-	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(true);
+	
+	// ItemSelectionUI
+	if (!UUserItemSelectionWidget)
+		UUserItemSelectionWidget = CreateWidget<UUserWidgetCustom>(this, UItemSelectionWidget);
+
+	UUserItemSelectionWidget->AddToViewport();
+
 	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SetItemSelectionInfotoSlot(ChoiceItemArray);
 }
 
 void APlayerControllerHero::EndSwitchItemSelection()
 {
-	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
+	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->RemoveFromViewport();
 }
 
 void APlayerControllerHero::ClassSelection()
@@ -116,6 +120,21 @@ void APlayerControllerHero::EndClassSelection()
 
 	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->InitSkills(Hero->Get_Skills());
 	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->ShowSkillBar();
+}
+
+void APlayerControllerHero::LookAtCursor()
+{
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECC_GameTraceChannel1, false, Hit);
+
+	if (Hit.bBlockingHit)
+	{
+		FVector CursorHitLocation = FVector(Hit.Location.X, Hit.Location.Y, Hero->GetActorLocation().Z);
+
+		LookDirection = UKismetMathLibrary::FindLookAtRotation(Hero->GetActorLocation(), CursorHitLocation);
+		Hero->SetActorRotation(LookDirection);
+	}
+	
 }
 
 UUserWidgetCustom* APlayerControllerHero::GetUserWidget() const
@@ -143,11 +162,6 @@ void APlayerControllerHero::BeginPlay()
 	UUserScreenInfoWidget = CreateWidget<UUserWidgetCustom>(this, UUserWidget);
 	UUserScreenInfoWidget->AddToViewport();
 	Cast<UPlayerScreenInfoUI>(UUserScreenInfoWidget)->InitAttributes(Hero->Get_Attributes());
-	
-	// ItemSelectionUI
-	UUserItemSelectionWidget = CreateWidget<UUserWidgetCustom>(this, UItemSelectionWidget);
-	UUserItemSelectionWidget->AddToViewport();
-	Cast<UItemSelectionUI>(UUserItemSelectionWidget)->SwitchVisibility(false);
 
 	// Delegates Bindings
 	Hero->OnHitDamage.AddDynamic(this, &APlayerControllerHero::SetPlayerHpInfoToWidget);
@@ -177,9 +191,7 @@ void APlayerControllerHero::SetupInputComponent()
 		// Stop Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerControllerHero::StopJumping);
 		// Normal Attack
-		EnhancedInputComponent->BindAction(NormalAttackAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::NormalAttack);
-		// Flying
-		EnhancedInputComponent->BindAction(FlyingAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Fly);
+		EnhancedInputComponent->BindAction(NormalAttackAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Attack);
 		// Pause
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &APlayerControllerHero::Pause);
 		
@@ -191,6 +203,9 @@ void APlayerControllerHero::SetupInputComponent()
 void APlayerControllerHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	/* Character's Look Direction is always towards the mouse cursor. */
+	LookAtCursor();
 }
 
 void APlayerControllerHero::Jump()
@@ -211,16 +226,10 @@ void APlayerControllerHero::Move(const FInputActionValue& Value)
 		Hero->Move(Value);
 }
 
-void APlayerControllerHero::NormalAttack()
+void APlayerControllerHero::Attack()
 {
 	if (Hero)
-		Hero->NormalAttack();
-}
-
-void APlayerControllerHero::Fly()
-{
-	if (Hero)
-		Hero->Fly();
+		Hero->Attack();
 }
 
 void APlayerControllerHero::Pause()

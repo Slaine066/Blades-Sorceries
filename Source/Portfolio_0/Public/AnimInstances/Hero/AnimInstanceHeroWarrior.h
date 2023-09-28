@@ -6,9 +6,6 @@
 #include "AnimInstanceHero.h"
 #include "AnimInstanceHeroWarrior.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UAnimInstanceHeroWarrior : public UAnimInstanceHero
 {
@@ -17,41 +14,26 @@ class PORTFOLIO_0_API UAnimInstanceHeroWarrior : public UAnimInstanceHero
 public:
 	UAnimInstanceHeroWarrior();
 
-	/*
-	** Methods
-	*/
+	/* Methods */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void NormalAttackCombo();
+	void AttackCombo();
 
-	/*
-	** Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AHeroWarrior* HeroWarrior;
 
 protected:
-	/*
-	* Methods Inherited
-	*/
-	// Similar to BeginPlay, but for UAnimInstance
+	/* Methods Inherited */
 	virtual void NativeInitializeAnimation() override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	void CheckHeroWarrior();
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	
 };
