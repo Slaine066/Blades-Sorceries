@@ -42,8 +42,8 @@ void UAnimInstanceCharacter::UpdateAnimation()
 		
 		IsRunning = Speed > 0.0f;
 
-		GEngine->AddOnScreenDebugMessage(111, 999.f, FColor::Blue, FString::Printf(TEXT("Speed: %f"), Speed));
-		GEngine->AddOnScreenDebugMessage(222, 999.f, FColor::Blue, FString::Printf(TEXT("Direction: %f"), Direction));
+		// GEngine->AddOnScreenDebugMessage(111, 999.f, FColor::Blue, FString::Printf(TEXT("Speed: %f"), Speed));
+		// GEngine->AddOnScreenDebugMessage(222, 999.f, FColor::Blue, FString::Printf(TEXT("Direction: %f"), Direction));
 	}
 }
 

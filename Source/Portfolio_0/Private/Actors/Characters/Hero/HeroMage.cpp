@@ -2,28 +2,22 @@
 
 
 #include "Actors/Characters/Hero/HeroMage.h"
-#include <EnhancedInputComponent.h>
-#include "AnimInstances/Hero/AnimInstanceHeroMage.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Actors/WeaponBase.h"
 #include "Actors/ClothPartsBase.h"
-#include "Actors/Projectiles/ProjectileBase.h"
 #include "Actors/Projectiles/ProjectileMagic.h"
-#include "Camera/CameraComponent.h"
-#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
-#include <Engine/Classes/Kismet/KismetMathLibrary.h>
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 AHeroMage::AHeroMage()
 {
 	CharacterType = ECHARACTER::MAGE;
+	SpellMuzzleOffset = FVector(50.f, 0.f, 50.f);
 }
 
 void AHeroMage::Attack()
 {
 	if (!IsAttacking)
 	{
-		PlayAnimMontage(AttackMontage);
+		PlayAnimMontage(AttackMontage, 1.25f);
 
 		IsAttacking = true;
 	}
@@ -38,7 +32,7 @@ void AHeroMage::BeginPlay()
 	{
 		WeaponRight = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassRight);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketR");
 		if (!WeaponSocket)
 			return;
 
@@ -54,7 +48,7 @@ void AHeroMage::BeginPlay()
 		}
 	}
 
-	// Spawn Right Weapon at run-time.
+	// Spawn Hair at run-time.
 	if (ClothHairClass)
 	{
 		ClothHair = GetWorld()->SpawnActor<AClothPartsBase>(ClothHairClass);
@@ -94,28 +88,16 @@ void AHeroMage::OnSpawnProjectile()
 		FVector MageLocation = GetActorLocation();
 		FRotator MageRotation = GetActorRotation();
 
-		// Set SpellMuzzleOffset from CameraSpace to WorldSpace
-		FVector MuzzleLocation = MageLocation + FTransform(MageRotation).TransformVector(SpellMuzzleOffset);
+		FVector MageLocationOffset = MageLocation + FTransform(MageRotation).TransformVector(SpellMuzzleOffset);
 
-		// Skew the aim to be slightly upwards
-		FRotator MuzzleRotation = MageRotation;
+		FTransform SpawnTransform = FTransform(MageRotation, MageLocationOffset);
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = GetInstigator();
-
-		// Spawn Projectile at the muzzle
-		AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileMagic>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
-
+		AProjectileBase* Projectile = GetWorld()->SpawnActorDeferred<AProjectileMagic>(ProjectileClass, SpawnTransform, this, GetInstigator());
 		if (Projectile)
 		{
-			// Set Projectile Collision Profile
 			Projectile->Set_ProjectileType(EProjectileType::PROJECTILE_HERO);
-
-			// Set the Projectiles Direction.
-			FVector LaunchDirection = MuzzleRotation.Vector();
-			Projectile->FireInDirection(LaunchDirection);
+			Projectile->FinishSpawning(SpawnTransform);
+			Projectile->Shoot(MageRotation.Vector());
 		}
-		
 	}
 }

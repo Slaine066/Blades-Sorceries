@@ -8,10 +8,10 @@ UAnimInstanceHeroArcher::UAnimInstanceHeroArcher()
 {
 }
 
-void UAnimInstanceHeroArcher::NormalAttackFunc()
+void UAnimInstanceHeroArcher::SpawnProjectile()
 {
 	if (Archer)
-		Archer->OnNormalAttack();
+		Archer->OnSpawnProjectile();
 }
 
 void UAnimInstanceHeroArcher::NativeInitializeAnimation()
@@ -24,7 +24,5 @@ void UAnimInstanceHeroArcher::NativeInitializeAnimation()
 void UAnimInstanceHeroArcher::CheckHeroArcher()
 {
 	if (Hero)
-	{
 		Archer = Cast<AHeroArcher>(Hero);
-	}
 }

@@ -20,15 +20,21 @@ public:
 	/* Methods */
 	void OnSpawnProjectile();
 
+	/* Variables */
+
 protected:
 	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted) override;
 
+	/* Methods */
+
 	/* Variables */
-	// Projectile Class to Spawn
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	TSubclassOf<class AProjectileBase> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
@@ -36,6 +42,6 @@ protected:
 
 private:
 	/* Methods */
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	UAnimMontage* AttackMontage;
+
+	/* Variables */
 };

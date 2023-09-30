@@ -134,7 +134,6 @@ void APlayerControllerHero::LookAtCursor()
 		LookDirection = UKismetMathLibrary::FindLookAtRotation(Hero->GetActorLocation(), CursorHitLocation);
 		Hero->SetActorRotation(LookDirection);
 	}
-	
 }
 
 UUserWidgetCustom* APlayerControllerHero::GetUserWidget() const

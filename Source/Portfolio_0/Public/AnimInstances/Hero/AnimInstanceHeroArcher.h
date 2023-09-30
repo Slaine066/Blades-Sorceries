@@ -6,9 +6,6 @@
 #include "AnimInstanceHero.h"
 #include "AnimInstanceHeroArcher.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UAnimInstanceHeroArcher : public UAnimInstanceHero
 {
@@ -17,16 +14,25 @@ class PORTFOLIO_0_API UAnimInstanceHeroArcher : public UAnimInstanceHero
 public:
 	UAnimInstanceHeroArcher();
 	
+	/* Methods */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void SpawnProjectile();
+
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AHeroArcher* Archer;
 
-	UFUNCTION(BlueprintCallable, Category = "NormalAttack")
-	void NormalAttackFunc();
-
 protected:
+	/* Methods Inherited */
 	virtual void NativeInitializeAnimation() override;
 
+	/* Methods */
+
+	/* Variables */
+
 private:
+	/* Methods */
 	void CheckHeroArcher();
 
+	/* Variables */
 };

@@ -15,7 +15,7 @@ public:
 	UAnimInstanceHeroMage();
 
 	/* Methods */
-	UFUNCTION(BlueprintCallable, Category = "Spell")
+	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void SpawnProjectile();
 
 	/* Variables */

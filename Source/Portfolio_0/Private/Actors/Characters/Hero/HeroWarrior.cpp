@@ -23,7 +23,7 @@ void AHeroWarrior::Attack()
 	}
 	else
 	{
-		PlayAnimMontage(AttackMontages[ComboCounter]);
+		PlayAnimMontage(AttackMontages[ComboCounter], 1.f);
 
 		IsAttacking = true;
 		ComboCounter = 1;
@@ -39,7 +39,7 @@ void AHeroWarrior::BeginPlay()
 	{
 		WeaponRight = GetWorld()->SpawnActor<AWeaponBase>(WeaponClassRight);
 
-		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocket");
+		const USkeletalMeshSocket* WeaponSocket = GetMesh()->GetSocketByName("WeaponSocketR");
 		if (!WeaponSocket)
 			return;
 
