@@ -14,29 +14,19 @@ class PORTFOLIO_0_API AWeaponBase : public AActor
 public:	
 	AWeaponBase();
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	// Damage dealt by this Weapon every Hit
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float Damage;
@@ -45,15 +35,11 @@ protected:
 	TSubclassOf<UDamageType> DamageType;
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
 

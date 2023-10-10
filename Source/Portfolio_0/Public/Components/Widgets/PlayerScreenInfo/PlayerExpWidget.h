@@ -19,10 +19,7 @@ public:
 	UPlayerExpWidget(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
-	UFUNCTION()
 	void UpdateExp(FAttributes PlayerAttribute);
-
-	void BindCharacterAttribute(FAttributes PlayerAttribute);
 
 protected:
 	/* Methods */
@@ -33,21 +30,14 @@ protected:
 
 private:
 	/* Methods */
-	FAttributes CharacterAttributes;
 
 	/* Variables */
-	UPROPERTY()
+	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* ProgressExpBar;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextMaxExp;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextCurrentExp;
 
-	UPROPERTY()
-	class UTextBlock*	TextMaxExp;
-
-	UPROPERTY()
-	class UTextBlock*	TextExp;
-
-	UPROPERTY()
-	class UTextBlock*	TextLevel;
-
-	float				ExpRatio;
-
+	float ExpRatio;
 };

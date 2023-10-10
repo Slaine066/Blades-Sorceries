@@ -4,72 +4,64 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
 
 UENUM(BlueprintType)
 enum class EProjectileType { PROJECTILE_HERO, PROJECTILE_MOB };
 
-UCLASS(Blueprintable)
+UCLASS()
 class PORTFOLIO_0_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AProjectileBase();
 
 	/* Methods */
-
-	UStaticMeshComponent* GetMeshComponent() const { return ProjectileMeshComponent; }
-
+	UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
 	void Set_ProjectileType(EProjectileType ProjectileType);
 
-	// Function that initializes the projectile's velocity in the shoot direction.
-	void FireInDirection(const FVector& ShootDirection);
-
-	// Function that is called when the projectile hits something
-	UFUNCTION()
-	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	void Shoot(const FVector& ShootDirection);
 	
 	/* Variables */
-	// Sphere collision component.
-	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
-	USphereComponent* CollisionComponent;
-	// Projectile movement component
-	UPROPERTY(VisibleAnywhere, Category = "ProjectileMovement")
-	UProjectileMovementComponent* ProjectileMovementComponent;
-	// Projectile Mesh
-	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
-	class UStaticMeshComponent* ProjectileMeshComponent;
-	// Projectile Material
-	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
-	UMaterialInstanceDynamic* ProjectileMaterialInstance;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class USphereComponent* CollisionComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class UProjectileMovementComponent* ProjectileMovementComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+    class UNiagaraComponent* NiagaraComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class UStaticMeshComponent* MeshComponent;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	/* Methods */
 	UFUNCTION()
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+	/* Variables */
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float Damage;
 
-	///* Variables */
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-		float Damage;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<UDamageType> DamageType;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-		TSubclassOf<UDamageType> DamageType;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class UNiagaraSystem* HitParticle;
 
-	UPROPERTY(EditAnywhere, Category = "Effects")
-		class UNiagaraSystem* HitParticle;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	class UNiagaraSystem* HitWorldParticle;
 
 private:
 	/* Methods */
-
+	
 	/* Variables */
 
 };

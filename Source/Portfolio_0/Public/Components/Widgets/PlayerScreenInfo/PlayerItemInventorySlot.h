@@ -20,32 +20,27 @@ public:
 	UPlayerItemInventorySlot(const FObjectInitializer& ObjectInitializer);
 
 	/* Methods */
-	UFUNCTION()
-	void SetItemImagePath(FString Path);
 
 	/* Variables */
+	void UpdateInfo(struct FItemData ItemData);
 
 protected:
 	/* Methods */
 	virtual void NativeConstruct() override;
 
 	/* Variables */
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageSlot;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageItem;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageGrade;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextGrade;
+
 
 private:
 	/* Methods */
 
 	/* Variables */
-	UPROPERTY()
-	class UImage* ImageBg;
-
-	UPROPERTY()
-	class UImage* ImageItem;
-
-	FString		ItemImagePath;
-
-	UPROPERTY();
-	class UCanvasPanel* CanvasPanel;
-
-	bool bIsHaveItem;
-
 };

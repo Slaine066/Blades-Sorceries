@@ -20,46 +20,30 @@ class PORTFOLIO_0_API AGameModeCustom : public AGameMode
 	GENERATED_BODY()
 
 public:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void StartPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	void CheckGameTimer();
 	void Spawn(FGameTimer GameTimer);
 	void Despawn();
 	FVector Get_RandomSpawnLocation(FVector PlayerLocation);
-	FRotator Get_SpawnRotation();
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditDefaultsOnly, Category = "Mob")
 	TMap<EMobType, TSubclassOf<ACharacterMob>> SpawnableMobs;
 	UPROPERTY(EditDefaultsOnly, Category = "Mob")

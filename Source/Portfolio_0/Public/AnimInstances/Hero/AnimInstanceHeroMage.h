@@ -6,9 +6,6 @@
 #include "AnimInstanceHero.h"
 #include "AnimInstanceHeroMage.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UAnimInstanceHeroMage : public UAnimInstanceHero
 {
@@ -18,36 +15,15 @@ public:
 	UAnimInstanceHeroMage();
 
 	/* Methods */
-
-	UFUNCTION(BlueprintCallable, Category = "Flying")
-		void Flying();
-	UFUNCTION(BlueprintCallable, Category = "Flying")
-		void LandingGround();
-	UFUNCTION(BlueprintCallable, Category = "Spell")
-		void NormalAttackSpell();
-	UFUNCTION(BlueprintCallable, Category = "Spell")
-		void SpellEnd();
-	UFUNCTION(BlueprintCallable, Category = "Spell")
-		void SpellEndAim();
-	UFUNCTION(BlueprintCallable, Category = "Hit")
-		void HitEnd();
-
-
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void SpawnProjectile();
 
 	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class AHeroMage* HeroMage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool IsFlying;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool IsSpell;
-
+	class AHeroMage* HeroMage;
 
 protected:
 	/* Methods Inherited */
-	// Similar to BeginPlay, but for UAnimInstance
 	virtual void NativeInitializeAnimation() override;
 
 	/* Methods */
@@ -59,4 +35,5 @@ private:
 	void CheckHeroMage();
 
 	/* Variables */	
+
 };

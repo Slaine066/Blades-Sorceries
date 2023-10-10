@@ -10,16 +10,10 @@ UPlayerExpWidget::UPlayerExpWidget(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-void UPlayerExpWidget::BindCharacterAttribute(FAttributes PlayerAttribute)
-{
-	UpdateExp(PlayerAttribute);
-}
-
 void UPlayerExpWidget::UpdateExp(FAttributes PlayerAttribute)
 {
 	TextMaxExp->SetText(FText::FromString(FString::FromInt(PlayerAttribute.ExperienceMax)));
-	TextExp->SetText(FText::FromString(FString::FromInt(PlayerAttribute.Experience)));
-	TextLevel->SetText(FText::FromString(FString::FromInt(PlayerAttribute.Level)));
+	TextCurrentExp->SetText(FText::FromString(FString::FromInt(PlayerAttribute.Experience)));
 
 	ExpRatio = (float)PlayerAttribute.Experience / PlayerAttribute.ExperienceMax;
 
@@ -29,17 +23,4 @@ void UPlayerExpWidget::UpdateExp(FAttributes PlayerAttribute)
 void UPlayerExpWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	ProgressExpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("ProgressBar_Exp")));
-	check(nullptr != ProgressExpBar);
-
-	TextMaxExp = Cast<UTextBlock>(GetWidgetFromName(TEXT("MaxExp")));
-	check(nullptr != TextMaxExp);
-
-	TextExp = Cast<UTextBlock>(GetWidgetFromName(TEXT("Exp")));
-	check(nullptr != TextExp);
-
-	TextLevel = Cast<UTextBlock>(GetWidgetFromName(TEXT("Level")));
-	check(nullptr != TextLevel);
-
 }

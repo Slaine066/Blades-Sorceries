@@ -22,9 +22,6 @@ public:
 	UFUNCTION()
 	void UpdateInventoryInfo(const TArray<class AItemBase*>& InventoryArray);
 
-	UFUNCTION()
-	FString UpdateInventoryPath(EItem ItemEnum);
-
 	/* Variables */
 
 protected:
@@ -37,16 +34,8 @@ private:
 	/* Methods */
 
 	/* Variables */
+	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* ItemBar;
 
-	UPROPERTY()
-	class UUniformGridPanel* InventoryslotGrid;
-
-	UPROPERTY()
-	class UUniformGridSlot* InventoryslotGridSlot;
-
-	UPROPERTY()
-	class UVerticalBox*		VerticalBox;
-
-	UPROPERTY()
-	class UVerticalBoxSlot* VerticalBoxSlot;
+	TSubclassOf<class UPlayerItemInventorySlot> ItemSlotClass;
 };

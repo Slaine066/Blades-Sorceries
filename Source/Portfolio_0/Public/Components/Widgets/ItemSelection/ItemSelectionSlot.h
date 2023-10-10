@@ -21,34 +21,37 @@ public:
 	/* Methods */
 
 	UFUNCTION()
-	void UpdateInfo(FItemData ItemData);
+	void UpdateInfo(FItemData _ItemData);
 
 	/* Variables */
 
 protected:
 	/* Methods */
 	virtual void NativeConstruct() override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	/* Variables */
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ButtonSlot;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageSlot;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageItem;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextItemName;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextItemDescription;
 
 private:
 	/* Methods */
-
+	/* Methods */
+	UFUNCTION()
+	void SlotButtonOnClicked();
+	UFUNCTION()
+	void SlotButtonOnHovered();
+	UFUNCTION()
+	void SlotButtonOnUnhovered();
 
 	/* Variables */
 
-	UPROPERTY()
-	class UImage* ItemImage;
-
-	UPROPERTY()
-	class UTextBlock* TextGrade;
-
-	UPROPERTY()
-	class UTextBlock* TextExplanation;
-
-	UPROPERTY()
-	class UTextBlock* TextItemName;
-
-	struct FItemData SaveItemData;
+	struct FItemData ItemData;
 };

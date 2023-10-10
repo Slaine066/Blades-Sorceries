@@ -3,8 +3,9 @@
 
 #include "Components/Widgets/ItemSelection/ItemSelectionSlot.h"
 #include "Actors/Characters/Hero/CharacterHero.h"
-#include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 UItemSelectionSlot::UItemSelectionSlot(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -12,131 +13,125 @@ UItemSelectionSlot::UItemSelectionSlot(const FObjectInitializer& ObjectInitializ
 	
 }
 
-void UItemSelectionSlot::UpdateInfo(FItemData ItemData)
+void UItemSelectionSlot::UpdateInfo(FItemData _ItemData)
 {
-	SaveItemData = ItemData;
+	ItemData = _ItemData;
 
-	FString NameString = ItemData.Name.ToString();
-	FString SplitL;
-	FString SplitR;
+	FVector2D BrushSize;
+	if (ItemData.Type == EItemType::ATTRIBUTE_BOOST)
+		BrushSize = FVector2D(90.f, 90.f);
+	else
+		BrushSize = FVector2D(97.5f, 97.5f);
 
-	NameString.Split(TEXT("("), &SplitL, &SplitR);
-
-	TextItemName->SetText(FText::FromString(SplitL));
-	TextExplanation->SetText(ItemData.Description);
+	ImageSlot->SetBrushSize(BrushSize);
+	ImageSlot->SetBrushFromTexture(ItemData.Slot);
+	ImageItem->SetBrushFromTexture(ItemData.Icon);
+	TextItemName->SetText(ItemData.Name);
+	TextItemDescription->SetText(ItemData.Description);
 
 	switch (ItemData.Grade)
 	{
-		case EItemGrade::COMMON:
-		{
-			TextGrade->SetText(FText::FromString(TEXT("COMMON")));
-			break;
-		}
-		case EItemGrade::UNCOMMON:
-		{
-			TextGrade->SetText(FText::FromString(TEXT("UNCOMMON")));
-			break;
-		}
-		case EItemGrade::RARE:
-		{
-			TextGrade->SetText(FText::FromString(TEXT("RARE")));
-			break;
-		}
-		case EItemGrade::EPIC:
-		{
-			TextGrade->SetText(FText::FromString(TEXT("EPIC")));
-			break;
-		}
-		case EItemGrade::LEGENDARY:
-		{
-			TextGrade->SetText(FText::FromString(TEXT("LEGENDARY")));
-			break;
-		}	
-	}
-
-	FString ItemPath;
-
-	switch (ItemData.Item)
-	{
-	case EItem::HEALTH:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Health_Icon.Health_Icon'");
+	case EItemGrade::COMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::UNCOMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::RARE:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::EPIC:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::LEGENDARY:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	default:
 		break;
 	}
-	case EItem::HEALTH_REGEN:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Health_Regen_Icon.Health_Regen_Icon'");
-		break;
-	}
-	case EItem::DAMAGE:
-	{
-
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Damage_Increase_Icon.Damage_Increase_Icon'");
-		break;
-	}
-	case EItem::ATTACK_SPEED:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Attack_Speed_Icon.Attack_Speed_Icon'");
-		break;
-	}
-	case EItem::ARMOR:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Armor_Increase_Icon.Armor_Increase_Icon'");
-		break;
-	}
-	case EItem::MOVEMENT_SPEED:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Movement_Speed.Movement_Speed'");
-		break;
-	}
-	case EItem::PICKUP_RANGE:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Pickup_Range_Icon.Pickup_Range_Icon'");
-		break;
-	}
-	case EItem::COOLDOWN_REDUCTION:
-	{
-		ItemPath = FString("'/Game/Portfolio_0/UI/Item_InventorySlot_Screen/Resource/Cooldown_Reduction_Icon.Cooldown_Reduction_Icon'");
-		break;
-	}
-	}
-
-	UTexture2D* ItemTexture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *ItemPath));
-
-	ItemImage->SetBrushFromTexture(ItemTexture);
 }
 
 void UItemSelectionSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ItemImage = Cast<UImage>(GetWidgetFromName(TEXT("Image_ItemImage")));
-	if (nullptr == ItemImage)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget Image_ItemImage")));
-
-	TextGrade = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextBlock_Grade")));
-	if (nullptr == TextGrade)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget TextBlock_Grade")));
-
-	TextExplanation = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextBlock_Explanation")));
-	if (nullptr == TextExplanation)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget TextBlock_Explanation")));
-
-	TextItemName = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextBlock_ItemName")));
-	if (nullptr == TextItemName)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget TextBlock_ItemName")));
+	if (ButtonSlot)
+	{
+		if (!ButtonSlot->OnClicked.IsBound())
+			ButtonSlot->OnClicked.AddDynamic(this, &UItemSelectionSlot::SlotButtonOnClicked);
+		if (!ButtonSlot->OnHovered.IsBound())
+			ButtonSlot->OnHovered.AddDynamic(this, &UItemSelectionSlot::SlotButtonOnHovered);
+		if (!ButtonSlot->OnUnhovered.IsBound())
+			ButtonSlot->OnUnhovered.AddDynamic(this, &UItemSelectionSlot::SlotButtonOnUnhovered);
+	}
 }
 
-FReply UItemSelectionSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+void UItemSelectionSlot::SlotButtonOnClicked()
 {
-	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
 	ACharacterHero* Hero = Cast<ACharacterHero>(GetOwningPlayerPawn());
-	
 	if (Hero)
-	{
-		Hero->PickItemSelection(SaveItemData);
-	}
+		Hero->PickItemSelection(ItemData);
+}
 
-	return Reply;
+void UItemSelectionSlot::SlotButtonOnHovered()
+{
+	switch (ItemData.Grade)
+	{
+	case EItemGrade::COMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.75f, 0.75f, 0.75f, 1.0f));
+		break;
+	case EItemGrade::UNCOMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.1f, 0.95f, 0.1f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::RARE:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.0f, 0.35f, 0.95f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::EPIC:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.55f, 0.15f, 0.95f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::LEGENDARY:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	default:
+		break;
+	}
+}
+
+void UItemSelectionSlot::SlotButtonOnUnhovered()
+{
+	switch (ItemData.Grade)
+	{
+	case EItemGrade::COMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.55f, 0.55f, 0.55f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::UNCOMMON:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.95f, 0.35f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::RARE:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.1f, 0.55f, 0.75f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::EPIC:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.35f, 0.35f, 0.95f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	case EItemGrade::LEGENDARY:
+		TextItemName->SetColorAndOpacity(FLinearColor(0.95f, 0.55f, 0.1f, 1.0f));
+		TextItemDescription->SetColorAndOpacity(FLinearColor(0.3f, 0.3f, 0.3f, 1.0f));
+		break;
+	default:
+		break;
+	}
 }

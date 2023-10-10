@@ -5,7 +5,6 @@
 #include "Actors/Characters/Hero/CharacterHero.h"
 
 UAnimInstanceHero::UAnimInstanceHero()
-	: IsWeaponUnsheathed(false)
 {
 }
 

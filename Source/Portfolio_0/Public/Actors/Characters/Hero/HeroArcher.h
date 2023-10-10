@@ -4,12 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "CharacterHero.h"
-#include "../../Projectiles/ProjectileArrow.h"
 #include "HeroArcher.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API AHeroArcher : public ACharacterHero
 {
@@ -18,49 +14,34 @@ class PORTFOLIO_0_API AHeroArcher : public ACharacterHero
 public:
 	AHeroArcher();
 
-	virtual void NormalAttack() override;
+	/* Inherited Methods */
+	virtual void Attack() override;
 
-	void OnNormalAttack();
-	FVector GetMousePos() const { return m_vMousePosition; }
+	/* Methods */
+	void OnSpawnProjectile();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GamePlay)
-	FVector MuzzleOffset;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	TSubclassOf<class AProjectileArrow> ProjectileClass;
+	/* Variables */
 
 protected:
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted) override;
+
+	/* Methods */
 	
+	/* Variables */
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TSubclassOf<class AProjectileBase> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	FVector ArrowMuzzleOffset;
 
 private:
-	void SetWeapon();
-	void NormalAttackFunc(const FInputActionValue& Value);
-	void UpdateMousePos();
-	void ArrowFire(); // NormalAttack
-	void Fire(FVector vDirection);
-	void HandlePicking();
-
-private:
-	UPROPERTY(EditAnywhere, Category = "NormalAttack")
-	UAnimMontage* NormalAttackMontage;
-
-	UPROPERTY(EditAnywhere, Category = "Hit")
-	UAnimMontage* Hit;
-
-	UPROPERTY(EditAnywhere, Category = "Death")
-	UAnimMontage* Death;
-
-	UPROPERTY(EditAnywhere, Category = "NormalAttack")
-	bool bIsAttack;
-
-	FVector m_vMousePosition;
-
-	FVector Temp;
+	/* Methods */
 	
-
-	
-	float fShootTime = 0.f;
-	bool bShoot = false;
+	/* Variables */
 };

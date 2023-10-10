@@ -16,7 +16,9 @@ class PORTFOLIO_0_API UUserWidgetCustom : public UUserWidget
 
 public:
 	UUserWidgetCustom(const FObjectInitializer& ObjectInitializer);
+
 	/* Methods */
+	void Set_WidgetOwner(UUserWidgetCustom* Owner) { WidgetOwner = Owner; }
 
 	/* Variables */
 
@@ -29,10 +31,13 @@ protected:
 	virtual void NativeConstruct() override;
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	
 	/* Variables */
+	UUserWidgetCustom* WidgetOwner;
 
 private:
 	/* Methods */
 
-	/* Variables */	
+	/* Variables */
+	
 };

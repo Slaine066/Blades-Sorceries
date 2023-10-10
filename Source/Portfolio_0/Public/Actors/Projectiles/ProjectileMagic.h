@@ -6,10 +6,7 @@
 #include "ProjectileBase.h"
 #include "ProjectileMagic.generated.h"
 
-/**
- * 
- */
-UCLASS(Blueprintable)
+UCLASS()
 class PORTFOLIO_0_API AProjectileMagic : public AProjectileBase
 {
 	GENERATED_BODY()
@@ -21,18 +18,16 @@ public:
 
 	/* Variables */
 
-
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) override;
 
 	/* Methods */
 
 	/* Variables */
-
 
 private:
 	/* Methods */

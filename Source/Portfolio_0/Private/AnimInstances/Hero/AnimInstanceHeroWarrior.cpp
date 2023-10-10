@@ -8,10 +8,10 @@ UAnimInstanceHeroWarrior::UAnimInstanceHeroWarrior()
 {
 }
 
-void UAnimInstanceHeroWarrior::NormalAttackCombo()
+void UAnimInstanceHeroWarrior::AttackCombo()
 {
 	if (HeroWarrior)
-		HeroWarrior->OnNormalAttackCombo();
+		HeroWarrior->OnAttackCombo();
 }
 
 void UAnimInstanceHeroWarrior::NativeInitializeAnimation()

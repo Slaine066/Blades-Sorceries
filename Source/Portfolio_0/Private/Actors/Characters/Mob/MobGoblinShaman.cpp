@@ -41,7 +41,7 @@ void AMobGoblinShaman::SpawnProjectile()
 		ProjectileDirection.Normalize();
 
 		// Set the projectiles's Initial Trajectory
-		Projectile->FireInDirection(ProjectileDirection);
+		Projectile->Shoot(ProjectileDirection);
 	}
 }
 

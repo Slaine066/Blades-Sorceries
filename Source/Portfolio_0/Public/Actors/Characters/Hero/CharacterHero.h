@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../CharacterBase.h"
 #include "InputActionValue.h"
+#include "../../../Util/Utility.h"
 #include "CharacterHero.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUpItemEvent, const TArray<class AItemBase*>&, InventoryArray);
@@ -12,14 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUpExpEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncreaseHealthEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUpItemSelectionEvent, const TArray<struct FItemData>&, ChoiceItemArray);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpItemSelectionEndEvent);
-
-UENUM(BlueprintType)
-enum class EJOBCLASS : uint8
-{
-	WARRIOR,
-	MAGE,
-	ARCHER
-};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpClassSelectionEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUpClassSelectionEndEvent);
 
 UCLASS()
 class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
@@ -29,38 +24,27 @@ class PORTFOLIO_0_API ACharacterHero : public ACharacterBase
 public:
 	ACharacterHero();
 
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void Die() override;
 
-	/*
-	* Methods
-	*/
-	// Input Action Functions
-	virtual void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	virtual void NormalAttack();
-	virtual void Fly();
-	void Pause();
-
-	const EJOBCLASS GetJobClass() { return JobClass; }
-
-	// Testing Input Action Functions
-	void LevelUp();
-	void Choice1();
-	void Choice2();
-	void Choice3();
-
-	UFUNCTION(BlueprintCallable, Category = "Item")
+	/* Methods */
+	const ECHARACTER GetCharacterType() { return CharacterType; }
+	TArray<class ASkillBase*> Get_Skills() { return Skills; }
 	int GetItemCount() { return Items.Num(); }
-
 	void GainExperience(int Amount);
 	void IncreaseHealth(int Amount);
 	void GenerateChoices();
 
+	// Input Action Functions
+	virtual void Move(const FInputActionValue& Value);
+
+	// Testing Input Action Functions
+	void LevelUp();
+
 	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
 	void PickItemSelection(FItemData ItemData);
+	UFUNCTION(BlueprintCallable, Category = "Level Up")
+	void ChooseClass(ECLASS Class);
 
 	UFUNCTION(BlueprintCallable, Category = "Pickup Items")
 	void TriggerPickupItemEvent(const TArray<class AItemBase*>& InventoryArray);
@@ -72,10 +56,12 @@ public:
 	void TriggerLevelUpItemSelection(const TArray<struct FItemData>& ChoiceItemArray);
 	UFUNCTION(BlueprintCallable, Category = "Level Up")
 	void TriggerLevelUpItemSelectionEnd();
+	UFUNCTION(BlueprintCallable, Category = "Level Up")
+	void TriggerLevelUpClassSelection();
+	UFUNCTION(BlueprintCallable, Category = "Level Up")
+	void TriggerLevelUpClassSelectionEnd();
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
 	FOnPickUpItemEvent OnPickUpItem;
 	UPROPERTY(BlueprintAssignable, Category = "Pickup Items")
@@ -86,56 +72,57 @@ public:
 	FOnLevelUpItemSelectionEvent OnLevelUpItemSelection;
 	UPROPERTY(BlueprintAssignable, Category = "Level Up")
 	FOnLevelUpItemSelectionEndEvent OnLevelUpItemSelectionEnd;
+	UPROPERTY(BlueprintAssignable, Category = "Level Up")
+	FOnLevelUpClassSelectionEvent OnLevelUpClassSelection;
+	UPROPERTY(BlueprintAssignable, Category = "Level Up")
+	FOnLevelUpClassSelectionEndEvent OnLevelUpClassSelectionEnd;
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
-	EJOBCLASS JobClass;
+	ECHARACTER CharacterType;
+	ECLASS CharacterClass;
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	UFUNCTION()
 	void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnCapsuleOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void InitSkills();
 	void CheckChoices();
 	void AddItem(class AItemBase* Item);
 	void Log();
 
-	/*
-	* Variables
-	*/
-	// Spring Arm & Camera
+	/* Variables */
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComponent;
-	// Sphere Collision
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* SphereCollisionComponent;
 
+	// Items
 	UPROPERTY(EditAnywhere, Category = "Item")
 	class UDataTable* ItemsDataTable = nullptr;
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	TArray<class AItemBase*> Items;
 	TArray<struct FItemData> Choices;
+
+	// Skill
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	class UDataTable* SkillsDataTable = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	TArray<class ASkillBase*> Skills;
 
 	float fDelayEventTime = 0.f;
 };

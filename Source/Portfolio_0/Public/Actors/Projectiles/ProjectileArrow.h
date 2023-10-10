@@ -3,51 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "ProjectileBase.h"
 #include "ProjectileArrow.generated.h"
 
-
 UCLASS()
-class PORTFOLIO_0_API AProjectileArrow : public AActor
+class PORTFOLIO_0_API AProjectileArrow : public AProjectileBase
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AProjectileArrow();
 
+	/* Methods */
+
+	/* Variables */
+
 protected:
-	// Called when the game starts or when spawned
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
-public:
-	void FireArrowDirection(const FVector& vDirection);
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) override;
 
-	// 프로젝타일이 무언가에 맞으면 호출되는 함수입니다.
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	/* Methods */
 
-public:
-	// Sphere Collision Com
-	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
-	USphereComponent* CollisionComponent;
+	/* Variables */
 
-	// Projectile Movement Com
-	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	UProjectileMovementComponent* ProjectileMovementComponent;
+private:
+	/* Methods */
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	class UStaticMeshComponent* ProjectileMeshComponent;
-
-	// Projectile Material
-	UPROPERTY(VisibleDefaultsOnly, Category = "ProjectileMovement")
-	UMaterialInstanceDynamic* ProjectileMaterialInstance;
-
+	/* Variables */
 
 };

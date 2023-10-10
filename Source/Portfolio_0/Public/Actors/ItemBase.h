@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
+#include "../Util/Utility.h"
 #include "ItemBase.generated.h"
 
 UENUM(BlueprintType)
@@ -21,27 +22,12 @@ enum class EItem : uint8
 	COOLDOWN_REDUCTION, 
 
 	/* Abilities */
-
-
-	/* Last Element */
-
-};
-
-UENUM(BlueprintType)
-enum class EItemType : uint8
-{
-	ATTRIBUTE_BOOST,
-	ABILITY
-};
-
-UENUM(BlueprintType)
-enum class EItemGrade : uint8
-{
-	COMMON,
-	UNCOMMON,
-	RARE,
-	EPIC,
-	LEGENDARY
+	ADDITIONAL_PROJECTILE,
+	SKILL_DAMAGE,
+	SKILL_COOLDOWN_REDUCTION,
+	SKILL_DURATION,
+	SKILL_SPEED,
+	SKILL_SIZE
 };
 
 USTRUCT(BlueprintType, meta = (AbleSplitPin))
@@ -54,9 +40,13 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	EItemType Type;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	ECLASS Class;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	EItemGrade Grade;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	UTexture2D* Icon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	UTexture2D* Slot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
@@ -73,13 +63,9 @@ class PORTFOLIO_0_API AItemBase : public AActor
 public:
 	AItemBase();
 
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 	FItemData Get_ItemData() { return ItemData; }
 	void Set_ItemData(FItemData& _ItemData) { ItemData = _ItemData; }
 
@@ -88,24 +74,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EItem GetItem() { return ItemData.Item; }
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
 	FItemData ItemData;

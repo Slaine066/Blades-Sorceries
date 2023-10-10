@@ -20,50 +20,39 @@ class PORTFOLIO_0_API UAnimInstanceCharacter : public UAnimInstance
 public:
 	UAnimInstanceCharacter();
 
-	/*
-	** Methods
-	*/
+	/* Methods */
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void UpdateAnimation();
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	virtual void Die();
 
-	/*
-	** Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACharacterBase* Character;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsRunning;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsFalling;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Direction;
+
 protected:
-	/*
-	* Methods Inherited
-	*/
-	// Similar to BeginPlay, but for UAnimInstance
+	/* Methods Inherited */
 	virtual void NativeInitializeAnimation() override;
 
-	/*
-	* Methods
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	void CheckCharacter();
 
-	/*
-	* Variables
-	*/
-
+	/* Variables */
+	
 };

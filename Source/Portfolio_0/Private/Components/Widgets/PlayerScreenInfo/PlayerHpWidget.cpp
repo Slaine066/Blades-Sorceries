@@ -4,26 +4,56 @@
 #include "Components/Widgets/PlayerScreenInfo/PlayerHpWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Components/Image.h"
+#include "Actors/Characters/Hero/CharacterHero.h"
+#include "Kismet/GameplayStatics.h"
+#include "Materials/Material.h"
 
 UPlayerHpWidget::UPlayerHpWidget(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
+	ACharacterHero* Hero = Cast<ACharacterHero>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (!Hero)
+		return;
+
+	ECHARACTER Character = Hero->GetCharacterType();
+	switch (Character)
+	{
+	case ECHARACTER::WARRIOR:
+	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> CharacterProfileMaterialWarriorAsset(TEXT("/Game/Portfolio_0/UI/HealthBar/M_CharacterSelectorProfileWarrior"));
+		if (CharacterProfileMaterialWarriorAsset.Succeeded())
+			CharacterProfileMaterial = CharacterProfileMaterialWarriorAsset.Object;
+		break;
+	}
+	case ECHARACTER::MAGE:
+	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> CharacterProfileMaterialMageAsset(TEXT("/Game/Portfolio_0/UI/HealthBar/M_CharacterSelectorProfileMage"));
+		if (CharacterProfileMaterialMageAsset.Succeeded())
+			CharacterProfileMaterial = CharacterProfileMaterialMageAsset.Object;
+		break;
+	}
+	case ECHARACTER::ARCHER:
+	{
+		static ConstructorHelpers::FObjectFinder<UMaterial> CharacterProfileMaterialArcherAsset(TEXT("/Game/Portfolio_0/UI/HealthBar/M_CharacterSelectorProfileArcher"));
+		if (CharacterProfileMaterialArcherAsset.Succeeded())
+			CharacterProfileMaterial = CharacterProfileMaterialArcherAsset.Object;
+		break;
+	}	
+	}
 }
 
-void UPlayerHpWidget::BindCharacterAttribute(FAttributes PlayerAttribute)
-{	
-	UpdateHp(PlayerAttribute);
+void UPlayerHpWidget::UpdateLevel(FAttributes PlayerAttribute)
+{
+	TextLevel->SetText(FText::FromString(FString::FromInt(PlayerAttribute.Level)));
 }
 
 void UPlayerHpWidget::UpdateHp(FAttributes PlayerAttribute)
 {
-	int iHealthMax = PlayerAttribute.HealthMax;
-	int iHealth = PlayerAttribute.Health;
+	TextMaxHp->SetText(FText::FromString(FString::FromInt(PlayerAttribute.HealthMax)));
+	TextCurrentHp->SetText(FText::FromString(FString::FromInt(PlayerAttribute.Health)));
 
-	TextMaxHp->SetText(FText::FromString(FString::FromInt(iHealthMax)));
-	TextHp->SetText(FText::FromString(FString::FromInt(iHealth)));
-
-	HpRatio = (float)iHealth / iHealthMax;
+	HpRatio = (float)PlayerAttribute.Health / PlayerAttribute.HealthMax;
 
 	ProgressHpBar->SetPercent(HpRatio);
 }
@@ -32,15 +62,5 @@ void UPlayerHpWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ProgressHpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("ProgressBar_Health")));
-	if (nullptr == ProgressHpBar)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget ProgressBar_Health")));
-
-	TextMaxHp = Cast<UTextBlock>(GetWidgetFromName(TEXT("MaxHP")));
-	if (nullptr == TextMaxHp)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget MaxHP")));
-
-	TextHp = Cast<UTextBlock>(GetWidgetFromName(TEXT("HP")));
-	if (nullptr == TextHp)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Faided Get Widget HP")));
+	ImageCharacter->SetBrushFromMaterial(CharacterProfileMaterial);
 }

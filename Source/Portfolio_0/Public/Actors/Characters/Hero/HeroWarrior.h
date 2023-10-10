@@ -14,47 +14,30 @@ class PORTFOLIO_0_API AHeroWarrior : public ACharacterHero
 public:
 	AHeroWarrior();
 
-	/*
-	* Methods Inherited
-	*/
-	virtual void NormalAttack() override;
+	/* Methods Inherited */
+	virtual void Attack() override;
 
-	/*
-	* Methods
-	*/
-	void OnNormalAttackCombo();
+	/* Methods */
+	void OnAttackCombo();
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 protected:
-	/*
-	* Methods Inherited
-	*/
+	/* Methods Inherited */
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/*
-	* Methods 
-	*/
+	/* Methods */
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 
 private:
-	/*
-	* Methods
-	*/
+	/* Methods */
 	
 
-	/*
-	* Variables
-	*/
+	/* Variables */
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	TArray<UAnimMontage*> NormalAttackMontages;
+	TArray<UAnimMontage*> AttackMontages;
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool IsComboActive;

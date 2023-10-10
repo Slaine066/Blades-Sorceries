@@ -7,9 +7,6 @@
 #include "Actors/Characters/Hero/CharacterHero.h"
 #include "PlayerHpWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_0_API UPlayerHpWidget : public UUserWidgetCustom
 {
@@ -20,9 +17,9 @@ public:
 
 	/* Methods */
 	UFUNCTION()
+	void UpdateLevel(FAttributes PlayerAttribute);
+	UFUNCTION()
 	void UpdateHp(FAttributes PlayerAttribute);
-
-	void BindCharacterAttribute(FAttributes PlayerAttribute);
 
 	/* Variables */
 
@@ -30,22 +27,24 @@ protected:
 	/* Methods */
 	virtual void NativeConstruct() override;
 
-
 	/* Variables */
 
 private:
 	/* Methods */
-	FAttributes CharacterAttributes;	
 
 	/* Variables */
-	UPROPERTY()
+	UPROPERTY(meta = (BindWidget))
 	class UProgressBar*	ProgressHpBar;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextCurrentHp;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextMaxHp;
+	UPROPERTY(meta = (BindWidget))
+	class UImage* ImageCharacter;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* TextLevel;
 
-	UPROPERTY()
-	class UTextBlock*	TextMaxHp;
+	float HpRatio;
 
-	UPROPERTY()
-	class UTextBlock*	TextHp;	
-
-	float				HpRatio;
+	class UMaterial* CharacterProfileMaterial;
 };

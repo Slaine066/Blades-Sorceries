@@ -4,6 +4,48 @@
 
 #include "CoreMinimal.h"
 
+UENUM(BlueprintType)
+enum class ECHARACTER : uint8
+{
+	WARRIOR,
+	MAGE,
+	ARCHER
+};
+
+UENUM(BlueprintType)
+enum class ECLASS : uint8
+{
+	BERSERKER,
+	GUARDIAN,
+	DEATH_KNIGHT,
+	PYROMANCER,
+	ELECTROMANCER,
+	ARCANIST,
+	RANGER,
+	HUNTER,
+	DEMON_HUNTER,
+	NONE
+};
+
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	ATTRIBUTE_BOOST,
+	SKILL_1,
+	SKILL_2,
+	SKILL_3
+};
+
+UENUM(BlueprintType)
+enum class EItemGrade : uint8
+{
+	COMMON,
+	UNCOMMON,
+	RARE,
+	EPIC,
+	LEGENDARY
+};
+
 /* Enum used for AddOnScreenDebugMessage(). */
 UENUM()
 enum class ELOG

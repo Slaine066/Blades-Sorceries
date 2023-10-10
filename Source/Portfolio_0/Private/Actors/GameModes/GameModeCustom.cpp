@@ -5,10 +5,31 @@
 #include "Actors/Characters/Mob/CharacterMob.h"
 #include "Kismet/GameplayStatics.h"
 #include "Util/Utility.h"
+#include "GameInstanceCustom.h"
 
 void AGameModeCustom::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// Set DefaultPawn to the one selected in the MainMenu Level.
+	UGameInstanceCustom* GameInstanceCustom = Cast<UGameInstanceCustom>(GetGameInstance());
+	if (GameInstanceCustom)
+		DefaultPawnClass = GameInstanceCustom->Get_SelectedCharacter();
+}
+
+void AGameModeCustom::StartPlay()
+{
+	Super::StartPlay();
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerController)
+	{
+		FInputModeGameAndUI InputMode;
+		InputMode.SetHideCursorDuringCapture(false);
+
+		PlayerController->SetInputMode(InputMode);
+		PlayerController->bShowMouseCursor = true;
+	}
 }
 
 void AGameModeCustom::Tick(float DeltaTime)
@@ -75,7 +96,7 @@ void AGameModeCustom::CheckGameTimer()
 	}
 
 	// Log MobCountLimit
-	GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT_LIMIT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Count Limit: %d"), MobCountLimit), false);
+	// GEngine->AddOnScreenDebugMessage((int)ELOG::MOB_COUNT_LIMIT, 999.f, FColor::Red, FString::Printf(TEXT("Mob Count Limit: %d"), MobCountLimit), false);
 
 	Spawn(GameTimer);
 }
@@ -159,9 +180,4 @@ FVector AGameModeCustom::Get_RandomSpawnLocation(FVector PlayerLocation)
 	}
 
 	return RandomLocation;
-}
-
-FRotator AGameModeCustom::Get_SpawnRotation()
-{
-	return FRotator();
 }

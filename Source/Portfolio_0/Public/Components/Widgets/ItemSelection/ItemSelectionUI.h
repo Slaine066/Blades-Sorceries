@@ -20,11 +20,9 @@ public:
 	/* Methods */
 	UFUNCTION()
 	void SetItemSelectionInfotoSlot(const TArray<struct FItemData>& ChoiceItemArray);
-
-	void SwitchVisibility(bool IsVisible);
 	
-
 	/* Variables */
+
 protected:
 	/* Methods */
 	virtual void NativeConstruct() override;
@@ -33,11 +31,9 @@ protected:
 
 private:
 	/* Methods */
-	/* Variables */
 
+	/* Variables */
 	class UItemSelectionSlot* ItemSelection1;
 	class UItemSelectionSlot* ItemSelection2;
 	class UItemSelectionSlot* ItemSelection3;
-
-	bool bIsVisibility;
 };
